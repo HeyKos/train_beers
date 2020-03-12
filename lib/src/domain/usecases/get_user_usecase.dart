@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import '../entities/user.dart';
 import '../repositories/users_repository.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
@@ -10,10 +9,8 @@ class GetUserUseCase
   GetUserUseCase(this.usersRepository);
 
   @override
-  Future<Stream<GetUserUseCaseResponse>> buildUseCaseStream(
-      GetUserUseCaseParams params) async {
-    final StreamController<GetUserUseCaseResponse> controller =
-        StreamController();
+  Future<Stream<GetUserUseCaseResponse>> buildUseCaseStream(GetUserUseCaseParams params) async {
+    final StreamController<GetUserUseCaseResponse> controller = StreamController();
     try {
       // get user
       User user = await usersRepository.getUser(params.uid);

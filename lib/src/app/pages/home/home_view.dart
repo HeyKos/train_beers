@@ -10,9 +10,8 @@ class HomePage extends View {
   final String title;
 
   @override
-  _HomePageState createState() =>
-      // inject dependencies inwards
-      _HomePageState();
+  // inject dependencies inwards
+  _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends ViewState<HomePage, HomeController> {
@@ -50,14 +49,6 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
                 ),
                 color: Colors.blue,
               ),
-              RaisedButton(
-                onPressed: controller.getUserwithError,
-                child: Text(
-                  'Get User Error',
-                  style: TextStyle(color: Colors.white),
-                ),
-                color: Colors.blue,
-              )
             ],
           ),
         ),

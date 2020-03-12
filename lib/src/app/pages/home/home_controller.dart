@@ -38,7 +38,6 @@ class HomeController extends Controller {
   }
 
   void getUser() => homePresenter.getUser('test-uid');
-  void getUserwithError() => homePresenter.getUser('test-uid231243');
 
   void buttonPressed() {
     _counter++;

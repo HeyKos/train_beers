@@ -8,8 +8,14 @@ class DataUsersRepository extends UsersRepository {
   DataUsersRepository._internal() {
     users = List<User>();
     users.addAll([
-      User('test-uid', 'John Smith', 18),
-      User('test-uid2', 'John Doe', 22)
+      User('1', 'Jon Hollinger'),
+      User('2', 'Christopher Dubbins'),
+      User('3', 'Jobi Campbell'),
+      User('4', 'Frank Arendt'),
+      User('5', 'Mike Koser'),
+      User('6', 'Josh Peters'),
+      User('7', 'Brandon Scott'),
+      User('8', 'Michael Tyson'),
     ]);
   }
   factory DataUsersRepository() => _instance;
