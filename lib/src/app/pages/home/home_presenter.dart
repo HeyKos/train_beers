@@ -1,44 +1,44 @@
-import '../../../domain/usecases/get_user_usecase.dart';
+import 'package:train_beers/src/domain/usecases/get_next_user_usecase.dart';
+import '../../../domain/usecases/get_next_user_usecase.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 
 class HomePresenter extends Presenter {
-  Function getUserOnNext;
-  Function getUserOnComplete;
-  Function getUserOnError;
+  Function getNextUserOnNext;
+  Function getNextUserOnComplete;
+  Function getNextUserOnError;
 
-  final GetUserUseCase getUserUseCase;
-  HomePresenter(usersRepo) : getUserUseCase = GetUserUseCase(usersRepo);
+  final GetNextUserUseCase getNextUserUseCase;
+  HomePresenter(usersRepo) : getNextUserUseCase = GetNextUserUseCase(usersRepo);
 
-  void getUser(String uid) {
+  void getNextUser(int currentSequence) {
     // execute getUseruserCase
-    getUserUseCase.execute(
-        _GetUserUseCaseObserver(this), GetUserUseCaseParams(uid));
+    getNextUserUseCase.execute(_GetNextUserUseCaseObserver(this), GetNextUserUseCaseParams(currentSequence));
   }
 
   @override
   void dispose() {
-    getUserUseCase.dispose();
+    getNextUserUseCase.dispose();
   }
 }
 
-class _GetUserUseCaseObserver extends Observer<GetUserUseCaseResponse> {
+class _GetNextUserUseCaseObserver extends Observer<GetNextUserUseCaseResponse> {
   final HomePresenter presenter;
-  _GetUserUseCaseObserver(this.presenter);
+  _GetNextUserUseCaseObserver(this.presenter);
   @override
   void onComplete() {
-    assert(presenter.getUserOnComplete != null);
-    presenter.getUserOnComplete();
+    assert(presenter.getNextUserOnComplete != null);
+    presenter.getNextUserOnComplete();
   }
 
   @override
   void onError(e) {
-    assert(presenter.getUserOnError != null);
-    presenter.getUserOnError(e);
+    assert(presenter.getNextUserOnError != null);
+    presenter.getNextUserOnError(e);
   }
 
   @override
   void onNext(response) {
-    assert(presenter.getUserOnNext != null);
-    presenter.getUserOnNext(response.user);
+    assert(presenter.getNextUserOnNext != null);
+    presenter.getNextUserOnNext(response.user);
   }
 }

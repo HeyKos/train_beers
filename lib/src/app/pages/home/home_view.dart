@@ -30,21 +30,10 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text(
-                // use data provided by the controller
-                'Button pressed ${controller.counter} times.',
-              ),
-              Text(
-                'The current user is',
-              ),
-              Text(
-                controller.user == null ? '' : '${controller.user}',
-                style: Theme.of(context).textTheme.display1,
-              ),
               RaisedButton(
-                onPressed: controller.getUser,
+                onPressed: controller.getNextUser,
                 child: Text(
-                  'Get User',
+                  "Who's up for train beers?",
                   style: TextStyle(color: Colors.white),
                 ),
                 color: Colors.blue,
@@ -53,11 +42,6 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => controller.buttonPressed(),
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

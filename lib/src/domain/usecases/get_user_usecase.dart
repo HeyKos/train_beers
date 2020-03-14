@@ -3,8 +3,7 @@ import '../entities/user.dart';
 import '../repositories/users_repository.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 
-class GetUserUseCase
-    extends UseCase<GetUserUseCaseResponse, GetUserUseCaseParams> {
+class GetUserUseCase extends UseCase<GetUserUseCaseResponse, GetUserUseCaseParams> {
   final UsersRepository usersRepository;
   GetUserUseCase(this.usersRepository);
 
