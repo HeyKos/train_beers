@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "229563388687",
+    "firebase_url": "https://train-beers.firebaseio.com",
+    "project_id": "train-beers",
+    "storage_bucket": "train-beers.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:229563388687:android:902a8b378b783e5867e47a",
+        "android_client_info": {
+          "package_name": "me.koser.train_beers"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "229563388687-17lmk719l1sq918cda4fmnj2costgabg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASEoDoGAk55Rh7vtzF02B3lQw5gaehW_8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "229563388687-17lmk719l1sq918cda4fmnj2costgabg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
