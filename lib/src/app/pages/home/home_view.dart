@@ -38,6 +38,14 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
                 ),
                 color: Colors.blue,
               ),
+              Text(
+                controller.currentUser == null ? "" : controller.currentUser.name,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 40.0,
+                ),
+              ),
             ],
           ),
         ),
