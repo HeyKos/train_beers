@@ -1,7 +1,8 @@
-import '../entities/user.dart';
+import 'package:train_beers/src/domain/entities/user_entity.dart';
 
 abstract class UsersRepository {
-  Future<User> getUser(String uid);
-  Future<User> getNextUser(int currentSequence);
-  Future<List<User>> getAllUsers();
+    Future<void> addNewUser(UserEntity user);
+    Future<void> deleteUser(UserEntity user);
+    Stream<List<UserEntity>> users();
+    Future<void> updateUser(UserEntity user);
 }

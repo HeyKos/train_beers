@@ -2,7 +2,7 @@ import './home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
-import '../../../data/repositories/data_users_repository.dart';
+import '../../../data/repositories/firebase_users_repository.dart';
 
 class HomePage extends View {
   HomePage({Key key, this.title}) : super(key: key);
@@ -15,10 +15,10 @@ class HomePage extends View {
 }
 
 class _HomePageState extends ViewState<HomePage, HomeController> {
-  _HomePageState() : super(HomeController(DataUsersRepository()));
+  _HomePageState() : super(HomeController(FirebaseUsersRepository()));
 
   @override
-  Widget buildPage() {
+  Widget buildPage() {  
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),

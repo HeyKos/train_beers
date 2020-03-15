@@ -1,5 +1,5 @@
 import 'dart:async';
-import '../entities/user.dart';
+import 'package:train_beers/src/domain/entities/user_entity.dart';
 import '../repositories/users_repository.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 
@@ -11,10 +11,19 @@ class GetNextUserUseCase extends UseCase<GetNextUserUseCaseResponse, GetNextUser
   Future<Stream<GetNextUserUseCaseResponse>> buildUseCaseStream(GetNextUserUseCaseParams params) async {
     final StreamController<GetNextUserUseCaseResponse> controller = StreamController();
     try {
+      UserEntity user;
       // get user
-      User user = await usersRepository.getNextUser(params.currentSequence);
-      // Adding it triggers the .onNext() in the `Observer`
-      // It is usually better to wrap the reponse inside a respose object.
+      List<UserEntity> users = await usersRepository.users().first;
+      users.sort((a, b) => a.sequence.compareTo(b.sequence));
+      int maxSequence = users.last.sequence;
+
+      if (params.currentSequence == maxSequence) {
+        user = users.first;
+      }
+      else {
+        user = users.firstWhere((u) => u.sequence > params.currentSequence);
+      }
+      
       controller.add(GetNextUserUseCaseResponse(user));
       logger.finest('GetNextUserUseCase successful.');
       controller.close();
@@ -35,6 +44,6 @@ class GetNextUserUseCaseParams {
 
 /// Wrapping response inside an object makes it easier to change later
 class GetNextUserUseCaseResponse {
-  final User user;
+  final UserEntity user;
   GetNextUserUseCaseResponse(this.user);
 }
