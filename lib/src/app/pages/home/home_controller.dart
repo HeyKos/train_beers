@@ -41,11 +41,10 @@ class HomeController extends Controller {
 
   void initLogoutListeners() {
     homePresenter.logoutOnNext = () {
-      refreshUI(); // Refreshes the UI manually
+      print('Logout onNext');
     };
     homePresenter.logoutOnComplete = () {
       print('Logout complete');
-      refreshUI();
     };
 
     // On error, show a snackbar, remove the user, and refresh the UI

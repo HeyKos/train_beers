@@ -10,9 +10,9 @@ class Router {
   Route<dynamic> getRoute(RouteSettings settings) {
     switch (settings.name) {
       case Pages.home:
-        return _buildRoute(settings, HomePage());
+        return _buildRoute(settings, HomePage(title: "Home"));
       case Pages.login:
-        return _buildRoute(settings, LoginPage());
+        return _buildRoute(settings, LoginPage(title: "Sign In"));
       default:
         return null;
     }
