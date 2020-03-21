@@ -1,3 +1,4 @@
+import 'package:train_beers/src/data/repositories/firebase_authenticaion_repository.dart';
 import './home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -15,13 +16,20 @@ class HomePage extends View {
 }
 
 class _HomePageState extends ViewState<HomePage, HomeController> {
-  _HomePageState() : super(HomeController(FirebaseUsersRepository()));
+  _HomePageState() : super(HomeController(FirebaseUsersRepository(), FirebaseAuthenticationRepository()));
 
   @override
   Widget buildPage() {  
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: <Widget>[
+          FlatButton.icon(
+            icon: Icon(Icons.person),
+            label: Text("Sign Out"),
+            onPressed: controller.logout,
+          ),
+        ],
       ),
       body: Scaffold(
         key:

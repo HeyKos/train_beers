@@ -6,6 +6,11 @@ class FirebaseAuthenticationRepository implements AuthenticationRepository {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
+  Stream<String> get user {
+    return _auth.onAuthStateChanged.map((FirebaseUser user) => user.uid);
+  }
+
+  @override
   Future<String> login(String email, String password) async {
       AuthResult authResult =   await _auth.signInWithEmailAndPassword(
         email: email,
@@ -20,7 +25,5 @@ class FirebaseAuthenticationRepository implements AuthenticationRepository {
   }
 
   @override
-  Stream<String> get user {
-    return _auth.onAuthStateChanged.map((FirebaseUser user) => user.uid);
-  }
+  Future logout() async => await _auth.signOut();
 }

@@ -8,13 +8,18 @@ class HomeController extends Controller {
   UserEntity get currentUser => _currentUser;
   final HomePresenter homePresenter;
   // Presenter should always be initialized this way
-  HomeController(usersRepo)
-      : homePresenter = HomePresenter(usersRepo),
-        super();
+  HomeController(usersRepo, authRepo) :
+    homePresenter = HomePresenter(usersRepo, authRepo),
+    super();
 
   @override
   // this is called automatically by the parent class
   void initListeners() {
+    initGetNextUserListeners();
+    initLogoutListeners();
+  }
+
+  void initGetNextUserListeners() {
     homePresenter.getNextUserOnNext = (UserEntity user) {
       print(user.toString());
       _currentUser = user;
@@ -34,23 +39,33 @@ class HomeController extends Controller {
     };
   }
 
+  void initLogoutListeners() {
+    homePresenter.logoutOnNext = () {
+      refreshUI(); // Refreshes the UI manually
+    };
+    homePresenter.logoutOnComplete = () {
+      print('Logout complete');
+      refreshUI();
+    };
+
+    // On error, show a snackbar, remove the user, and refresh the UI
+    homePresenter.logoutOnError = (e) {
+      print('Could not logout user.');
+      ScaffoldState state = getState();
+      state.showSnackBar(SnackBar(content: Text(e.message)));
+      refreshUI(); // Refreshes the UI manually
+    };
+  }
+
   void getNextUser() =>
     homePresenter.getNextUser(_currentUser == null ? -1 : _currentUser.sequence);
 
-  void buttonPressed() {
-    getNextUser();
-    refreshUI();
-  }
-
-  @override
-  void onResumed() {
-    print("On resumed");
-    super.onResumed();
-  }
+  void logout() => 
+    homePresenter.logout();
 
   @override
   void dispose() {
-    homePresenter.dispose(); // don't forget to dispose of the presenter
+    homePresenter.dispose();
     super.dispose();
   }
 }

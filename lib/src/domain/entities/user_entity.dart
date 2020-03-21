@@ -10,8 +10,4 @@ class UserEntity {
 
   @override
   String toString() => '$name';
-
-  @override
-  int get hashCode =>
-    name.hashCode ^ sequence.hashCode ^ id.hashCode;
 }
