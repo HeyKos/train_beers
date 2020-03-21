@@ -1,3 +1,4 @@
+import 'package:train_beers/src/app/widgets/countdown_timer.dart';
 import 'package:train_beers/src/data/repositories/firebase_authenticaion_repository.dart';
 import './home_controller.dart';
 import 'package:flutter/material.dart';
@@ -32,31 +33,31 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
         ],
       ),
       body: Scaffold(
-        key:
-            globalKey, // built in global key for the ViewState for easy access in the controller
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              RaisedButton(
-                onPressed: controller.getNextUser,
-                child: Text(
-                  "Who's up for train beers?",
-                  style: TextStyle(color: Colors.white),
-                ),
-                color: Colors.blue,
-              ),
-              Text(
-                controller.currentUser == null ? "" : controller.currentUser.name,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.blue,
-                  fontSize: 40.0,
-                ),
-              ),
-            ],
-          ),
-        ),
+        key: globalKey, // built in global key for the ViewState for easy access in the controller
+        body: CountDownTimer(),
+        // body: Center(
+        //   child: Column(
+        //     mainAxisAlignment: MainAxisAlignment.center,
+        //     children: <Widget>[
+        //       RaisedButton(
+        //         onPressed: controller.getNextUser,
+        //         child: Text(
+        //           "Who's up for train beers?",
+        //           style: TextStyle(color: Colors.white),
+        //         ),
+        //         color: Colors.blue,
+        //       ),
+        //       Text(
+        //         controller.currentUser == null ? "" : controller.currentUser.name,
+        //         textAlign: TextAlign.center,
+        //         style: TextStyle(
+        //           color: Colors.blue,
+        //           fontSize: 40.0,
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
       ),
     );
   }
