@@ -11,7 +11,7 @@ class AuthWrapper extends StatelessWidget {
     // Listen for changes to the user identifier stream from the provider.
     String userIdentifier = Provider.of<String>(context);
     // Take the user to the login page if no user identifier exists.
-    if (userIdentifier == null) {
+    if (userIdentifier == null || userIdentifier == "") {
       return LoginPage(title: "Sign In");
     }
     
