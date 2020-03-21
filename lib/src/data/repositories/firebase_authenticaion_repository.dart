@@ -18,4 +18,9 @@ class FirebaseAuthenticationRepository implements AuthenticationRepository {
 
       return authResult.user.uid;
   }
+
+  @override
+  Stream<String> get user {
+    return _auth.onAuthStateChanged.map((FirebaseUser user) => user.uid);
+  }
 }
