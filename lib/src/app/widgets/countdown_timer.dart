@@ -42,56 +42,19 @@ class _CountDownTimerState extends State<CountDownTimer>
     return AnimatedBuilder(
       animation: controller,
       builder: (context, child) {
-        return Stack(
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Expanded(
-                    child: Align(
-                      alignment: FractionalOffset.center,
-                      child: AspectRatio(
-                        aspectRatio: 1.0,
-                        child: Stack(
-                          children: <Widget>[
-                            Align(
-                              alignment: FractionalOffset.center,
-                              child: Column(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment:
-                                CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Text(
-                                    "Countdown to Train Beers",
-                                    style: TextStyle(
-                                        fontSize: 20.0,
-                                        color: Colors.black
-                                    ),
-                                  ),
-                                  Text(
-                                    timerString,
-                                    style: TextStyle(
-                                        fontSize: 20.0,
-                                        color: Colors.pink
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+            Text(
+              "Countdown to Train Beers: $timerString",
+              style: TextStyle(
+                  fontSize: 20.0,
+                  color: Colors.black
               ),
             ),
           ],
-        );
-      });
+        );},
+    );
   }
 
   /// Determine how many seconds it is from now until next Friday at 4:00 PM.
