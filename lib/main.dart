@@ -23,11 +23,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.grey,
       ),
-      home:StreamBuilder(
+      home: StreamBuilder(
         stream: FirebaseAuthenticationRepository().user,
         builder: (context, snapshot) {
           if(snapshot.hasData){
-            return HomePage(title: "Home");
+            return HomePage(title: "Home", uid: snapshot.data,);
           } else {
             return LoginPage(title: "Sign In");
           }

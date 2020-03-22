@@ -34,4 +34,14 @@ class FirebaseUsersRepository implements UsersRepository {
         .document(update.id)
         .updateData(UsersMapper.userModelToDocument(UserModel.fromEntity(update)));
   }
+
+  @override
+  Stream<UserEntity> getUserByUid(String uid) {
+    return userCollection.where('uid', isEqualTo: uid).snapshots().map((snapshot) {
+      var result = snapshot.documents.first;
+      return UsersMapper.userEntityFromUserModel(
+        UsersMapper.userModelFromSnapshot(result)
+      );
+    });
+  }
 }
