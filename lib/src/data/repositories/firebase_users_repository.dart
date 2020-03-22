@@ -1,7 +1,7 @@
 import 'package:train_beers/src/data/mappers/users_mapper.dart';
 import 'package:train_beers/src/data/models/user_model.dart';
-import '../../domain/entities/user_entity.dart';
-import '../../domain/repositories/users_repository.dart';
+import 'package:train_beers/src/domain/entities/user_entity.dart';
+import 'package:train_beers/src/domain/repositories/users_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirebaseUsersRepository implements UsersRepository {
