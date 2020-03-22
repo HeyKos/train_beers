@@ -1,8 +1,8 @@
+import 'package:train_beers/src/domain/entities/user_entity.dart';
 import 'package:train_beers/src/domain/usecases/get_next_user_usecase.dart';
-import 'package:train_beers/src/domain/usecases/get_user_by_uid_usecase.dart';
 import 'package:train_beers/src/domain/usecases/logout_usecase.dart';
-import '../../../domain/usecases/get_next_user_usecase.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
+import 'package:train_beers/src/domain/usecases/update_user_usecase.dart';
 
 class HomePresenter extends Presenter {
   // Use Case Functions
@@ -12,32 +12,32 @@ class HomePresenter extends Presenter {
   Function logoutOnNext;
   Function logoutOnComplete;
   Function logoutOnError;
-  Function getUserByUidOnNext;
-  Function getUserByUidOnComplete;
-  Function getUserByUidOnError;
+  Function updateUserOnNext;
+  Function updateUserOnComplete;
+  Function updateUserOnError;
 
   // Use Case Objects
   final GetNextUserUseCase getNextUserUseCase;
-  final GetUserByUidUseCase getUserByUidUseCase;
   final LogoutUseCase logoutUseCase;
+  final UpdateUserUseCase updateUserUseCase;
   
   // Constructors
   HomePresenter(usersRepo, authRepo) :
     getNextUserUseCase = GetNextUserUseCase(usersRepo),
-    getUserByUidUseCase = GetUserByUidUseCase(usersRepo),
-    logoutUseCase = LogoutUseCase(authRepo);
+    logoutUseCase = LogoutUseCase(authRepo),
+    updateUserUseCase = UpdateUserUseCase(usersRepo);
 
   void getNextUser(int currentSequence) {
     // execute getUseruserCase
     getNextUserUseCase.execute(_GetNextUserUseCaseObserver(this), GetNextUserUseCaseParams(currentSequence));
   }
 
-  void getUserByUid(String uid) {
-    getUserByUidUseCase.execute(_GetUserByUidUseCaseObserver(this), GetUserByUidUseCaseParams(uid));
-  }
-
   void logout() {
     logoutUseCase.execute(_GetLogoutUseCaseObserver(this));
+  }
+
+  void updateUser(UserEntity user) {
+    updateUserUseCase.execute(_UpdateUserUseCaseObserver(this), UpdateUserUseCaseParams(user));
   }
 
   @override
@@ -69,28 +69,6 @@ class _GetNextUserUseCaseObserver extends Observer<GetNextUserUseCaseResponse> {
   }
 }
 
-class _GetUserByUidUseCaseObserver extends Observer<GetUserByUidUseCaseResponse> {
-  final HomePresenter presenter;
-  _GetUserByUidUseCaseObserver(this.presenter);
-  @override
-  void onComplete() {
-    assert(presenter.getUserByUidOnComplete != null);
-    presenter.getUserByUidOnComplete();
-  }
-
-  @override
-  void onError(e) {
-    assert(presenter.getUserByUidOnError != null);
-    presenter.getUserByUidOnError(e);
-  }
-
-  @override
-  void onNext(response) {
-    assert(presenter.getUserByUidOnNext != null);
-    presenter.getUserByUidOnNext(response.user);
-  }
-}
-
 class _GetLogoutUseCaseObserver extends Observer<void> {
   final HomePresenter presenter;
   _GetLogoutUseCaseObserver(this.presenter);
@@ -110,5 +88,27 @@ class _GetLogoutUseCaseObserver extends Observer<void> {
   void onNext(response) {
     assert(presenter.logoutOnNext != null);
     presenter.logoutOnNext();
+  }
+}
+
+class _UpdateUserUseCaseObserver extends Observer<UpdateUserUseCaseResponse> {
+  final HomePresenter presenter;
+  _UpdateUserUseCaseObserver(this.presenter);
+  @override
+  void onComplete() {
+    assert(presenter.updateUserOnComplete != null);
+    presenter.updateUserOnComplete();
+  }
+
+  @override
+  void onError(e) {
+    assert(presenter.updateUserOnError != null);
+    presenter.updateUserOnError(e);
+  }
+
+  @override
+  void onNext(response) {
+    assert(presenter.updateUserOnNext != null);
+    presenter.updateUserOnNext(response.user);
   }
 }

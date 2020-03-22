@@ -5,6 +5,8 @@ import 'package:train_beers/src/app/pages/login/login_view.dart';
 import 'package:train_beers/src/app/utils/router.dart';
 import 'package:train_beers/src/data/repositories/firebase_authenticaion_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:train_beers/src/data/repositories/firebase_users_repository.dart';
+import 'package:train_beers/src/domain/entities/user_entity.dart';
 
 void main() => runApp(MyApp());
 
@@ -24,10 +26,21 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.grey,
       ),
       home: StreamBuilder(
-        stream: FirebaseAuthenticationRepository().user,
+        stream: FirebaseAuthenticationRepository().user, // TODO: This should probably use a use case, not reference the repository directly.
         builder: (context, snapshot) {
           if(snapshot.hasData){
-            return HomePage(title: "Home", uid: snapshot.data,);
+            return StreamBuilder<UserEntity>(
+              stream: FirebaseUsersRepository().getUserByUid(snapshot.data), // TODO: This should probably use a use case, not reference the repository directly.
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return HomePage(title: "Home", user: snapshot.data);
+                }
+                else {
+                  // TODO: This is awful, so we'll need to do something different.
+                  return Text("Loading...");
+                }
+              }
+            );
           } else {
             return LoginPage(title: "Sign In");
           }

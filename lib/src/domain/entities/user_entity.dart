@@ -3,13 +3,17 @@ import 'package:flutter/material.dart';
 @immutable
 class UserEntity {
   final String id;
-  final String uid;
-  final String name;
-  final int sequence;
-  final bool isActive;
-  final DateTime purchasedOn;
+  String uid;
+  String name;
+  int sequence;
+  bool isActive;
+  DateTime purchasedOn;
 
   UserEntity(this.id, this.uid, this.name, this.sequence, this.isActive, this.purchasedOn);
+
+  set userIsActive(bool value) {
+    this.isActive = value;
+  }
 
   @override
   String toString() => '$name';

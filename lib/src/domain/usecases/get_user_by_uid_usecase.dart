@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:train_beers/src/domain/entities/user_entity.dart';
-import '../repositories/users_repository.dart';
+import 'package:train_beers/src/domain/repositories/users_repository.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 
 class GetUserByUidUseCase extends UseCase<GetUserByUidUseCaseResponse, GetUserByUidUseCaseParams> {

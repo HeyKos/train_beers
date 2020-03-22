@@ -5,10 +5,8 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 
 class HomeController extends Controller {
   UserEntity _nextUser;
-  UserEntity _currentUser;
   
   UserEntity get nextUser => _nextUser;
-  UserEntity get currentUser => _currentUser;
   final HomePresenter homePresenter;
   // Presenter should always be initialized this way
   HomeController(usersRepo, authRepo) :
@@ -19,7 +17,6 @@ class HomeController extends Controller {
   // this is called automatically by the parent class
   void initListeners() {
     initGetNextUserListeners();
-    initGetUserByUidListeners();
     initLogoutListeners();
   }
 
@@ -43,26 +40,6 @@ class HomeController extends Controller {
     };
   }
 
-  void initGetUserByUidListeners() {
-    homePresenter.getUserByUidOnNext = (UserEntity user) {
-      print(user.toString());
-      _currentUser = user;
-      refreshUI(); // Refreshes the UI manually
-    };
-    homePresenter.getUserByUidOnComplete = () {
-      print('Current User retrieved');
-    };
-
-    // On error, show a snackbar, remove the user, and refresh the UI
-    homePresenter.getUserByUidOnError = (e) {
-      print('Could not retrieve current user.');
-      ScaffoldState state = getState();
-      state.showSnackBar(SnackBar(content: Text(e.message)));
-      _currentUser = null;
-      refreshUI(); // Refreshes the UI manually
-    };
-  }
-
   void initLogoutListeners() {
     homePresenter.logoutOnNext = () {
       print('Logout onNext');
@@ -80,11 +57,28 @@ class HomeController extends Controller {
     };
   }
 
+  void initUpdateUserListeners() {
+    homePresenter.updateUserOnNext = () {
+      print('Update user onNext');
+    };
+    homePresenter.updateUserOnComplete = () {
+      print('Update user complete');
+    };
+
+    // On error, show a snackbar, remove the user, and refresh the UI
+    homePresenter.updateUserOnError = (e) {
+      print('Could not update user.');
+      ScaffoldState state = getState();
+      state.showSnackBar(SnackBar(content: Text(e.message)));
+      refreshUI(); // Refreshes the UI manually
+    };
+  }
+
   void getNextUser() => homePresenter.getNextUser(_nextUser == null ? -1 : _nextUser.sequence);
 
   void logout() => homePresenter.logout();
 
-  void getUserByUid(String uid) => homePresenter.getUserByUid(uid);
+  void updateUser(UserEntity user) => homePresenter.updateUser(user);
 
   @override
   void dispose() {

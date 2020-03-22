@@ -1,5 +1,5 @@
 import 'dart:async';
-import '../../domain/repositories/authentication_repository.dart';
+import 'package:train_beers/src/domain/repositories/authentication_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class FirebaseAuthenticationRepository implements AuthenticationRepository {
