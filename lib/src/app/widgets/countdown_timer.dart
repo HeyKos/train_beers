@@ -1,36 +1,22 @@
 import 'package:flutter/material.dart';  
+import 'package:train_beers/src/domain/extensions/num_extensions.dart';
 
+/// A widget for displaying an up to date countdown to the next train beer event.
 class CountDownTimer extends StatefulWidget {
   @override
   _CountDownTimerState createState() => _CountDownTimerState();
 }
 
-class _CountDownTimerState extends State<CountDownTimer>
-    with TickerProviderStateMixin {
+/// Manages the state for the CountDownTimer widget.
+class _CountDownTimerState extends State<CountDownTimer> with TickerProviderStateMixin {
   AnimationController controller;
-
-  String get timerString {
-    Duration duration = controller.duration * controller.value;
-    
-    String twoDigits(int n) {
-      if (n >= 10) return "$n";
-      return "0$n";
-    }
-
-    String twoDigitDays = twoDigits(duration.inDays.remainder(7));
-    String twoDigitHours = twoDigits(duration.inHours.remainder(24));
-    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-
-    return "$twoDigitDays:$twoDigitHours:$twoDigitMinutes:$twoDigitSeconds";
-  }
 
   @override
   void initState() {
     super.initState();
     controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: getDurationToTrainBeersInSeconds()),
+      duration: Duration(seconds: getSecondsToTrainBeers()),
     );
   }
 
@@ -46,7 +32,7 @@ class _CountDownTimerState extends State<CountDownTimer>
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text(
-              "Countdown to Train Beers: $timerString",
+              "Countdown to Train Beers: ${getTimerString(controller.duration, controller.value)}",
               style: TextStyle(
                   fontSize: 20.0,
                   color: Colors.black
@@ -57,8 +43,30 @@ class _CountDownTimerState extends State<CountDownTimer>
     );
   }
 
-  /// Determine how many seconds it is from now until next Friday at 4:00 PM.
-  int getDurationToTrainBeersInSeconds() {
+  /// Gets a formatted string of the current countdown value.
+  /// 
+  /// The [newDuration] is calculated by multiplying the supplied [duration]
+  /// by the supplied [currentAnimationValue]. The [newDuration] is then
+  /// parsed into days, hours, minutes, and seconds. The returned value 
+  /// follows the following format: "dd:hh:mm:ss".
+  String getTimerString(Duration duration, double currentAnimationValue) {
+    Duration newDuration = duration * currentAnimationValue;
+
+    String twoDigitDays = newDuration.inDays.remainder(7).toTwoDigitString();
+    String twoDigitHours = newDuration.inHours.remainder(24).toTwoDigitString();
+    String twoDigitMinutes = newDuration.inMinutes.remainder(60).toTwoDigitString();
+    String twoDigitSeconds = newDuration.inSeconds.remainder(60).toTwoDigitString();
+
+    return "$twoDigitDays:$twoDigitHours:$twoDigitMinutes:$twoDigitSeconds";
+  }
+
+  /// Return the number of seconds it is from now until the next train beer event.
+  /// 
+  /// We look at the current weekday, and set the [daysToAdd] based on that. 
+  /// For now we'll assume that train beers always occur on Friday at 4:00 PM ET.
+  /// The [nextBeerDate] is derived from the adjusted date from now, and the 
+  /// hour, minute, seconds, milliseconds, and microseconds are set to a specific time.
+  int getSecondsToTrainBeers() {
     DateTime now =  DateTime.now();
 
     int daysToAdd = 0;
