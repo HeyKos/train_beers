@@ -19,13 +19,14 @@ class HomePage extends View {
 }
 
 class _HomePageState extends ViewState<HomePage, HomeController> {
-  _HomePageState(this.uid) : super(HomeController(FirebaseUsersRepository(), FirebaseAuthenticationRepository()));
+  _HomePageState(this.uid) : super(HomeController(FirebaseUsersRepository(), FirebaseAuthenticationRepository())) {
+    controller.getUserByUid(this.uid);
+  }
   
   final String uid;
 
   @override
   Widget buildPage() {
-    controller.getUserByUid(this.uid);
 
     return Scaffold(
       appBar: AppBar(
