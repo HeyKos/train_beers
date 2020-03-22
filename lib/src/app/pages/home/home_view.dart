@@ -34,27 +34,61 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
       ),
       body: Scaffold(
         key: globalKey, // built in global key for the ViewState for easy access in the controller
-        body: Center(
+        body: Container(
+          padding: EdgeInsets.all(20.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              CountDownTimer(),
-              RaisedButton(
-                onPressed: controller.getNextUser,
-                child: Text(
-                  "Who's up for train beers?",
-                  style: TextStyle(color: Colors.white),
-                ),
-                color: Colors.blue,
+              Spacer(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      CountDownTimer()
+                    ],
+                  ),
+                ],
               ),
-              Text(
-                controller.currentUser == null ? "" : controller.currentUser.name,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.blue,
-                  fontSize: 40.0,
-                ),
+              Spacer(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      RaisedButton(
+                        onPressed: controller.getNextUser,
+                        child: Text(
+                          "Who's up for train beers?",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        color: Colors.blue,
+                        ),
+                    ],
+                  )
+                ],
               ),
+              Spacer(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        controller.currentUser == null ? "" : controller.currentUser.name,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontSize: 30.0,
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+              Spacer(),
             ],
           ),
         ),
