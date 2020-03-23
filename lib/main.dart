@@ -2,6 +2,7 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:logging/logging.dart';
 import 'package:train_beers/src/app/pages/home/home_view.dart';
 import 'package:train_beers/src/app/pages/login/login_view.dart';
+import 'package:train_beers/src/app/pages/splash/splash_view.dart';
 import 'package:train_beers/src/app/utils/router.dart';
 import 'package:train_beers/src/data/repositories/firebase_authenticaion_repository.dart';
 import 'package:flutter/material.dart';
@@ -36,8 +37,7 @@ class MyApp extends StatelessWidget {
                   return HomePage(title: "Home", user: snapshot.data);
                 }
                 else {
-                  // TODO: This is awful, so we'll need to do something different.
-                  return Text("Loading...");
+                  return SplashPage(title: "Splash");
                 }
               }
             );
