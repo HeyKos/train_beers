@@ -10,9 +10,15 @@ class Router {
   Route<dynamic> getRoute(RouteSettings settings) {
     switch (settings.name) {
       case Pages.home:
-        return _buildRoute(settings, HomePage(title: "Home"));
+        Map<String, dynamic> args = settings.arguments as Map;
+        return _buildRoute(
+            settings,
+            HomePage(title: "Home", user: args['user'])
+        );
       case Pages.login:
         return _buildRoute(settings, LoginPage(title: "Sign In"));
+      case Pages.splash:
+        return _buildRoute(settings, SplashPage(title: "Splash" ));
       default:
         return null;
     }

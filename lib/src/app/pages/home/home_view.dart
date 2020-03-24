@@ -8,19 +8,23 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:train_beers/src/data/repositories/firebase_users_repository.dart';
 
 class HomePage extends View {
-  HomePage({Key key, this.title, this.user}) : super(key: key);
-
   final String title;
   final UserEntity user;
+  
+  HomePage({
+    Key key,
+    this.title,
+    @required this.user
+  }) : super(key: key);
+  
 
   @override
   // inject dependencies inwards
-  _HomePageState createState() => _HomePageState(this.user);
+  _HomePageState createState() => _HomePageState(user);
 }
 
 class _HomePageState extends ViewState<HomePage, HomeController> {
   _HomePageState(this.user) : super(HomeController(FirebaseUsersRepository(), FirebaseAuthenticationRepository()));
-  
   final UserEntity user;
 
   @override
@@ -63,7 +67,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        getCurrentUserText(user),
+                        getCurrentUserText(this.user),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.blue,
