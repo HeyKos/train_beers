@@ -44,6 +44,7 @@ class HomePresenter extends Presenter {
   void dispose() {
     getNextUserUseCase.dispose();
     logoutUseCase.dispose();
+    updateUserUseCase.dispose();
   }
 }
 

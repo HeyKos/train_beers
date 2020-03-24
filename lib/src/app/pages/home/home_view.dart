@@ -24,8 +24,7 @@ class HomePage extends View {
 }
 
 class _HomePageState extends ViewState<HomePage, HomeController> {
-  _HomePageState(this.user) : super(HomeController(FirebaseUsersRepository(), FirebaseAuthenticationRepository()));
-  final UserEntity user;
+  _HomePageState(user) : super(HomeController(FirebaseUsersRepository(), FirebaseAuthenticationRepository(), user));
 
   @override
   Widget buildPage() {
@@ -67,7 +66,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        getCurrentUserText(this.user),
+                        getCurrentUserText(controller.user),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.blue,
@@ -86,7 +85,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        getActiveStatusMessage(user),
+                        getActiveStatusMessage(controller.user),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.black,
@@ -106,11 +105,11 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
                     children: <Widget>[
                       RaisedButton(
                         onPressed: () {
-                          user.userIsActive = !user.isActive;
-                          controller.updateUser(user);
+                          controller.user.userIsActive = !controller.user.isActive;
+                          controller.updateUser(controller.user);
                         },
                         child: Text(
-                          "Count me ${user.isActive ? 'out' : 'in'}!",
+                          "Count me ${controller.user.isActive ? 'out' : 'in'}!",
                           style: TextStyle(color: Colors.white),
                         ),
                         color: Colors.black,

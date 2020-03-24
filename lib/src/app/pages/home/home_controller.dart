@@ -5,12 +5,16 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 
 class HomeController extends Controller {
   UserEntity _nextUser;
+  UserEntity _user;
   
   UserEntity get nextUser => _nextUser;
+  UserEntity get user => _user;
+
   final HomePresenter homePresenter;
   // Presenter should always be initialized this way
-  HomeController(usersRepo, authRepo) :
+  HomeController(usersRepo, authRepo, UserEntity user) :
     homePresenter = HomePresenter(usersRepo, authRepo),
+    _user = user,
     super();
 
   @override
@@ -18,6 +22,7 @@ class HomeController extends Controller {
   void initListeners() {
     initGetNextUserListeners();
     initLogoutListeners();
+    initUpdateUserListeners();
   }
 
   void initGetNextUserListeners() {
@@ -58,9 +63,12 @@ class HomeController extends Controller {
   }
 
   void initUpdateUserListeners() {
-    homePresenter.updateUserOnNext = () {
+    homePresenter.updateUserOnNext = (UserEntity user) {
       print('Update user onNext');
+      _user = user;
+      refreshUI();
     };
+
     homePresenter.updateUserOnComplete = () {
       print('Update user complete');
     };
