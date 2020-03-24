@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:train_beers/src/app/pages/splash/splash_controller.dart';
 import 'package:train_beers/src/data/repositories/firebase_users_repository.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 
 class SplashPage extends View {
   SplashPage({Key key, this.uid, this.title}) : super(key: key);
@@ -29,13 +30,18 @@ class _SplashPageState extends ViewState<SplashPage, SplashController> {
           Image(
             image: AssetImage('assets/images/splash_image.png')
           ),
-          Text("Loading...",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20.0,
-              decoration: TextDecoration.none,
+          ScaleAnimatedTextKit(
+            text: [
+              "Loading..."
+            ],
+            textStyle: TextStyle(
+                fontSize: 30.0,
+                color: Colors.white,
+                decoration: TextDecoration.none,
             ),
-          )
+            textAlign: TextAlign.center,
+            alignment: AlignmentDirectional.topStart
+          ),
         ],
       )
     );
