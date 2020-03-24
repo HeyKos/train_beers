@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:train_beers/src/app/pages/pages.dart';
 import './splash_presenter.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,8 @@ class SplashController extends Controller {
 
   @override
   void initListeners() {
-    splashPresenter.getUserByUidOnNext = (UserEntity user) {
+    splashPresenter.getUserByUidOnNext = (UserEntity user) async {
+      await new Future.delayed(const Duration(seconds: 5));
       goHome(user);
     };
 

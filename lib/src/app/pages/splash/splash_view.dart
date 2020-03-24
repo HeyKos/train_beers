@@ -22,10 +22,21 @@ class _SplashPageState extends ViewState<SplashPage, SplashController> {
     return Container(
       key: globalKey, // built in global key for the ViewState for easy access in the controller,
       color: Colors.grey,
-      child: Center(
-        child: Image(
-          image: AssetImage('assets/images/splash_image.png')
-        ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Image(
+            image: AssetImage('assets/images/splash_image.png')
+          ),
+          Text("Loading...",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20.0,
+              decoration: TextDecoration.none,
+            ),
+          )
+        ],
       )
     );
   }
