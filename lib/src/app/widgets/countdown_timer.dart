@@ -121,7 +121,7 @@ class _CountDownTimerState extends State<CountDownTimer> with TickerProviderStat
     now = now.add(new Duration(days: daysToAdd));
     // Create a new date basing the year, month, and day off of our adjusted [now] DateTime object.
     // The time will be explicitly set to 4:00 PM.
-    DateTime nextBeerDate = new DateTime(now.year, now.month, now.day, 17, 0, 0, 0, 0);
+    DateTime nextBeerDate = new DateTime(now.year, now.month, now.day, 16, 0, 0, 0, 0);
     
     return nextBeerDate.difference(DateTime.now()).inSeconds;
   }
