@@ -1,3 +1,4 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:train_beers/src/app/widgets/countdown_timer.dart';
 import 'package:train_beers/src/data/repositories/firebase_authenticaion_repository.dart';
 import 'package:train_beers/src/domain/entities/user_entity.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:train_beers/src/data/repositories/firebase_users_repository.dart';
+import 'package:flutter_conditional_rendering/flutter_conditional_rendering.dart';
 
 class HomePage extends View {
   final String title;
@@ -53,7 +55,36 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      CountDownTimer()
+                      Conditional.single(
+                        context: context,
+                        conditionBuilder: (BuildContext context) => !shouldDisplayCountdown(),
+                        widgetBuilder: (BuildContext context) {
+                          return CountDownTimer();
+                        },
+                        fallbackBuilder: (BuildContext context) {
+                          return ColorizeAnimatedTextKit(
+                            text: [
+                              "WE'RE DRINKING!",
+                              "BEER IS LIFE!",
+                              "CHECK PLEASE!",
+                            ],
+                            textStyle: TextStyle(
+                                fontSize: 40.0, 
+                                fontFamily: "Horizon"
+                            ),
+                            colors: [
+                              Colors.red,
+                              Colors.orange,
+                              Colors.purple,
+                              Colors.green,
+                              Colors.yellow,
+                              Colors.blue,
+                            ],
+                            textAlign: TextAlign.start,
+                            alignment: AlignmentDirectional.topStart // or Alignment.topLeft
+                          );
+                        }
+                      ),
                     ],
                   ),
                 ],
@@ -182,5 +213,14 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
     }
 
     return "You're not drinking beers this week.";
+  }
+
+  bool shouldDisplayCountdown() {
+    DateTime now = DateTime.now();
+    if (now.weekday != 5) {
+      return true;
+    }
+
+    return now.hour < 16 || now.hour > 17;
   }
 }
