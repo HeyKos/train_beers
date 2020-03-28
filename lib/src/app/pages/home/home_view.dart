@@ -8,15 +8,19 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:train_beers/src/data/repositories/firebase_users_repository.dart';
 import 'package:flutter_conditional_rendering/flutter_conditional_rendering.dart';
+import 'package:clock/clock.dart';
+
 
 class HomePage extends View {
   final String title;
   final UserEntity user;
+  final Clock clock;
   
   HomePage({
     Key key,
     this.title,
-    @required this.user
+    @required this.user,
+    this.clock = const Clock(),
   }) : super(key: key);
   
 
@@ -97,7 +101,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        getCurrentUserText(controller.user),
+                        controller.user != null ? controller.user.getWelcomeText() : "",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.blue,
@@ -116,7 +120,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        getActiveStatusMessage(controller.user),
+                        controller.user != null ? controller.user.getActiveStatusMessage() : "",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.black,
@@ -195,28 +199,8 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
     );
   }
 
-  String getCurrentUserText(UserEntity user) {
-    if (user == null) {
-      return "";
-    }
-
-    return "Hi there ${user.name}!";
-  }
-
-  String getActiveStatusMessage(UserEntity user) {
-    if (user == null) {
-      return "";
-    }
-
-    if (user.isActive) {
-      return "You're currently in for beers!";
-    }
-
-    return "You're not drinking beers this week.";
-  }
-
   bool shouldDisplayCountdown() {
-    DateTime now = DateTime.now();
+    DateTime now = clock.now();
     if (now.weekday != 5) {
       return true;
     }
