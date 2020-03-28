@@ -88,6 +88,6 @@ class CountdownUseCase {
       return true;
     }
 
-    return now.hour < 16 || now.hour > 17;
+    return now.hour < 16 || (now.hour >= 17 && now.minute > 0);
   }
 }

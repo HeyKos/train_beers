@@ -57,7 +57,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
                     children: <Widget>[
                       Conditional.single(
                         context: context,
-                        conditionBuilder: (BuildContext context) => !controller.shouldDisplayCountdown(),
+                        conditionBuilder: (BuildContext context) => controller.shouldDisplayCountdown(),
                         widgetBuilder: (BuildContext context) {
                           return CountDownTimer();
                         },
@@ -69,7 +69,6 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
                               "CHECK PLEASE!",
                             ],
                             isRepeatingAnimation: true,
-                            speed: Duration(seconds: 2),
                             textStyle: TextStyle(
                                 fontSize: 40.0, 
                                 fontFamily: "Horizon"
