@@ -1,4 +1,5 @@
 import 'package:train_beers/src/domain/entities/user_entity.dart';
+import 'package:train_beers/src/domain/usecases/countdown_use_case.dart';
 import 'package:train_beers/src/domain/usecases/get_next_user_usecase.dart';
 import 'package:train_beers/src/domain/usecases/logout_usecase.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
@@ -20,12 +21,14 @@ class HomePresenter extends Presenter {
   final GetNextUserUseCase getNextUserUseCase;
   final LogoutUseCase logoutUseCase;
   final UpdateUserUseCase updateUserUseCase;
-  
+  final CountdownUseCase countdownUseCase;
+
   // Constructors
   HomePresenter(usersRepo, authRepo) :
     getNextUserUseCase = GetNextUserUseCase(usersRepo),
     logoutUseCase = LogoutUseCase(authRepo),
-    updateUserUseCase = UpdateUserUseCase(usersRepo);
+    updateUserUseCase = UpdateUserUseCase(usersRepo),
+    countdownUseCase = CountdownUseCase();
 
   void getNextUser(int currentSequence) {
     // execute getUseruserCase
@@ -39,6 +42,8 @@ class HomePresenter extends Presenter {
   void updateUser(UserEntity user) {
     updateUserUseCase.execute(_UpdateUserUseCaseObserver(this), UpdateUserUseCaseParams(user));
   }
+
+  bool shouldDisplayCountdown() => countdownUseCase.shouldDisplayCountdown();
 
   @override
   void dispose() {

@@ -88,6 +88,8 @@ class HomeController extends Controller {
 
   void updateUser(UserEntity user) => homePresenter.updateUser(user);
 
+  bool shouldDisplayCountdown() => homePresenter.shouldDisplayCountdown();
+
   @override
   void dispose() {
     homePresenter.dispose();

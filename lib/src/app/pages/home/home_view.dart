@@ -8,19 +8,15 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:train_beers/src/data/repositories/firebase_users_repository.dart';
 import 'package:flutter_conditional_rendering/flutter_conditional_rendering.dart';
-import 'package:clock/clock.dart';
-
 
 class HomePage extends View {
   final String title;
   final UserEntity user;
-  final Clock clock;
   
   HomePage({
     Key key,
     this.title,
     @required this.user,
-    this.clock = const Clock(),
   }) : super(key: key);
   
 
@@ -61,7 +57,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
                     children: <Widget>[
                       Conditional.single(
                         context: context,
-                        conditionBuilder: (BuildContext context) => !shouldDisplayCountdown(),
+                        conditionBuilder: (BuildContext context) => !controller.shouldDisplayCountdown(),
                         widgetBuilder: (BuildContext context) {
                           return CountDownTimer();
                         },
@@ -197,14 +193,5 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
         ),
       ),
     );
-  }
-
-  bool shouldDisplayCountdown() {
-    DateTime now = clock.now();
-    if (now.weekday != 5) {
-      return true;
-    }
-
-    return now.hour < 16 || now.hour > 17;
   }
 }
