@@ -10,7 +10,8 @@ class CountdownUseCase {
   /// Members
   final Clock clock;
   /// Constructor
-  CountdownUseCase() : clock = Clock();
+  CountdownUseCase({this.clock = const Clock()});
+
 
   /// Return the number of seconds it is from now until the next train beer event.
   /// 

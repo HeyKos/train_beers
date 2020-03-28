@@ -68,6 +68,8 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
                               "BEER IS LIFE!",
                               "CHECK PLEASE!",
                             ],
+                            isRepeatingAnimation: true,
+                            speed: Duration(seconds: 2),
                             textStyle: TextStyle(
                                 fontSize: 40.0, 
                                 fontFamily: "Horizon"
