@@ -1,3 +1,5 @@
+import 'package:train_beers/src/app/pages/pages.dart';
+
 import './login_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
@@ -21,13 +23,13 @@ class LoginController extends Controller {
   @override
   void initListeners() {
     loginPresenter.loginOnNext = (bool success, String userIdentifier) {
-      print("User Identifier: $userIdentifier");
       _success = success;
       _userIdentifier = userIdentifier;
-      refreshUI(); // Refreshes the UI manually
     };
     loginPresenter.loginOnComplete = () {
-      print('User loged in');
+      Navigator.of(getContext()).pushReplacementNamed(Pages.splash, arguments: {
+        "uid": _userIdentifier
+      });
     };
 
     // On error, show a snackbar, remove the user, and refresh the UI

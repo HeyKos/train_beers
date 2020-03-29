@@ -1,8 +1,8 @@
+import 'package:train_beers/src/data/repositories/firebase_authenticaion_repository.dart';
 import './login_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
-import '../../../data/repositories/firebase_authenticaion_repository.dart';
 
 class LoginPage extends View {
   LoginPage({Key key, this.title}) : super(key: key);
@@ -53,20 +53,12 @@ class _LoginPageState extends ViewState<LoginPage, LoginController> {
                 },
               ),
               RaisedButton(
-                onPressed: () => controller.login(),
+                onPressed: controller.login,
                 child: Text(
                   "Sign In",
                   style: TextStyle(color: Colors.black),
                 ),
                 color: Colors.white,
-              ),
-              Text(
-                this._getLoginMessage(controller.userIdentifier),
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 40.0,
-                ),
               ),
             ],
           ),
@@ -74,16 +66,4 @@ class _LoginPageState extends ViewState<LoginPage, LoginController> {
       ),
     );
   }
-
-  String _getLoginMessage(String userIdentifier) {
-    if (userIdentifier == null) {
-      return "";
-    }
-
-    if (userIdentifier == "") {
-      return "";
-    }
-
-    return "Logged in: ${controller.userIdentifier}";
-  } 
 }

@@ -36,7 +36,7 @@ class SplashController extends Controller {
   }
 
   void goHome(UserEntity user) {
-    Navigator.of(getContext()).pushNamed(Pages.home, arguments: {
+    Navigator.of(getContext()).pushReplacementNamed(Pages.home, arguments: {
       "user": user
     });
   }

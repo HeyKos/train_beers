@@ -26,6 +26,13 @@ class _CountDownTimerState extends State<CountDownTimer> with TickerProviderStat
   }
 
   /// Overrides
+  
+  @override 
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     // Start the timer.

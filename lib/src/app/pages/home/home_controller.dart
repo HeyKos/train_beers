@@ -1,3 +1,4 @@
+import 'package:train_beers/src/app/pages/pages.dart';
 import 'package:train_beers/src/domain/entities/user_entity.dart';
 import './home_presenter.dart';
 import 'package:flutter/material.dart';
@@ -59,8 +60,10 @@ class HomeController extends Controller {
     homePresenter.logoutOnNext = () {
       print('Logout onNext');
     };
+
     homePresenter.logoutOnComplete = () {
-      print('Logout complete');
+      // Take the user to the login page, and pop all existing routes.
+      Navigator.of(getContext()).pushNamedAndRemoveUntil(Pages.login, ModalRoute.withName(Pages.login));
     };
 
     // On error, show a snackbar, remove the user, and refresh the UI
