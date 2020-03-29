@@ -1,4 +1,5 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:train_beers/src/app/utils/constants.dart';
 import 'package:train_beers/src/app/widgets/countdown_timer.dart';
 import 'package:train_beers/src/data/repositories/firebase_authenticaion_repository.dart';
 import 'package:train_beers/src/domain/entities/user_entity.dart';
@@ -35,11 +36,22 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
       appBar: AppBar(
         title: Text(widget.title),
         actions: <Widget>[
-          FlatButton.icon(
-            icon: Icon(Icons.person),
-            label: Text("Sign Out"),
-            onPressed: controller.logout,
+          PopupMenuButton<String>(
+            onSelected: onMenuOptionChange,
+            itemBuilder: (BuildContext context) {
+              return Constants.homeMenuOptions.map((String option) {
+                return PopupMenuItem<String>(
+                  value: option,
+                  child: Text(option),
+                );
+              }).toList();
+            },
           ),
+          // FlatButton.icon(
+          //   icon: Icon(Icons.person),
+          //   label: Text("Sign Out"),
+          //   onPressed: controller.logout,
+          // ),
         ],
       ),
       body: Scaffold(
@@ -192,4 +204,16 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
       )
     );
   }
+
+  void onMenuOptionChange(String value) {
+    switch(value) {
+      case Constants.SETTINGS:
+        print("Tapped Settings");
+        break;
+      case Constants.SIGN_OUT:
+      default:
+        controller.logout();
+        break;
+    }
+  } 
 }
