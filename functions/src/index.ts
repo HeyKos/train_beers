@@ -22,3 +22,20 @@ export const makeUppercase = functions.database.ref("/messages/{pushId}/original
     // Setting an "uppercase" sibling in the Realtime Database returns a Promise.
     return snapshot?.ref?.parent?.child('uppercase').set(uppercase);
 });
+
+export const setNextTrainBeerPerson = functions.firestore.document('/users/{id}').onUpdate((snapshot, context) => {
+    // Get the user that was updated, and if 
+});
+
+/*
+    TODO: Must pay for CloudScheduler on Firebase.
+    Runs at 5:00pm, every Friday, every month to determine who the next
+    person responsible for train beers is.
+*/
+export const scheduleNextTrainBeerPerson = functions.pubsub.schedule('0 0 17 ? * FRI *')
+    .timeZone('America/New_York')
+    .onRun((context) => {
+        console.log('Runs 5:00pm, every Friday, every month');
+        return null;
+    }
+);
