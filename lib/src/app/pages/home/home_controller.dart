@@ -4,19 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 
 class HomeController extends Controller {
+  /// Members
   UserEntity _nextUser;
   UserEntity _user;
+  final HomePresenter homePresenter;
   
+  /// Properties
   UserEntity get nextUser => _nextUser;
   UserEntity get user => _user;
 
-  final HomePresenter homePresenter;
-  // Presenter should always be initialized this way
+  // Constructor
   HomeController(usersRepo, authRepo, UserEntity user) :
     homePresenter = HomePresenter(usersRepo, authRepo),
     _user = user,
     super();
 
+  /// Overrides
   @override
   // this is called automatically by the parent class
   void initListeners() {
@@ -25,6 +28,13 @@ class HomeController extends Controller {
     initUpdateUserListeners();
   }
 
+  @override
+  void dispose() {
+    homePresenter.dispose();
+    super.dispose();
+  }
+
+  /// Methods
   void initGetNextUserListeners() {
     homePresenter.getNextUserOnNext = (UserEntity user) {
       print(user.toString());
@@ -90,9 +100,5 @@ class HomeController extends Controller {
 
   bool shouldDisplayCountdown() => homePresenter.shouldDisplayCountdown();
 
-  @override
-  void dispose() {
-    homePresenter.dispose();
-    super.dispose();
-  }
+  void onMenuOptionChange(String value) => homePresenter.onMenuOptionChange(value);
 }

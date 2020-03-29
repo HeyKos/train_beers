@@ -37,21 +37,9 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
         title: Text(widget.title),
         actions: <Widget>[
           PopupMenuButton<String>(
-            onSelected: onMenuOptionChange,
-            itemBuilder: (BuildContext context) {
-              return Constants.homeMenuOptions.map((String option) {
-                return PopupMenuItem<String>(
-                  value: option,
-                  child: Text(option),
-                );
-              }).toList();
-            },
+            onSelected: controller.onMenuOptionChange,
+            itemBuilder: getMenuItems,
           ),
-          // FlatButton.icon(
-          //   icon: Icon(Icons.person),
-          //   label: Text("Sign Out"),
-          //   onPressed: controller.logout,
-          // ),
         ],
       ),
       body: Scaffold(
@@ -67,37 +55,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Conditional.single(
-                        context: context,
-                        conditionBuilder: (BuildContext context) => controller.shouldDisplayCountdown(),
-                        widgetBuilder: (BuildContext context) {
-                          return CountDownTimer();
-                        },
-                        fallbackBuilder: (BuildContext context) {
-                          return ColorizeAnimatedTextKit(
-                            text: [
-                              "WE'RE DRINKING!",
-                              "BEER IS LIFE!",
-                              "CHECK PLEASE!",
-                            ],
-                            isRepeatingAnimation: true,
-                            textStyle: TextStyle(
-                                fontSize: 40.0, 
-                                fontFamily: "Horizon"
-                            ),
-                            colors: [
-                              Colors.red,
-                              Colors.orange,
-                              Colors.purple,
-                              Colors.green,
-                              Colors.yellow,
-                              Colors.blue,
-                            ],
-                            textAlign: TextAlign.start,
-                            alignment: AlignmentDirectional.topStart // or Alignment.topLeft
-                          );
-                        }
-                      ),
+                      countdownWidget,
                     ],
                   ),
                 ],
@@ -183,37 +141,70 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        foregroundColor: controller.user.isActive ? Colors.white : Colors.black,
-        backgroundColor: controller.user.isActive ? Colors.redAccent : Colors.greenAccent,
-        tooltip: "Count me ${controller.user.isActive ? 'out' : 'in'}!",
-        child: Conditional.single(
-          context: context,
-          conditionBuilder: (BuildContext context) => controller.user.isActive,
-          widgetBuilder: (BuildContext context) {
-            return Icon(Icons.thumb_down);
-          },
-          fallbackBuilder: (BuildContext context) {
-            return Icon(Icons.thumb_up);
-          },
-        ),
-        onPressed: () {
-          controller.user.userIsActive = !controller.user.isActive;
-          controller.updateUser(controller.user);
-        },
-      )
+      floatingActionButton: actionButton
     );
+  } 
+
+  /// Methods
+  List<PopupMenuItem<String>> getMenuItems(BuildContext context) {
+    return Constants.homeMenuOptions.map((String option) {
+      return PopupMenuItem<String>(
+        value: option,
+        child: Text(option),
+      );
+    }).toList();    
   }
 
-  void onMenuOptionChange(String value) {
-    switch(value) {
-      case Constants.SETTINGS:
-        print("Tapped Settings");
-        break;
-      case Constants.SIGN_OUT:
-      default:
-        controller.logout();
-        break;
+  /// Properties (Widgets)
+  FloatingActionButton get actionButton => FloatingActionButton(
+    foregroundColor: controller.user.isActive ? Colors.white : Colors.black,
+    backgroundColor: controller.user.isActive ? Colors.redAccent : Colors.greenAccent,
+    tooltip: "Count me ${controller.user.isActive ? 'out' : 'in'}!",
+    child: Conditional.single(
+      context: context,
+      conditionBuilder: (BuildContext context) => controller.user.isActive,
+      widgetBuilder: (BuildContext context) {
+        return Icon(Icons.thumb_down);
+      },
+      fallbackBuilder: (BuildContext context) {
+        return Icon(Icons.thumb_up);
+      },
+    ),
+    onPressed: () {
+      controller.user.userIsActive = !controller.user.isActive;
+      controller.updateUser(controller.user);
+    },
+  );
+
+  Widget get countdownWidget => Conditional.single(
+    context: context,
+    conditionBuilder: (BuildContext context) => controller.shouldDisplayCountdown(),
+    widgetBuilder: (BuildContext context) {
+      return CountDownTimer();
+    },
+    fallbackBuilder: (BuildContext context) {
+      return ColorizeAnimatedTextKit(
+        text: [
+          "WE'RE DRINKING!",
+          "BEER IS LIFE!",
+          "CHECK PLEASE!",
+        ],
+        isRepeatingAnimation: true,
+        textStyle: TextStyle(
+            fontSize: 40.0, 
+            fontFamily: "Horizon"
+        ),
+        colors: [
+          Colors.red,
+          Colors.orange,
+          Colors.purple,
+          Colors.green,
+          Colors.yellow,
+          Colors.blue,
+        ],
+        textAlign: TextAlign.start,
+        alignment: AlignmentDirectional.topStart // or Alignment.topLeft
+      );
     }
-  } 
+  );
 }

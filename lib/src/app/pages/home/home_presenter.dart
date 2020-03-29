@@ -1,3 +1,4 @@
+import 'package:train_beers/src/app/utils/constants.dart';
 import 'package:train_beers/src/domain/entities/user_entity.dart';
 import 'package:train_beers/src/domain/usecases/countdown_use_case.dart';
 import 'package:train_beers/src/domain/usecases/get_next_user_usecase.dart';
@@ -6,7 +7,8 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:train_beers/src/domain/usecases/update_user_usecase.dart';
 
 class HomePresenter extends Presenter {
-  // Use Case Functions
+  /// Members
+  /// Use Case Functions
   Function getNextUserOnNext;
   Function getNextUserOnComplete;
   Function getNextUserOnError;
@@ -17,26 +19,35 @@ class HomePresenter extends Presenter {
   Function updateUserOnComplete;
   Function updateUserOnError;
 
-  // Use Case Objects
+  /// Use Case Objects
   final GetNextUserUseCase getNextUserUseCase;
   final LogoutUseCase logoutUseCase;
   final UpdateUserUseCase updateUserUseCase;
   final CountdownUseCase countdownUseCase;
 
-  // Constructors
+  /// Constructor
   HomePresenter(usersRepo, authRepo) :
     getNextUserUseCase = GetNextUserUseCase(usersRepo),
     logoutUseCase = LogoutUseCase(authRepo),
     updateUserUseCase = UpdateUserUseCase(usersRepo),
     countdownUseCase = CountdownUseCase();
 
+  /// Overrides
+  @override
+  void dispose() {
+    getNextUserUseCase.dispose();
+    logoutUseCase.dispose();
+    updateUserUseCase.dispose();
+  }
+
+  /// Methods
   void getNextUser(int currentSequence) {
     // execute getUseruserCase
     getNextUserUseCase.execute(_GetNextUserUseCaseObserver(this), GetNextUserUseCaseParams(currentSequence));
   }
 
   void logout() {
-    logoutUseCase.execute(_GetLogoutUseCaseObserver(this));
+    logoutUseCase.execute(_LogoutUseCaseObserver(this));
   }
 
   void updateUser(UserEntity user) {
@@ -45,17 +56,28 @@ class HomePresenter extends Presenter {
 
   bool shouldDisplayCountdown() => countdownUseCase.shouldDisplayCountdown();
 
-  @override
-  void dispose() {
-    getNextUserUseCase.dispose();
-    logoutUseCase.dispose();
-    updateUserUseCase.dispose();
+  void onMenuOptionChange(String value) {
+    switch(value) {
+      case Constants.SETTINGS:
+        print("Tapped Settings");
+        break;
+      case Constants.SIGN_OUT:
+      default:
+        logout();
+        break;
+    }
   }
 }
 
+/// An observer class for the [GetNextUserUseCase].
 class _GetNextUserUseCaseObserver extends Observer<GetNextUserUseCaseResponse> {
+  /// Members
   final HomePresenter presenter;
+  
+  /// Constructor
   _GetNextUserUseCaseObserver(this.presenter);
+  
+  /// Overrides
   @override
   void onComplete() {
     assert(presenter.getNextUserOnComplete != null);
@@ -75,9 +97,15 @@ class _GetNextUserUseCaseObserver extends Observer<GetNextUserUseCaseResponse> {
   }
 }
 
-class _GetLogoutUseCaseObserver extends Observer<void> {
+/// An observer class for the [LogoutUserUseCase].
+class _LogoutUseCaseObserver extends Observer<void> {
+  /// Members
   final HomePresenter presenter;
-  _GetLogoutUseCaseObserver(this.presenter);
+
+  /// Constructor
+  _LogoutUseCaseObserver(this.presenter);
+  
+  /// Overrides
   @override
   void onComplete() {
     assert(presenter.logoutOnComplete != null);
@@ -97,9 +125,15 @@ class _GetLogoutUseCaseObserver extends Observer<void> {
   }
 }
 
+/// An observer class for the [UpdateUserUseCase].
 class _UpdateUserUseCaseObserver extends Observer<UpdateUserUseCaseResponse> {
+  /// Members
   final HomePresenter presenter;
+  
+  /// Constructor
   _UpdateUserUseCaseObserver(this.presenter);
+  
+  /// Overrides
   @override
   void onComplete() {
     assert(presenter.updateUserOnComplete != null);
