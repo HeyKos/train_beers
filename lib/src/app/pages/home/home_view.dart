@@ -136,28 +136,6 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       RaisedButton(
-                        onPressed: () {
-                          controller.user.userIsActive = !controller.user.isActive;
-                          controller.updateUser(controller.user);
-                        },
-                        child: Text(
-                          "Count me ${controller.user.isActive ? 'out' : 'in'}!",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        color: Colors.black,
-                        ),
-                    ],
-                  )
-                ],
-              ),
-              Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      RaisedButton(
                         onPressed: controller.getNextUser,
                         child: Text(
                           "Who's up for train beers?",
@@ -193,6 +171,25 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        foregroundColor: controller.user.isActive ? Colors.white : Colors.black,
+        backgroundColor: controller.user.isActive ? Colors.redAccent : Colors.greenAccent,
+        tooltip: "Count me ${controller.user.isActive ? 'out' : 'in'}!",
+        child: Conditional.single(
+          context: context,
+          conditionBuilder: (BuildContext context) => controller.user.isActive,
+          widgetBuilder: (BuildContext context) {
+            return Icon(Icons.thumb_down);
+          },
+          fallbackBuilder: (BuildContext context) {
+            return Icon(Icons.thumb_up);
+          },
+        ),
+        onPressed: () {
+          controller.user.userIsActive = !controller.user.isActive;
+          controller.updateUser(controller.user);
+        },
+      )
     );
   }
 }
