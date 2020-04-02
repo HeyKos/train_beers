@@ -39,10 +39,11 @@ class _ActiveUsersPageState extends ViewState<ActiveUsersPage, ActiveUsersContro
   /// Properties (Widgets)
   Widget usersListView(BuildContext context) {
     return ListView.builder(
-      itemCount: controller.users.length,
+      itemCount: controller.users != null ? controller.users.length : 0,
       itemBuilder: (context, index) {
+        var text = controller.users != null ? controller.users[index].name : "";
         return ListTile(
-          title: Text(controller.users[index].name),
+          title: Text(text),
         );
       },
     );

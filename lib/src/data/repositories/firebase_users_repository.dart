@@ -24,7 +24,11 @@ class FirebaseUsersRepository implements UsersRepository {
       .orderBy("name",)
       .snapshots()
       .map((snapshot) {
-        return snapshot.documents.map(UsersMapper.userEntityFromSnapshot);
+        return snapshot.documents
+          .map((doc) {
+            return UsersMapper.userEntityFromUserModel(
+                UsersMapper.userModelFromSnapshot(doc));
+          }).toList();
       });
   }
 

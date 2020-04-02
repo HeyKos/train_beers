@@ -95,7 +95,10 @@ class HomeController extends Controller {
     };
   }
 
-  void getNextUser() => homePresenter.getNextUser(_nextUser == null ? -1 : _nextUser.sequence);
+  // void getNextUser() => homePresenter.getNextUser(_nextUser == null ? -1 : _nextUser.sequence);
+  void getNextUser() {
+    Navigator.of(getContext()).pushNamed(Pages.active_users);
+  }
 
   void logout() => homePresenter.logout();
 
