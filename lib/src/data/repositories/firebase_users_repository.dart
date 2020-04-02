@@ -18,21 +18,13 @@ class FirebaseUsersRepository implements UsersRepository {
   }
 
   @override
-  Stream<List<UserEntity>> users() {
-    return userCollection.snapshots().map((snapshot) {
-      return snapshot.documents
-          .map((doc) => 
-            UsersMapper.userEntityFromUserModel(
-                UsersMapper.userModelFromSnapshot(doc)))
-          .toList();
-    });
-  }
-
-  @override
-  Future<void> updateUser(UserEntity update) {
+  Stream<List<UserEntity>> getActiveUsers() {
     return userCollection
-        .document(update.id)
-        .updateData(UsersMapper.userModelToDocument(UserModel.fromEntity(update)));
+      .where('isActive', isEqualTo: true)
+      .snapshots()
+      .map((snapshot) {
+        return snapshot.documents.map(UsersMapper.userEntityFromSnapshot);
+      });
   }
 
   @override
@@ -49,12 +41,20 @@ class FirebaseUsersRepository implements UsersRepository {
   }
 
   @override
-  Stream<List<UserEntity>> getActiveUsers() {
+  Future<void> updateUser(UserEntity update) {
     return userCollection
-      .where('isActive', isEqualTo: true)
-      .snapshots()
-      .map((snapshot) {
-        return snapshot.documents.map(UsersMapper.userEntityFromSnapshot);
-      });
+        .document(update.id)
+        .updateData(UsersMapper.userModelToDocument(UserModel.fromEntity(update)));
+  }
+
+  @override
+  Stream<List<UserEntity>> users() {
+    return userCollection.snapshots().map((snapshot) {
+      return snapshot.documents
+          .map((doc) => 
+            UsersMapper.userEntityFromUserModel(
+                UsersMapper.userModelFromSnapshot(doc)))
+          .toList();
+    });
   }
 }
