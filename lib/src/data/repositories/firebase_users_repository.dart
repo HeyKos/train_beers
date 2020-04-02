@@ -21,6 +21,7 @@ class FirebaseUsersRepository implements UsersRepository {
   Stream<List<UserEntity>> getActiveUsers() {
     return userCollection
       .where('isActive', isEqualTo: true)
+      .orderBy("name",)
       .snapshots()
       .map((snapshot) {
         return snapshot.documents.map(UsersMapper.userEntityFromSnapshot);
