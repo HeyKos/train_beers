@@ -1,15 +1,7 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:train_beers/src/app/utils/constants.dart';
-import 'package:train_beers/src/app/widgets/countdown_timer.dart';
-import 'package:train_beers/src/data/repositories/firebase_authenticaion_repository.dart';
-import 'package:train_beers/src/domain/entities/user_entity.dart';
-import './home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:train_beers/src/data/repositories/firebase_users_repository.dart';
-import 'package:flutter_conditional_rendering/flutter_conditional_rendering.dart';
-
 import 'active_users_controller.dart';
 
 class ActiveUsersPage extends View {
