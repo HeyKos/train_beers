@@ -12,9 +12,7 @@ class GetActiveUsersUseCase extends UseCase<GetActiveUsersUseCaseResponse, void>
     final StreamController<GetActiveUsersUseCaseResponse> controller = StreamController();
     try {
       List<UserEntity> users;
-      // get user
       users = await usersRepository.getActiveUsers().first;
-
       controller.add(GetActiveUsersUseCaseResponse(users));
       logger.finest('GetActiveUsersUseCase successful.');
       controller.close();
