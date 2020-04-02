@@ -6,4 +6,5 @@ abstract class UsersRepository {
     Stream<List<UserEntity>> users();
     Future<void> updateUser(UserEntity user);
     Stream<UserEntity> getUserByUid(String uid);
+    Stream<List<UserEntity>> getActiveUsers();
 }

@@ -58,4 +58,8 @@ class UsersMapper {
       userModel.purchasedOn.toDate()
     );
   }
+
+  static UserEntity userEntityFromSnapshot(DocumentSnapshot snap) {
+    return userEntityFromUserModel(userModelFromSnapshot(snap));
+  }
 }

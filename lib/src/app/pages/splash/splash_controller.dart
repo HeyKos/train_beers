@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:train_beers/src/app/pages/pages.dart';
 import './splash_presenter.dart';
 import 'package:flutter/material.dart';

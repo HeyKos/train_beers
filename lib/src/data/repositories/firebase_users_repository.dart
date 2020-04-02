@@ -37,11 +37,24 @@ class FirebaseUsersRepository implements UsersRepository {
 
   @override
   Stream<UserEntity> getUserByUid(String uid) {
-    return userCollection.where('uid', isEqualTo: uid).snapshots().map((snapshot) {
-      var result = snapshot.documents.first;
-      return UsersMapper.userEntityFromUserModel(
-        UsersMapper.userModelFromSnapshot(result)
-      );
-    });
+    return userCollection
+      .where('uid', isEqualTo: uid)
+      .snapshots()
+      .map((snapshot) {
+        var result = snapshot.documents.first;
+        return UsersMapper.userEntityFromUserModel(
+          UsersMapper.userModelFromSnapshot(result)
+        );
+      });
+  }
+
+  @override
+  Stream<List<UserEntity>> getActiveUsers() {
+    return userCollection
+      .where('isActive', isEqualTo: true)
+      .snapshots()
+      .map((snapshot) {
+        return snapshot.documents.map(UsersMapper.userEntityFromSnapshot);
+      });
   }
 }
