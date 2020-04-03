@@ -106,5 +106,5 @@ class HomeController extends Controller {
 
   bool shouldDisplayCountdown() => homePresenter.shouldDisplayCountdown();
 
-  void onMenuOptionChange(String value) => homePresenter.onMenuOptionChange(value);
+  void onMenuOptionChange(String value) => homePresenter.onMenuOptionChange(value, _user, getContext());
 }

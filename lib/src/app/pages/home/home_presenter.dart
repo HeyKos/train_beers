@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:train_beers/src/app/pages/pages.dart';
 import 'package:train_beers/src/app/utils/constants.dart';
 import 'package:train_beers/src/domain/entities/user_entity.dart';
 import 'package:train_beers/src/domain/usecases/countdown_use_case.dart';
@@ -54,12 +56,18 @@ class HomePresenter extends Presenter {
     updateUserUseCase.execute(_UpdateUserUseCaseObserver(this), UpdateUserUseCaseParams(user));
   }
 
+  void goToProfile(UserEntity user, BuildContext context) {
+    Navigator.pushNamed(context, Pages.profile, arguments: {
+      "user": user
+    });
+  }
+
   bool shouldDisplayCountdown() => countdownUseCase.shouldDisplayCountdown();
 
-  void onMenuOptionChange(String value) {
+  void onMenuOptionChange(String value, UserEntity user, BuildContext context) {
     switch(value) {
-      case Constants.PRIFULE:
-        print("Tapped Profile");
+      case Constants.PROFILE:
+        goToProfile(user, context);
         break;
       case Constants.SETTINGS:
         print("Tapped Settings");

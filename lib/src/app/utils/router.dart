@@ -19,6 +19,12 @@ class Router {
         );
       case Pages.login:
         return _buildRoute(settings, LoginPage(title: "Sign In"));
+      case Pages.profile:
+        Map<String, dynamic> args = settings.arguments as Map;
+        return _buildRoute(
+            settings,
+            ProfilePage(title: "Profile", user: args['user'])
+        );
       case Pages.splash:
         return _buildRoute(settings, SplashPage(title: "Splash" ));
       default:
