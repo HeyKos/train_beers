@@ -27,6 +27,12 @@ class Router {
         );
       case Pages.splash:
         return _buildRoute(settings, SplashPage(title: "Splash" ));
+      case Pages.updateProfilePicture:
+        Map<String, dynamic> args = settings.arguments as Map;
+        return _buildRoute(
+            settings,
+            UpdateProfilePicturePage(title: "Choose Profile Picture", user: args['user'])
+        );
       default:
         return null;
     }

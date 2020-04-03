@@ -1,20 +1,19 @@
-import 'package:train_beers/src/app/pages/pages.dart';
 import 'package:train_beers/src/domain/entities/user_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
-import 'profile_presenter.dart';
+import 'update_profile_picture_presenter.dart';
 
-class ProfileController extends Controller {
+class UpdateProfilePictureController extends Controller {
   /// Members
   UserEntity _user;
-  final ProfilePresenter profilePresenter;
+  final UpdateProfilePicturePresenter profilePresenter;
   
   /// Properties
   UserEntity get user => _user;
 
   // Constructor
-  ProfileController(usersRepo, UserEntity user) :
-    profilePresenter = ProfilePresenter(usersRepo),
+  UpdateProfilePictureController(usersRepo, UserEntity user) :
+    profilePresenter = UpdateProfilePicturePresenter(usersRepo),
     _user = user,
     super();
 
@@ -53,10 +52,4 @@ class ProfileController extends Controller {
   }
 
   void updateUser(UserEntity user) => profilePresenter.updateUser(user);
-
-  void goToUpdateProfilePicture() {
-    Navigator.pushNamed(getContext(), Pages.updateProfilePicture, arguments: {
-      "user": user
-    });
-  }
 }

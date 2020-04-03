@@ -44,7 +44,27 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text("Name: $name"),
+                      Text(name,
+                        style: TextStyle(
+                          fontSize: 30.0
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Spacer(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      FlatButton.icon(
+                        label: Text("Update Profile Image"),
+                        icon: Icon(Icons.people),
+                        onPressed: controller.goToUpdateProfilePicture,
+                      ),
                     ],
                   ),
                 ],
