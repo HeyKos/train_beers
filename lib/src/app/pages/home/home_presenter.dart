@@ -58,6 +58,9 @@ class HomePresenter extends Presenter {
 
   void onMenuOptionChange(String value) {
     switch(value) {
+      case Constants.PRIFULE:
+        print("Tapped Profile");
+        break;
       case Constants.SETTINGS:
         print("Tapped Settings");
         break;
