@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:train_beers/src/app/widgets/uploader.dart';
 import 'package:train_beers/src/domain/entities/user_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -72,7 +73,7 @@ class _UpdateProfilePicturePageState extends ViewState<UpdateProfilePicturePage,
             ),
 
             // TODO: Add the below line once the Uploader widget exists
-            //Uploader(file: _imageFile)
+            Uploader(file: _imageFile)
           ]
         ],
       ),
