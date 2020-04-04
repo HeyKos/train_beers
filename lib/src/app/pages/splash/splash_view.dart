@@ -6,10 +6,14 @@ import 'package:train_beers/src/data/repositories/firebase_users_repository.dart
 import 'package:animated_text_kit/animated_text_kit.dart';
 
 class SplashPage extends View {
-  SplashPage({Key key, this.uid, this.title}) : super(key: key);
-
   final String uid;
   final String title;
+
+  SplashPage({
+    Key key,
+    this.title,
+    @required this.uid,
+  }) : super(key: key);
 
   @override
   _SplashPageState createState() => _SplashPageState(this.uid);

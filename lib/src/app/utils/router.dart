@@ -26,7 +26,8 @@ class Router {
             ProfilePage(title: "Profile", user: args['user'])
         );
       case Pages.splash:
-        return _buildRoute(settings, SplashPage(title: "Splash" ));
+        Map<String, dynamic> args = settings.arguments as Map;
+        return _buildRoute(settings, SplashPage(title: "Splash", uid: args['uid']));
       case Pages.updateProfilePicture:
         Map<String, dynamic> args = settings.arguments as Map;
         return _buildRoute(
