@@ -1,9 +1,12 @@
+import 'package:flutter_conditional_rendering/conditional.dart';
+import 'package:train_beers/src/data/repositories/firebase_files_repository.dart';
 import 'package:train_beers/src/domain/entities/user_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:train_beers/src/data/repositories/firebase_users_repository.dart';
 import 'profile_controller.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ProfilePage extends View {
   final String title;
@@ -22,7 +25,8 @@ class ProfilePage extends View {
 }
 
 class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
-  _ProfilePageState(user) : super(ProfileController(FirebaseUsersRepository(), user));
+  _ProfilePageState(user): 
+    super(ProfileController(FirebaseFilesRepository(), FirebaseUsersRepository(), user));
 
   @override
   Widget buildPage() {
@@ -37,6 +41,36 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
           padding: EdgeInsets.all(20.0),
           child: Column(
             children: <Widget>[
+              Spacer(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Center(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(75.0),
+                          child: Conditional.single(
+                            context: context,
+                            conditionBuilder: (BuildContext context) => controller.avatarPath != null,
+                            widgetBuilder: (BuildContext context) {
+                              return CachedNetworkImage(
+                                imageUrl: controller.avatarPath,
+                                placeholder: (context, url) => CircularProgressIndicator(),
+                                errorWidget: (context, url, error) => Icon(Icons.error),
+                                width: 150.0,
+                                height: 150.0,
+                              );
+                            },
+                            fallbackBuilder: (BuildContext context) => CircularProgressIndicator(),
+                          ),
+                        )
+                      ),
+                    ],
+                  ),
+                ],
+              ),
               Spacer(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
