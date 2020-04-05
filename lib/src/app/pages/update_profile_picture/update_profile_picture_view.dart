@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:train_beers/src/app/widgets/uploader.dart';
@@ -56,9 +57,7 @@ class _UpdateProfilePicturePageState extends ViewState<UpdateProfilePicturePage,
       body: ListView(
         children: <Widget>[
           if (_imageFile != null) ...[
-
             Image.file(_imageFile),
-
             Row(
               children: <Widget>[
                 FlatButton(
@@ -71,9 +70,15 @@ class _UpdateProfilePicturePageState extends ViewState<UpdateProfilePicturePage,
                 ),
               ],
             ),
-
-            // TODO: Add the below line once the Uploader widget exists
-            Uploader(file: _imageFile)
+            Row(
+              children: <Widget>[
+                FlatButton(
+                  child: Icon(Icons.save),
+                  onPressed: () => controller.updateUser(controller.user),
+                ),
+              ]
+            ),
+            Uploader(file: _imageFile, updater: controller.uploadStatusOnChange),
           ]
         ],
       ),

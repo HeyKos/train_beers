@@ -6,27 +6,16 @@ import 'package:flutter_conditional_rendering/conditional.dart';
 
 class Uploader extends StatefulWidget {
   final File file;
+  final ValueChanged<StorageTaskSnapshot> updater;
 
-  Uploader({Key key, this.file}) : super(key: key);
+  Uploader({Key key, this.file, this.updater}) : super(key: key);
 
   createState() => _UploaderState();
 }
 
 class _UploaderState extends State<Uploader> {
-  final FirebaseStorage _storage =
-      FirebaseStorage(storageBucket: 'gs://train-beers.appspot.com');
-
+  final FirebaseStorage _storage = FirebaseStorage(storageBucket: 'gs://train-beers.appspot.com');
   StorageUploadTask _uploadTask;
-
-  /// Starts an upload task
-  void _startUpload() {
-    /// Unique file name for the file
-    String filePath = 'images/avatars/${DateTime.now()}.png';
-
-    setState(() {
-      _uploadTask = _storage.ref().child(filePath).putFile(widget.file);
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +29,11 @@ class _UploaderState extends State<Uploader> {
             double progressPercent = event != null
                 ? event.bytesTransferred / event.totalByteCount
                 : 0;
+
+            /// If the parent widget has a listener, then call it with the new upload event data.
+            if (_uploadTask.isComplete && widget.updater != null) {
+              widget.updater(event);
+            }
 
             return Column(
                 children: [
@@ -91,5 +85,15 @@ class _UploaderState extends State<Uploader> {
           onPressed: _startUpload,
         );
     }
+  }
+
+  /// Starts an upload task
+  void _startUpload() {
+    /// Unique file name for the file
+    String filePath = 'images/avatars/${DateTime.now()}.png';
+
+    setState(() {
+      _uploadTask = _storage.ref().child(filePath).putFile(widget.file);
+    });
   }
 }

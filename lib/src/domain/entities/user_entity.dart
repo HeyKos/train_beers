@@ -1,13 +1,14 @@
 class UserEntity {
   /// Members
+  String avatarPath;
   final String id;
-  String uid;
+  bool isActive;
   String name;
   int sequence;
-  bool isActive;
   DateTime purchasedOn;
+  String uid;
 
-  UserEntity(this.id, this.uid, this.name, this.sequence, this.isActive, this.purchasedOn);
+  UserEntity(this.avatarPath, this.id, this.isActive, this.name, this.purchasedOn, this.sequence, this.uid);
 
   /// Properties
   set userIsActive(bool value) {

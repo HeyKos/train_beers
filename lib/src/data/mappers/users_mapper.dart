@@ -6,34 +6,37 @@ class UsersMapper {
   
   static Map<String, Object> userModelToJson(UserModel model) {
     return {
+      'avatarPath': model.avatarPath,
       'id': model.id,
-      'uid': model.uid,
-      'name': model.name,
-      'sequenece': model.sequence,
       'isActive': model.isActive,
+      'name': model.name,
       'purchasedOn': model.purchasedOn.toString(),
+      'sequenece': model.sequence,
+      'uid': model.uid,
     };
   }
 
   static UserModel userModelFromJson(Map<String, Object> json) {
     return UserModel(
+      json['avatarPath'] as String,
       json['id'] as String,
-      json['uid'] as String,
-      json['name'] as String,
-      json['sequence'] as int,
       json['isActive'] as bool,
+      json['name'] as String,
       json['purchasedOn'] as Timestamp,
+      json['sequence'] as int,
+      json['uid'] as String,
     );
   }
 
   static UserModel userModelFromSnapshot(DocumentSnapshot snap) {
     var user = UserModel(
+      snap.data['avatarPath'],
       snap.documentID,
-      snap.data['uid'],
-      snap.data['name'],
-      snap.data['sequence'],
       snap.data['isActive'],
+      snap.data['name'],
       snap.data['purchasedOn'],
+      snap.data['sequence'],
+      snap.data['uid'],
     );
 
     return user;
@@ -41,21 +44,25 @@ class UsersMapper {
 
   static Map<String, Object> userModelToDocument(UserModel model) {
     return {
-      'name': model.name,
-      'sequence': model.sequence,
+      'avatarPath': model.avatarPath,
+      'id': model.id,
       'isActive': model.isActive,
+      'name': model.name,
       'purchasedOn': model.purchasedOn,
+      'sequence': model.sequence,
+      'uid': model.uid,
     };
   }
 
   static UserEntity userEntityFromUserModel(UserModel userModel) {
     return UserEntity (
+      userModel.avatarPath,
       userModel.id,
-      userModel.uid,
-      userModel.name,
-      userModel.sequence,
       userModel.isActive,
-      userModel.purchasedOn.toDate()
+      userModel.name,
+      userModel.purchasedOn.toDate(),
+      userModel.sequence,
+      userModel.uid,
     );
   }
 

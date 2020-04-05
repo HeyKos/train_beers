@@ -2,26 +2,28 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:train_beers/src/domain/entities/user_entity.dart';
 
 class UserModel {
+  final String avatarPath;
   final String id;
-  final String uid;
-  final String name;
-  final int sequence;
   final bool isActive;
+  final String name;
   final Timestamp purchasedOn;
+  final int sequence;
+  final String uid;
 
-  UserModel(this.id, this.uid, this.name, this.sequence, this.isActive, this.purchasedOn);
+  UserModel(this.avatarPath, this.id, this.isActive, this.name, this.purchasedOn, this.sequence, this.uid);
 
   @override
   String toString() => '$name';
 
   static UserModel fromEntity(UserEntity entity) {
     return UserModel(
+      entity.avatarPath,
       entity.id,
-      entity.uid,
-      entity.name,
-      entity.sequence,
       entity.isActive,
+      entity.name,
       Timestamp.fromDate(entity.purchasedOn),
+      entity.sequence,
+      entity.uid,
     );
   }
 }
