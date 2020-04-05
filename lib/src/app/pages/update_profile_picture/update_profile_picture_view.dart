@@ -1,7 +1,3 @@
-import 'dart:io';
-
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:train_beers/src/app/widgets/uploader.dart';
 import 'package:train_beers/src/domain/entities/user_entity.dart';
@@ -29,12 +25,10 @@ class UpdateProfilePicturePage extends View {
 
 class _UpdateProfilePicturePageState extends ViewState<UpdateProfilePicturePage, UpdateProfilePictureController> {
   _UpdateProfilePicturePageState(user) : super(UpdateProfilePictureController(FirebaseUsersRepository(), user));
-  
-  /// Members
-  File _imageFile;
 
   @override
   Widget buildPage() {
+    var hasImage = controller.userAvatar != null;
     return Scaffold(
 
       // Select an image from the camera or gallery
@@ -43,11 +37,11 @@ class _UpdateProfilePicturePageState extends ViewState<UpdateProfilePicturePage,
           children: <Widget>[
             IconButton(
               icon: Icon(Icons.photo_camera),
-              onPressed: () => _pickImage(ImageSource.camera),
+              onPressed: () => controller.pickImage(ImageSource.camera),
             ),
             IconButton(
               icon: Icon(Icons.photo_library),
-              onPressed: () => _pickImage(ImageSource.gallery),
+              onPressed: () => controller.pickImage(ImageSource.gallery),
             ),
           ],
         ),
@@ -56,17 +50,17 @@ class _UpdateProfilePicturePageState extends ViewState<UpdateProfilePicturePage,
       // Preview the image and crop it
       body: ListView(
         children: <Widget>[
-          if (_imageFile != null) ...[
-            Image.file(_imageFile),
+          if (hasImage) ...[
+            Image.file(controller.userAvatar),
             Row(
               children: <Widget>[
                 FlatButton(
                   child: Icon(Icons.crop),
-                  onPressed: _cropImage,
+                  onPressed: controller.cropImage,
                 ),
                 FlatButton(
                   child: Icon(Icons.refresh),
-                  onPressed: _clear,
+                  onPressed: controller.clear,
                 ),
               ],
             ),
@@ -78,7 +72,10 @@ class _UpdateProfilePicturePageState extends ViewState<UpdateProfilePicturePage,
                 ),
               ]
             ),
-            Uploader(file: _imageFile, updater: controller.uploadStatusOnChange),
+            Uploader(
+              file: controller.userAvatar,
+              updater: controller.uploadStatusOnChange
+            ),
           ]
         ],
       ),
@@ -86,37 +83,4 @@ class _UpdateProfilePicturePageState extends ViewState<UpdateProfilePicturePage,
   } 
 
   /// Methods
-  /// Cropper plugin
-  Future<void> _cropImage() async {
-    File cropped = await ImageCropper.cropImage(
-        sourcePath: _imageFile.path,
-        aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
-        maxWidth: 512,
-        maxHeight: 512,
-        androidUiSettings: AndroidUiSettings(
-          lockAspectRatio: true,
-          toolbarTitle: "Crop Image",
-        ),
-      );
-
-    setState(() {
-      _imageFile = cropped ?? _imageFile;
-    });
-  }
-
-  /// Select an image via gallery or camera
-  Future<void> _pickImage(ImageSource source) async {
-    File selected = await ImagePicker.pickImage(source: source);
-
-    setState(() {
-      _imageFile = selected;
-    });
-  }
-
-  /// Remove image
-  void _clear() {
-    setState(() => _imageFile = null);
-  }
-
-  /// Properties (Widgets)
 }
