@@ -1,7 +1,9 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:train_beers/src/app/utils/constants.dart';
 import 'package:train_beers/src/app/widgets/countdown_timer.dart';
 import 'package:train_beers/src/data/repositories/firebase_authenticaion_repository.dart';
+import 'package:train_beers/src/data/repositories/firebase_files_repository.dart';
 import 'package:train_beers/src/domain/entities/user_entity.dart';
 import './home_controller.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +29,7 @@ class HomePage extends View {
 }
 
 class _HomePageState extends ViewState<HomePage, HomeController> {
-  _HomePageState(user) : super(HomeController(FirebaseUsersRepository(), FirebaseAuthenticationRepository(), user));
+  _HomePageState(user) : super(HomeController(FirebaseFilesRepository(), FirebaseUsersRepository(), FirebaseAuthenticationRepository(), user));
 
   @override
   Widget buildPage() {
@@ -45,11 +47,11 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
       body: Scaffold(
         key: globalKey, // built in global key for the ViewState for easy access in the controller
         body: Container(
-          child: Container(
-            color: Colors.grey[800],
-            height: 40.0,
-            alignment: Alignment.topLeft,
-            child: countdownWidget,
+          child: Column(
+            children: <Widget>[
+              countdownWidget,
+              nextTrainBeerBuyerText,
+            ],
           ),
         ),
       ),
@@ -120,14 +122,43 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
     }
   );
 
-  Widget get nextTrainBeerBuyerText => Text(
-    controller.nextUser == null ? "" : controller.nextUser.name,
-    textAlign: TextAlign.center,
-    style: TextStyle(
-      color: Colors.blue,
-      fontSize: 30.0,
-    ),
-  );
+  Widget get nextTrainBeerBuyerText {
+
+    return Container(
+      padding: new EdgeInsets.only(top: 20.0),
+      child: Column(
+        children: <Widget>[
+          Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(75.0),
+              child: Conditional.single(
+                context: context,
+                conditionBuilder: (BuildContext context) => controller.avatarPath != null,
+                widgetBuilder: (BuildContext context) {
+                  return CachedNetworkImage(
+                    imageUrl: controller.avatarPath,
+                    placeholder: (context, url) => CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                    width: 150.0,
+                    height: 150.0,
+                  );
+                },
+                fallbackBuilder: (BuildContext context) => CircularProgressIndicator(),
+              ),
+            )
+          ),
+          Text(
+            controller.nextUser == null ? "" : "${controller.nextUser.name} is buying beer this week.",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 25.0,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget get nextTrainBeerBuyerButton => RaisedButton(
     onPressed: controller.getNextUser,
