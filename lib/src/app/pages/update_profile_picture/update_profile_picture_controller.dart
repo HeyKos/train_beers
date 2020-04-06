@@ -86,6 +86,7 @@ class UpdateProfilePictureController extends Controller {
   Future<void> pickImage(ImageSource source) async {
     File selected = await ImagePicker.pickImage(source: source);
     _userAvatar = selected;
+    cropImage();
     refreshUI();
   }
 

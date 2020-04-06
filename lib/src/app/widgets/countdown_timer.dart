@@ -41,36 +41,17 @@ class _CountDownTimerState extends State<CountDownTimer> with TickerProviderStat
     return AnimatedBuilder(
       animation: controller,
       builder: (context, child) {
-        return Container(
-          child: Row(
-            children: <Widget>[
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    "Countdown to Beers:",
-                    style: TextStyle(
-                        fontSize: 20.0,
-                        color: Colors.black
-                    ),
-                  ),
-                ],
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    "${countdownUseCase.getTimerString(controller.duration, controller.value)}",
-                    style: TextStyle(
-                        fontSize: 20.0,
-                        color: Colors.blue
-                    ),
-                  ),
-                ],
-              ),
-            ],
+        return Center(
+          child: Text(
+            "Train Beer Countdown: ${countdownUseCase.getTimerString(controller.duration, controller.value)}",
+            style: TextStyle(
+                fontSize: 20.0,
+                color: Colors.white,
+            ),
+            textAlign: TextAlign.center,
           ),
-        );},
+        );
+      }
     );
   }
 }

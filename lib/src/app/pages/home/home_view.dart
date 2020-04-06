@@ -45,99 +45,11 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
       body: Scaffold(
         key: globalKey, // built in global key for the ViewState for easy access in the controller
         body: Container(
-          padding: EdgeInsets.all(20.0),
-          child: Column(
-            children: <Widget>[
-              Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      countdownWidget,
-                    ],
-                  ),
-                ],
-              ),
-              Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        controller.user != null ? controller.user.getWelcomeText() : "",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 30.0,
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-              Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        controller.user != null ? controller.user.getActiveStatusMessage() : "",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 20.0,
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-              Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      RaisedButton(
-                        onPressed: controller.getNextUser,
-                        child: Text(
-                          "Who's up for train beers?",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        color: Colors.blue,
-                        ),
-                    ],
-                  )
-                ],
-              ),
-              Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        controller.nextUser == null ? "" : controller.nextUser.name,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 30.0,
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-              Spacer(),
-            ],
+          child: Container(
+            color: Colors.grey[800],
+            height: 40.0,
+            alignment: Alignment.topLeft,
+            child: countdownWidget,
           ),
         ),
       ),
@@ -206,5 +118,41 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
         alignment: AlignmentDirectional.topStart // or Alignment.topLeft
       );
     }
+  );
+
+  Widget get nextTrainBeerBuyerText => Text(
+    controller.nextUser == null ? "" : controller.nextUser.name,
+    textAlign: TextAlign.center,
+    style: TextStyle(
+      color: Colors.blue,
+      fontSize: 30.0,
+    ),
+  );
+
+  Widget get nextTrainBeerBuyerButton => RaisedButton(
+    onPressed: controller.getNextUser,
+    child: Text(
+      "Who's up for train beers?",
+      style: TextStyle(color: Colors.white),
+    ),
+    color: Colors.blue,
+  );
+
+  Widget get drinkingStatsText => Text(
+    controller.user != null ? controller.user.getActiveStatusMessage() : "",
+    textAlign: TextAlign.center,
+    style: TextStyle(
+      color: Colors.black,
+      fontSize: 20.0,
+    ),
+  );
+
+  Widget get welcomeText => Text(
+    controller.user != null ? controller.user.getWelcomeText() : "",
+    textAlign: TextAlign.center,
+    style: TextStyle(
+      color: Colors.blue,
+      fontSize: 30.0,
+    ),
   );
 }
