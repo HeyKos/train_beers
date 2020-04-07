@@ -22,10 +22,10 @@ class UserEntity {
   /// Methods
   String getActiveStatusMessage() {
     if (this.isActive) {
-      return "You're currently in for beers!";
+      return "You're in for beers 🍻";
     }
 
-    return "You're not drinking beers this week.";
+    return "You're not drinking 😭";
   }
   
   String getWelcomeText() {

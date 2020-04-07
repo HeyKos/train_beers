@@ -31,9 +31,9 @@ class HomePage extends View {
 class _HomePageState extends ViewState<HomePage, HomeController> {
   _HomePageState(user) : super(HomeController(FirebaseFilesRepository(), FirebaseUsersRepository(), FirebaseAuthenticationRepository(), user));
 
+  /// Overrides
   @override
   Widget buildPage() {
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -50,6 +50,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
           child: Column(
             children: <Widget>[
               countdownWidget,
+              drinkingStatusContainer,
               nextTrainBeerBuyer,
               activeDrinkers,
             ],
@@ -61,6 +62,17 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
   } 
 
   /// Methods
+  Widget drinkingStatusText(bool isActive) {
+    return Text(
+      controller.user != null ? controller.user.getActiveStatusMessage() : "",
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        color: isActive ? Colors.black : Colors.white,
+        fontSize: 20.0,
+      ),
+    );
+  }
+  
   List<PopupMenuItem<String>> getMenuItems(BuildContext context) {
     return Constants.homeMenuOptions.map((String option) {
       return PopupMenuItem<String>(
@@ -204,21 +216,15 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
     color: Colors.blueAccent,
   );
 
-  Widget get drinkingStatsText => Text(
-    controller.user != null ? controller.user.getActiveStatusMessage() : "",
-    textAlign: TextAlign.center,
-    style: TextStyle(
-      color: Colors.black,
-      fontSize: 20.0,
-    ),
-  );
-
-  Widget get welcomeText => Text(
-    controller.user != null ? controller.user.getWelcomeText() : "",
-    textAlign: TextAlign.center,
-    style: TextStyle(
-      color: Colors.blue,
-      fontSize: 30.0,
-    ),
-  );
+  Widget get drinkingStatusContainer {  
+    bool isActive = controller.user != null && controller.user.isActive;
+    return Container(
+      color: isActive ? Colors.greenAccent : Colors.redAccent,
+      height: 40.0,
+      alignment: Alignment.topLeft,
+      child: Center(
+        child: drinkingStatusText(isActive),
+      ),
+    );
+  }
 }
