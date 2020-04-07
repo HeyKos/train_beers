@@ -66,9 +66,9 @@ class HomePresenter extends Presenter {
     getAvatarUrlUseCase.execute(_GetAvatarUrlUseCaseObserver(this), GetAvatarUrlUseCaseParams(path));
   }
   
-  void getBuyer(int currentSequence) {
+  void getBuyer() {
     // execute getUseruserCase
-    getNextUserUseCase.execute(_GetNextUserUseCaseObserver(this), GetNextUserUseCaseParams(currentSequence));
+    getNextUserUseCase.execute(_GetNextUserUseCaseObserver(this), null);
   }
 
   void logout() {

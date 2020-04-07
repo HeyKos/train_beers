@@ -3,12 +3,12 @@ import 'package:train_beers/src/domain/entities/user_entity.dart';
 import '../repositories/users_repository.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 
-class GetNextUserUseCase extends UseCase<GetNextUserUseCaseResponse, GetNextUserUseCaseParams> {
+class GetNextUserUseCase extends UseCase<GetNextUserUseCaseResponse, void> {
   final UsersRepository usersRepository;
   GetNextUserUseCase(this.usersRepository);
 
   @override
-  Future<Stream<GetNextUserUseCaseResponse>> buildUseCaseStream(GetNextUserUseCaseParams params) async {
+  Future<Stream<GetNextUserUseCaseResponse>> buildUseCaseStream(void params) async {
     final StreamController<GetNextUserUseCaseResponse> controller = StreamController();
     try {
       UserEntity user = await usersRepository.getLongestSincePurchased().first;
@@ -23,12 +23,6 @@ class GetNextUserUseCase extends UseCase<GetNextUserUseCaseResponse, GetNextUser
     }
     return controller.stream;
   }
-}
-
-/// Wrapping params inside an object makes it easier to change later
-class GetNextUserUseCaseParams {
-  final int currentSequence;
-  GetNextUserUseCaseParams(this.currentSequence);
 }
 
 /// Wrapping response inside an object makes it easier to change later

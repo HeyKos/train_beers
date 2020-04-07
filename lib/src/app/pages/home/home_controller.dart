@@ -23,6 +23,7 @@ class HomeController extends Controller {
     homePresenter = HomePresenter(filesRepo, usersRepo, authRepo),
     _user = user,
     super() {
+      getBuyer();
       getActiveUsers();
     }
 
@@ -152,6 +153,8 @@ class HomeController extends Controller {
   }
 
   void getAvatarDownloadUrl(String path) => homePresenter.getAvatarDownloadUrl(path);
+
+  void getBuyer() => homePresenter.getBuyer();
 
   void logout() => homePresenter.logout();
 
