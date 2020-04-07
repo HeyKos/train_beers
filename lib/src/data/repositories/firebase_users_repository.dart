@@ -33,6 +33,18 @@ class FirebaseUsersRepository implements UsersRepository {
   }
 
   @override
+  Stream<UserEntity> getLongestSincePurchased() {
+    return userCollection
+      .where('isActive', isEqualTo: true)
+      .orderBy("purchasedOn")
+      .limit(1)
+      .snapshots()
+      .map((snapshot) {
+        return UsersMapper.userEntityFromSnapshot(snapshot.documents[0]);
+      });
+  }
+
+  @override
   Stream<UserEntity> getUserByUid(String uid) {
     return userCollection
       .where('uid', isEqualTo: uid)

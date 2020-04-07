@@ -11,18 +11,7 @@ class GetNextUserUseCase extends UseCase<GetNextUserUseCaseResponse, GetNextUser
   Future<Stream<GetNextUserUseCaseResponse>> buildUseCaseStream(GetNextUserUseCaseParams params) async {
     final StreamController<GetNextUserUseCaseResponse> controller = StreamController();
     try {
-      UserEntity user;
-      // get user
-      List<UserEntity> users = await usersRepository.users().first;
-      users.sort((a, b) => a.sequence.compareTo(b.sequence));
-      int maxSequence = users.last.sequence;
-
-      if (params.currentSequence == maxSequence) {
-        user = users.first;
-      }
-      else {
-        user = users.firstWhere((u) => u.sequence > params.currentSequence);
-      }
+      UserEntity user = await usersRepository.getLongestSincePurchased().first;
       
       controller.add(GetNextUserUseCaseResponse(user));
       logger.finest('GetNextUserUseCase successful.');

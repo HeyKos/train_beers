@@ -7,27 +7,31 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 class HomeController extends Controller {
   /// Members
   String _avatarPath;
-  UserEntity _nextUser;
+  UserEntity _buyer;
   UserEntity _user;
+  List<UserEntity> _users;
   final HomePresenter homePresenter;
   
   /// Properties
   String get avatarPath => _avatarPath;
-  UserEntity get nextUser => _nextUser;
+  UserEntity get buyer => _buyer;
   UserEntity get user => _user;
+  List<UserEntity> get users => _users;
 
   // Constructor
   HomeController(filesRepo, usersRepo, authRepo, UserEntity user) :
     homePresenter = HomePresenter(filesRepo, usersRepo, authRepo),
     _user = user,
     super() {
-      getNextUser();
+      getBuyer();
+      getActiveUsers();
     }
 
   /// Overrides
   @override
   // this is called automatically by the parent class
   void initListeners() {
+    initGetActiveUsersListeners();
     initGetAvatarUrlListeners();
     initGetNextUserListeners();
     initLogoutListeners();
@@ -41,6 +45,27 @@ class HomeController extends Controller {
   }
 
   /// Methods
+  void initGetActiveUsersListeners() {
+    homePresenter.getActiveUsersOnNext = (List<UserEntity> users) {
+      print(users.toString());
+      _users = users;
+      refreshUI(); // Refreshes the UI manually
+    };
+    
+    homePresenter.getActiveUsersOnComplete = () {
+      print('Active users retrieved');
+    };
+
+    // On error, show a snackbar, remove the user, and refresh the UI
+    homePresenter.getActiveUsersOnError = (e) {
+      print('Could not retrieve active users.');
+      ScaffoldState state = getState();
+      state.showSnackBar(SnackBar(content: Text(e.message)));
+      _users = null;
+      refreshUI(); // Refreshes the UI manually
+    };
+  }
+
   void initGetAvatarUrlListeners() {
     homePresenter.getAvatarUrlOnNext = (String url) {
       print('Get avatar url onNext');
@@ -64,8 +89,8 @@ class HomeController extends Controller {
   void initGetNextUserListeners() {
     homePresenter.getNextUserOnNext = (UserEntity user) {
       print(user.toString());
-      _nextUser = user;
-      getAvatarDownloadUrl(_nextUser.avatarPath);
+      _buyer = user;
+      getAvatarDownloadUrl(_buyer.avatarPath);
       refreshUI(); // Refreshes the UI manually
     };
     homePresenter.getNextUserOnComplete = () {
@@ -77,7 +102,7 @@ class HomeController extends Controller {
       print('Could not retrieve next user.');
       ScaffoldState state = getState();
       state.showSnackBar(SnackBar(content: Text(e.message)));
-      _nextUser = null;
+      _buyer = null;
       refreshUI(); // Refreshes the UI manually
     };
   }
@@ -121,7 +146,9 @@ class HomeController extends Controller {
     };
   }
 
-  void getNextUser() => homePresenter.getNextUser(_nextUser == null ? -1 : _nextUser.sequence);
+  void getActiveUsers() => homePresenter.getActiveUsers();
+
+  void getBuyer() => homePresenter.getBuyer(_buyer == null ? -1 : _buyer.sequence);
   // void getNextUser() {
   //   Navigator.of(getContext()).pushNamed(Pages.active_users);
   // }

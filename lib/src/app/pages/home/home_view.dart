@@ -148,7 +148,15 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
             )
           ),
           Text(
-            controller.nextUser == null ? "" : "${controller.nextUser.name} is buying beer this week.",
+            controller.buyer == null ? "" : "${controller.buyer.name} is buying beer this week.",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 25.0,
+            ),
+          ),
+          Text(
+            controller.users == null ? "" : "There are ${controller.users.length} people drinking this week.",
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.black,
@@ -161,7 +169,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
   }
 
   Widget get nextTrainBeerBuyerButton => RaisedButton(
-    onPressed: controller.getNextUser,
+    onPressed: controller.getBuyer,
     child: Text(
       "Who's up for train beers?",
       style: TextStyle(color: Colors.white),

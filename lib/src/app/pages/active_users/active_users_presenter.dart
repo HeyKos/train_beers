@@ -23,7 +23,6 @@ class ActiveUsersPresenter extends Presenter {
 
   /// Methods
   void getActiveUsers() {
-    // execute getUseruserCase
     getActiveUsersUseCase.execute(_GetActiveUsersUseCaseObserver(this), null);
   }
 }
