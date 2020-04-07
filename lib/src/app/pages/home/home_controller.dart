@@ -23,7 +23,6 @@ class HomeController extends Controller {
     homePresenter = HomePresenter(filesRepo, usersRepo, authRepo),
     _user = user,
     super() {
-      getBuyer();
       getActiveUsers();
     }
 
@@ -148,10 +147,9 @@ class HomeController extends Controller {
 
   void getActiveUsers() => homePresenter.getActiveUsers();
 
-  void getBuyer() => homePresenter.getBuyer(_buyer == null ? -1 : _buyer.sequence);
-  // void getNextUser() {
-  //   Navigator.of(getContext()).pushNamed(Pages.active_users);
-  // }
+  void goToActiveDrinkers() {
+    Navigator.of(getContext()).pushNamed(Pages.active_users);
+  }
 
   void getAvatarDownloadUrl(String path) => homePresenter.getAvatarDownloadUrl(path);
 

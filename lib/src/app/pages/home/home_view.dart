@@ -50,7 +50,8 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
           child: Column(
             children: <Widget>[
               countdownWidget,
-              nextTrainBeerBuyerText,
+              nextTrainBeerBuyer,
+              activeDrinkers,
             ],
           ),
         ),
@@ -122,45 +123,47 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
     }
   );
 
-  Widget get nextTrainBeerBuyerText {
-
+  Widget get nextTrainBeerBuyer {
     return Container(
       padding: new EdgeInsets.only(top: 20.0),
       child: Column(
         children: <Widget>[
-          Center(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(75.0),
-              child: Conditional.single(
-                context: context,
-                conditionBuilder: (BuildContext context) => controller.avatarPath != null,
-                widgetBuilder: (BuildContext context) {
-                  return CachedNetworkImage(
-                    imageUrl: controller.avatarPath,
-                    placeholder: (context, url) => CircularProgressIndicator(),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
-                    width: 150.0,
-                    height: 150.0,
-                  );
-                },
-                fallbackBuilder: (BuildContext context) => CircularProgressIndicator(),
-              ),
-            )
-          ),
           Text(
-            controller.buyer == null ? "" : "${controller.buyer.name} is buying beer this week.",
+            "This Week's Buyer",
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.black,
               fontSize: 25.0,
             ),
           ),
+          Padding(
+            padding: EdgeInsets.only(top: 20.0, bottom: 10.0),
+            child: Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(75.0),
+                child: Conditional.single(
+                  context: context,
+                  conditionBuilder: (BuildContext context) => controller.avatarPath != null,
+                  widgetBuilder: (BuildContext context) {
+                    return CachedNetworkImage(
+                      imageUrl: controller.avatarPath,
+                      placeholder: (context, url) => CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                      width: 100.0,
+                      height: 100.0,
+                    );
+                  },
+                  fallbackBuilder: (BuildContext context) => CircularProgressIndicator(),
+                ),
+              )
+            ),
+          ),
           Text(
-            controller.users == null ? "" : "There are ${controller.users.length} people drinking this week.",
+            controller.buyer == null ? "" : "${controller.buyer.name}",
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.black,
-              fontSize: 25.0,
+              fontSize: 16.0,
             ),
           ),
         ],
@@ -168,13 +171,37 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
     );
   }
 
-  Widget get nextTrainBeerBuyerButton => RaisedButton(
-    onPressed: controller.getBuyer,
+  Widget get activeDrinkers {
+    return Container(
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(top: 40.0),
+            child: Text(
+              controller.users == null ? "" : "There are ${controller.users.length} people drinking this week.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 20.0,
+              ),
+            ),
+          ),
+          activeDrinkerListButton,
+        ],
+      ),
+    );
+  }
+
+  Widget get activeDrinkerListButton => FlatButton (
+    onPressed: controller.goToActiveDrinkers,
     child: Text(
-      "Who's up for train beers?",
-      style: TextStyle(color: Colors.white),
+      "View Drinkers",
+      style: TextStyle(
+        color: Colors.white,
+        fontSize: 16.0
+      ),
     ),
-    color: Colors.blue,
+    color: Colors.blueAccent,
   );
 
   Widget get drinkingStatsText => Text(
