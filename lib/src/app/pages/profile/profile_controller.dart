@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:image_picker/image_picker.dart';
 import 'package:train_beers/src/app/pages/pages.dart';
 import 'package:train_beers/src/domain/entities/user_entity.dart';
 import 'package:flutter/material.dart';
@@ -8,11 +11,13 @@ class ProfileController extends Controller {
   /// Members
   String _avatarPath;
   UserEntity _user;
+  File _userAvatar;
   final ProfilePresenter profilePresenter;
   
   /// Properties
   String get avatarPath => _avatarPath;
   UserEntity get user => _user;
+  File get userAvatar => _userAvatar;
 
   // Constructor
   ProfileController(filesRepo, usersRepo, UserEntity user) :
@@ -23,11 +28,12 @@ class ProfileController extends Controller {
     }
 
   /// Overrides
-  @override
   // this is called automatically by the parent class
+  @override
   void initListeners() {
-    initUpdateUserListeners();
+    initCropImageListeners();
     initGetAvatarUrlListeners();
+    initUpdateUserListeners();
   }
 
   @override
@@ -37,6 +43,35 @@ class ProfileController extends Controller {
   }
 
   /// Methods
+  void cropImage() => profilePresenter.cropImage(userAvatar);
+  
+  Future<void> pickImage(ImageSource source) async {
+    File selected = await ImagePicker.pickImage(source: source);
+    _userAvatar = selected;
+    cropImage();
+    refreshUI();
+  }
+
+  void initCropImageListeners() {
+    profilePresenter.cropImageOnNext = (File croppedImage) {
+      print('Crop image onNext');
+      _userAvatar = croppedImage;
+      refreshUI();
+    };
+
+    profilePresenter.cropImageOnComplete = () {
+      print('Crop image complete');
+    };
+
+    // On error, show a snackbar, remove the user, and refresh the UI
+    profilePresenter.cropImageOnError = (e) {
+      print('Could not crop image.');
+      ScaffoldState state = getState();
+      state.showSnackBar(SnackBar(content: Text(e.message)));
+      refreshUI(); // Refreshes the UI manually
+    };
+  }
+
   void initGetAvatarUrlListeners() {
     profilePresenter.getAvatarUrlOnNext = (String url) {
       print('Get avatar url onNext');

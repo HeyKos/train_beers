@@ -1,4 +1,5 @@
 import 'package:flutter_conditional_rendering/conditional.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:train_beers/src/data/repositories/firebase_files_repository.dart';
 import 'package:train_beers/src/domain/entities/user_entity.dart';
 import 'package:flutter/material.dart';
@@ -139,8 +140,7 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
                 )
               ],
             ),
-            onPressed: () => print("Tapped Camera"),
-            // onPressed: () => controller.pickImage(ImageSource.camera),
+            onPressed: () => controller.pickImage(ImageSource.camera),
           ),
           FlatButton(
             child: Row(
@@ -156,8 +156,7 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
                 )
               ],
             ),
-            onPressed: () => print("Tapped Library"),
-            // onPressed: () => controller.pickImage(ImageSource.camera),
+            onPressed: () => controller.pickImage(ImageSource.gallery),
           ),
         ],
       ),
