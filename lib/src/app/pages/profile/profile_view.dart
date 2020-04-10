@@ -122,7 +122,45 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(20.0))
       ),
-      content: Text("Testing"),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          FlatButton(
+            child: Row(
+              children: <Widget>[
+                Icon(Icons.photo_camera),
+                Padding(
+                  padding: EdgeInsets.only(left: 10.0),
+                  child: Text("Take a photo", 
+                    style: TextStyle(
+                      fontSize: 20.0
+                    ),
+                  ),
+                )
+              ],
+            ),
+            onPressed: () => print("Tapped Camera"),
+            // onPressed: () => controller.pickImage(ImageSource.camera),
+          ),
+          FlatButton(
+            child: Row(
+              children: <Widget>[
+                Icon(Icons.photo_library),
+                Padding(
+                  padding: EdgeInsets.only(left: 10.0),
+                  child: Text("Choose a photo",
+                     style: TextStyle(
+                      fontSize: 20.0
+                    ),
+                  ),
+                )
+              ],
+            ),
+            onPressed: () => print("Tapped Library"),
+            // onPressed: () => controller.pickImage(ImageSource.camera),
+          ),
+        ],
+      ),
     );
   }
 }
