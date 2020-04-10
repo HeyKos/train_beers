@@ -97,7 +97,13 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
                       FlatButton.icon(
                         label: Text("Update Profile Image"),
                         icon: Icon(Icons.people),
-                        onPressed: controller.goToUpdateProfilePicture,
+                        // onPressed: controller.goToUpdateProfilePicture,
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) => buildProfileImageDialog(context),
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -111,4 +117,12 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
   } 
 
   /// Properties (Widgets)
+  Widget buildProfileImageDialog(BuildContext context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(20.0))
+      ),
+      content: Text("Testing"),
+    );
+  }
 }
