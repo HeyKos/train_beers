@@ -19,7 +19,7 @@ class ProfileController extends Controller {
     profilePresenter = ProfilePresenter(filesRepo, usersRepo),
     _user = user,
     super() {
-      getAvatarDownloadUrl(_user.avatarPath);
+      getAvatarDownloadUrl(_user.id, _user.avatarPath);
     }
 
   /// Overrides
@@ -77,7 +77,7 @@ class ProfileController extends Controller {
     };
   }
 
-  void getAvatarDownloadUrl(String path) => profilePresenter.getAvatarDownloadUrl(path);
+  void getAvatarDownloadUrl(String id, String path) => profilePresenter.getAvatarDownloadUrl(id, path);
 
   void goToUpdateProfilePicture() {
     Navigator.pushNamed(getContext(), Pages.updateProfilePicture, arguments: {

@@ -31,8 +31,8 @@ class ProfilePresenter extends Presenter {
 
   /// Methods
   
-  void getAvatarDownloadUrl(String path) {
-    getAvatarUrlUseCase.execute(_GetAvatarUrlUseCaseObserver(this), GetAvatarUrlUseCaseParams(path));
+  void getAvatarDownloadUrl(String id, String path) {
+    getAvatarUrlUseCase.execute(_GetAvatarUrlUseCaseObserver(this), GetAvatarUrlUseCaseParams(id, path));
   }
 
   void updateUser(UserEntity user) {

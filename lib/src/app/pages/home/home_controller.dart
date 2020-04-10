@@ -90,7 +90,7 @@ class HomeController extends Controller {
     homePresenter.getNextUserOnNext = (UserEntity user) {
       print(user.toString());
       _buyer = user;
-      getAvatarDownloadUrl(_buyer.avatarPath);
+      getAvatarDownloadUrl(_buyer.id, _buyer.avatarPath);
       refreshUI(); // Refreshes the UI manually
     };
     homePresenter.getNextUserOnComplete = () {
@@ -152,7 +152,7 @@ class HomeController extends Controller {
     Navigator.of(getContext()).pushNamed(Pages.active_users);
   }
 
-  void getAvatarDownloadUrl(String path) => homePresenter.getAvatarDownloadUrl(path);
+  void getAvatarDownloadUrl(String id, String path) => homePresenter.getAvatarDownloadUrl(id, path);
 
   void getBuyer() => homePresenter.getBuyer();
 

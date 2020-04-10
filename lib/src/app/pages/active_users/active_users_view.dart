@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
+import 'package:flutter_conditional_rendering/conditional.dart';
+import 'package:train_beers/src/data/repositories/firebase_files_repository.dart';
 import 'package:train_beers/src/data/repositories/firebase_users_repository.dart';
 import 'active_users_controller.dart';
 
@@ -19,7 +21,7 @@ class ActiveUsersPage extends View {
 }
 
 class _ActiveUsersPageState extends ViewState<ActiveUsersPage, ActiveUsersController> {
-  _ActiveUsersPageState() : super(ActiveUsersController(FirebaseUsersRepository()));
+  _ActiveUsersPageState() : super(ActiveUsersController(FirebaseFilesRepository(), FirebaseUsersRepository()));
 
   @override
   Widget buildPage() {
@@ -42,8 +44,29 @@ class _ActiveUsersPageState extends ViewState<ActiveUsersPage, ActiveUsersContro
       itemCount: controller.users != null ? controller.users.length : 0,
       itemBuilder: (context, index) {
         var text = controller.users != null ? controller.users[index].name : "";
-        return ListTile(
-          title: Text(text),
+        // TODO: This code is shit. Clean it up.
+        var initials = controller.users != null ? controller.users[index].name.split(" ")[0] + controller.users[index].name.split(" ")[1] : "";
+        var url =  controller.users != null ? controller.users[index].avatarUrl : "";
+        return Card(
+          child: ListTile(
+            contentPadding: EdgeInsets.all(5.0),
+            leading: Conditional.single(
+              context: context,
+              conditionBuilder: (BuildContext context) => url != null,
+              widgetBuilder: (BuildContext context) {
+                return CircleAvatar(
+                  backgroundImage: NetworkImage(url),
+                );
+              },
+              fallbackBuilder: (BuildContext context) {
+                return CircleAvatar(
+                  backgroundColor: Colors.grey,
+                  child: Text (initials),
+                );
+              }
+            ),
+            title: Text(text),
+          ),
         );
       },
     );

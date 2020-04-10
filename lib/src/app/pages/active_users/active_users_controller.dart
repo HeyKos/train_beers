@@ -12,8 +12,8 @@ class ActiveUsersController extends Controller {
   List<UserEntity> get users => _users;
 
   // Constructor
-  ActiveUsersController(usersRepo) :
-    activeUsersPresenter = ActiveUsersPresenter(usersRepo),
+  ActiveUsersController(filesRepo, usersRepo) :
+    activeUsersPresenter = ActiveUsersPresenter(filesRepo, usersRepo),
     super() {
       getActiveUsers();
     }
@@ -23,6 +23,7 @@ class ActiveUsersController extends Controller {
   // this is called automatically by the parent class
   void initListeners() {
     initGetActiveUsersListeners();
+    initGetAvatarUrlListeners();
   }
 
   @override
@@ -36,6 +37,9 @@ class ActiveUsersController extends Controller {
     activeUsersPresenter.getActiveUsersOnNext = (List<UserEntity> users) {
       print(users.toString());
       _users = users;
+      _users.forEach((user) {
+        getAvatarDownloadUrl(user.id, user.avatarPath);
+      });
       refreshUI(); // Refreshes the UI manually
     };
     
@@ -53,5 +57,31 @@ class ActiveUsersController extends Controller {
     };
   }
 
+  void initGetAvatarUrlListeners() {
+    activeUsersPresenter.getAvatarUrlOnNext = (String id, String url) {
+      print('Get avatar url onNext');
+      if (_users == null) {
+        return;
+      }
+      var user = _users.where((user) => user.id == id).first;
+      user.avatarUrl = url;
+      refreshUI();
+    };
+
+    activeUsersPresenter.getAvatarUrlOnComplete = () {
+      print('Get avatar url complete');
+    };
+
+    // On error, show a snackbar, remove the user, and refresh the UI
+    activeUsersPresenter.getAvatarUrlOnError = (e) {
+      print('Could not get avatar url.');
+      ScaffoldState state = getState();
+      state.showSnackBar(SnackBar(content: Text(e.message)));
+      refreshUI(); // Refreshes the UI manually
+    };
+  }
+
   void getActiveUsers() => activeUsersPresenter.getActiveUsers();
+
+  void getAvatarDownloadUrl(String id, String path) => activeUsersPresenter.getAvatarDownloadUrl(id, path);
 }

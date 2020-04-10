@@ -16,7 +16,7 @@ class GetAvatarUrlUseCase extends UseCase<GetAvatarUrlUseCaseResponse, GetAvatar
         controller.close();  
       }
       
-      controller.add(GetAvatarUrlUseCaseResponse(url));
+      controller.add(GetAvatarUrlUseCaseResponse(params.id, url));
       logger.finest('GetAvatarUrlUseCase successful.');
       controller.close();
     } catch (e) {
@@ -30,12 +30,14 @@ class GetAvatarUrlUseCase extends UseCase<GetAvatarUrlUseCaseResponse, GetAvatar
 
 /// Wrapping params inside an object makes it easier to change later
 class GetAvatarUrlUseCaseParams {
+  final String id;
   final String path;
-  GetAvatarUrlUseCaseParams(this.path);
+  GetAvatarUrlUseCaseParams(this.id, this.path);
 }
 
 /// Wrapping response inside an object makes it easier to change later
 class GetAvatarUrlUseCaseResponse {
+  final String id;
   final String url;
-  GetAvatarUrlUseCaseResponse(this.url);
+  GetAvatarUrlUseCaseResponse(this.id, this.url);
 }

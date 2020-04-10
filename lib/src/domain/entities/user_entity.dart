@@ -7,6 +7,7 @@ class UserEntity {
   int sequence;
   DateTime purchasedOn;
   String uid;
+  String avatarUrl;
 
   UserEntity(this.avatarPath, this.id, this.isActive, this.name, this.purchasedOn, this.sequence, this.uid);
 
