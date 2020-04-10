@@ -33,6 +33,7 @@ class ProfilePresenter extends Presenter {
   /// Overrides
   @override
   void dispose() {
+    cropImageUseCase.dispose();
     getAvatarUrlUseCase.dispose();
     updateUserUseCase.dispose();
   }

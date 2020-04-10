@@ -50,23 +50,7 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Center(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(75.0),
-                          child: Conditional.single(
-                            context: context,
-                            conditionBuilder: (BuildContext context) => controller.avatarPath != null,
-                            widgetBuilder: (BuildContext context) {
-                              return CachedNetworkImage(
-                                imageUrl: controller.avatarPath,
-                                placeholder: (context, url) => CircularProgressIndicator(),
-                                errorWidget: (context, url, error) => Icon(Icons.error),
-                                width: 150.0,
-                                height: 150.0,
-                              );
-                            },
-                            fallbackBuilder: (BuildContext context) => CircularProgressIndicator(),
-                          ),
-                        )
+                        child: avatarImage,
                       ),
                     ],
                   ),
@@ -118,6 +102,39 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
   } 
 
   /// Properties (Widgets)
+  Widget get avatarImage => Conditional.single(
+    context: context,
+    conditionBuilder: (BuildContext context) => controller.avatarPath != null || controller.userAvatar != null,
+    widgetBuilder: (BuildContext context) {
+      return Conditional.single(
+        context: context,
+        conditionBuilder: (BuildContext context) => controller.userAvatar != null,
+        widgetBuilder: (BuildContext context) {
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(75.0),
+            child: Image(
+              height: 150.0,
+              width: 150.0,
+              image: FileImage(controller.userAvatar),
+            )
+          );
+        },
+        fallbackBuilder: (BuildContext context) {
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(75.0),
+            child: CachedNetworkImage(
+              imageUrl: controller.avatarPath,
+              placeholder: (context, url) => CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Icon(Icons.error),
+              width: 150.0,
+              height: 150.0,
+            ),
+          );
+        },
+      );
+    },
+    fallbackBuilder: (BuildContext context) => CircularProgressIndicator(),
+  );
   Widget buildProfileImageDialog(BuildContext context) {
     return AlertDialog(
       shape: RoundedRectangleBorder(
