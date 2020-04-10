@@ -56,6 +56,7 @@ class ProfileController extends Controller {
     profilePresenter.cropImageOnNext = (File croppedImage) {
       print('Crop image onNext');
       _userAvatar = croppedImage;
+      Navigator.of(getContext(), rootNavigator: true).pop();
       refreshUI();
     };
 
