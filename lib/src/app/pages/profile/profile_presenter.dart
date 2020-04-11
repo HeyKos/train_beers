@@ -1,10 +1,10 @@
 import 'dart:io';
-
 import 'package:train_beers/src/domain/entities/user_entity.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:train_beers/src/domain/usecases/crop_image_usecase.dart';
 import 'package:train_beers/src/domain/usecases/get_avatar_url_usecase.dart';
 import 'package:train_beers/src/domain/usecases/update_user_usecase.dart';
+import 'package:train_beers/src/domain/usecases/upload_file_usecase.dart';
 
 class ProfilePresenter extends Presenter {
   /// Members
@@ -18,17 +18,22 @@ class ProfilePresenter extends Presenter {
   Function updateUserOnNext;
   Function updateUserOnComplete;
   Function updateUserOnError;
+  Function uploadFileOnNext;
+  Function uploadFileOnComplete;
+  Function uploadFileOnError;
 
   /// Use Case Objects
   final CropImageUseCase cropImageUseCase;
   final GetAvatarUrlUseCase getAvatarUrlUseCase;
   final UpdateUserUseCase updateUserUseCase;
+  final UploadFileUseCase uploadFileUseCase;
 
   /// Constructor
   ProfilePresenter(filesRepo, usersRepo) :
     cropImageUseCase = CropImageUseCase(),
     getAvatarUrlUseCase = GetAvatarUrlUseCase(filesRepo),
-    updateUserUseCase = UpdateUserUseCase(usersRepo);
+    updateUserUseCase = UpdateUserUseCase(usersRepo),
+    uploadFileUseCase = UploadFileUseCase(filesRepo);
 
   /// Overrides
   @override
@@ -36,6 +41,7 @@ class ProfilePresenter extends Presenter {
     cropImageUseCase.dispose();
     getAvatarUrlUseCase.dispose();
     updateUserUseCase.dispose();
+    uploadFileUseCase.dispose();
   }
 
   /// Methods
@@ -49,6 +55,10 @@ class ProfilePresenter extends Presenter {
 
   void updateUser(UserEntity user) {
     updateUserUseCase.execute(_UpdateUserUseCaseObserver(this), UpdateUserUseCaseParams(user));
+  }
+
+  void uploadAvatar(File file) {
+    uploadFileUseCase.execute(_UploadFileUseCaseObserver(this), UploadFileUseCaseParams(file));
   }
 }
 
@@ -134,5 +144,33 @@ class _UpdateUserUseCaseObserver extends Observer<UpdateUserUseCaseResponse> {
   void onNext(response) {
     assert(presenter.updateUserOnNext != null);
     presenter.updateUserOnNext(response.user);
+  }
+}
+
+/// An observer class for the [UploadFileUseCase].
+class _UploadFileUseCaseObserver extends Observer<UploadFileUseCaseResponse> {
+  /// Members
+  final ProfilePresenter presenter;
+  
+  /// Constructor
+  _UploadFileUseCaseObserver(this.presenter);
+  
+  /// Overrides
+  @override
+  void onComplete() {
+    assert(presenter.uploadFileOnComplete != null);
+    presenter.uploadFileOnComplete();
+  }
+
+  @override
+  void onError(e) {
+    assert(presenter.uploadFileOnError != null);
+    presenter.uploadFileOnError(e);
+  }
+
+  @override
+  void onNext(response) {
+    assert(presenter.uploadFileOnNext != null);
+    presenter.uploadFileOnNext(response.uploadTask);
   }
 }

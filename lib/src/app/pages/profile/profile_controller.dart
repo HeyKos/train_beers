@@ -1,7 +1,6 @@
 import 'dart:io';
-
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:train_beers/src/app/pages/pages.dart';
 import 'package:train_beers/src/domain/entities/user_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
@@ -10,12 +9,16 @@ import 'profile_presenter.dart';
 class ProfileController extends Controller {
   /// Members
   String _avatarPath;
+  bool _isProcessing = false;
+  StorageUploadTask _uploadTask;
   UserEntity _user;
   File _userAvatar;
   final ProfilePresenter profilePresenter;
   
   /// Properties
   String get avatarPath => _avatarPath;
+  bool get isProcessing => _isProcessing;
+  StorageUploadTask get uploadTask => _uploadTask;
   UserEntity get user => _user;
   File get userAvatar => _userAvatar;
 
@@ -34,6 +37,7 @@ class ProfileController extends Controller {
     initCropImageListeners();
     initGetAvatarUrlListeners();
     initUpdateUserListeners();
+    initUploadFileListeners();
   }
 
   @override
@@ -77,6 +81,7 @@ class ProfileController extends Controller {
     profilePresenter.getAvatarUrlOnNext = (String url) {
       print('Get avatar url onNext');
       _avatarPath = url;
+      _userAvatar = null;
       refreshUI();
     };
 
@@ -97,11 +102,13 @@ class ProfileController extends Controller {
     profilePresenter.updateUserOnNext = (UserEntity user) {
       print('Update user onNext');
       _user = user;
+      getAvatarDownloadUrl(_user.id, _user.avatarPath);
       refreshUI();
     };
 
     profilePresenter.updateUserOnComplete = () {
       print('Update user complete');
+      this._isProcessing = false;
     };
 
     // On error, show a snackbar, remove the user, and refresh the UI
@@ -113,13 +120,63 @@ class ProfileController extends Controller {
     };
   }
 
+  void initUploadFileListeners() {
+    profilePresenter.uploadFileOnNext = (StorageUploadTask uploadTask) {
+      print('Upload file onNext');
+      _uploadTask = uploadTask;
+      refreshUI();
+    };
+
+    profilePresenter.uploadFileOnComplete = () {
+      print('Upload file complete');
+    };
+
+    // On error, show a snackbar, remove the user, and refresh the UI
+    profilePresenter.uploadFileOnError = (e) {
+      print('Could not upload file.');
+      ScaffoldState state = getState();
+      state.showSnackBar(SnackBar(content: Text(e.message)));
+      refreshUI(); // Refreshes the UI manually
+    };
+  }
+
   void getAvatarDownloadUrl(String id, String path) => profilePresenter.getAvatarDownloadUrl(id, path);
 
-  void goToUpdateProfilePicture() {
-    Navigator.pushNamed(getContext(), Pages.updateProfilePicture, arguments: {
-      "user": user
-    });
+  void saveAvatar() {
+    _isProcessing = true;
+    profilePresenter.uploadAvatar(_userAvatar);
+    refreshUI();
+  }
+
+  void uploadStatusOnChange(StorageTaskSnapshot event) {
+    if (event == null) {
+      return;
+    }
+    
+    if (event.bytesTransferred != event.totalByteCount) {
+      return;
+    }
+
+    if (event.storageMetadata == null) {
+      return;
+    }
+
+    if (event.error != null && event.error > 0) {
+      // TODO: Come up with a better UX for this scenario.
+      print("An error code ($event.error) was returned.");
+      return;
+    }
+
+    if (event.storageMetadata.name.isEmpty || event.storageMetadata.path.isEmpty) {
+      return;
+    }
+
+    _user.avatarPath = "${event.storageMetadata.path}";
+    _userAvatar = null;
+    updateUser(user);
   }
 
   void updateUser(UserEntity user) => profilePresenter.updateUser(user);
+
+  void uploadAvatar(File file) => profilePresenter.uploadAvatar(file);
 }

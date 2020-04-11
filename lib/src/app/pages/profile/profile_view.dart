@@ -1,3 +1,4 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_conditional_rendering/conditional.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:train_beers/src/data/repositories/firebase_files_repository.dart';
@@ -58,6 +59,12 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
               ),
               Spacer(),
               Row(
+                children: <Widget>[
+                  saveAvatarButton,
+                ],
+              ),
+              Spacer(),
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Column(
@@ -102,6 +109,104 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
   } 
 
   /// Properties (Widgets)
+  Widget get saveAvatarButton => Conditional.single(
+    context: context,
+    conditionBuilder: (BuildContext context) => controller.userAvatar != null,
+    widgetBuilder: (BuildContext context) => Conditional.single(
+      context: context,
+      conditionBuilder: (BuildContext context) => !controller.isProcessing,
+      widgetBuilder: (BuildContext context) => RaisedButton(
+        child: Row(
+          children: <Widget>[
+            Icon(Icons.save, color: Colors.white),
+            Padding(
+              padding: EdgeInsets.only(left: 10.0),
+              child: Text("Save", 
+                style: TextStyle(
+                  fontSize: 20.0,
+                  color: Colors.white,
+                ),
+              ),
+            )
+          ],
+        ),
+        onPressed: () {
+          controller.saveAvatar();
+        },
+        color: Colors.blue,
+      ),
+      fallbackBuilder: (BuildContext context) => avatarSavingButton,
+    ),
+    fallbackBuilder: (BuildContext context) => Container(
+      height: 0.0,
+      width: 0.0,
+    )
+  );
+
+  Widget get avatarSavingButton => StreamBuilder<StorageTaskEvent>(
+    stream: controller.uploadTask.events,
+    builder: (_, snapshot) {
+      var event = snapshot?.data?.snapshot;
+
+      double progressPercent = event != null
+          ? event.bytesTransferred / event.totalByteCount
+          : 0;
+
+      if (controller.uploadTask.isComplete) {
+        controller.uploadStatusOnChange(event);
+      }
+
+      return Column(
+        children: [
+          Conditional.single(
+            context: context,
+            conditionBuilder: (BuildContext context) => controller.uploadTask.isComplete,
+            widgetBuilder: (BuildContext context) => RaisedButton(
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.check_circle, color: Colors.greenAccent),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10.0),
+                    child: Text("Success", 
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              onPressed: () => { },
+              color: Colors.blue[500],
+            ),
+            fallbackBuilder: (BuildContext context) => RaisedButton(
+              child: Row(
+                children: <Widget>[
+                  CircularProgressIndicator(
+                    value: progressPercent,
+                    backgroundColor: Colors.white,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.greenAccent),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10.0),
+                    child: Text("Saving...", 
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              onPressed: () => { },
+              color: Colors.blue[500],
+            ),
+          ),
+        ]
+      );
+    }
+  );
+  
   Widget get avatarImage => Conditional.single(
     context: context,
     conditionBuilder: (BuildContext context) => controller.avatarPath != null || controller.userAvatar != null,
@@ -135,6 +240,7 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
     },
     fallbackBuilder: (BuildContext context) => CircularProgressIndicator(),
   );
+
   Widget buildProfileImageDialog(BuildContext context) {
     return AlertDialog(
       shape: RoundedRectangleBorder(
