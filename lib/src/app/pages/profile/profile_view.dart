@@ -40,207 +40,106 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
       body: Scaffold(
         key: globalKey, // built in global key for the ViewState for easy access in the controller
         body: Container(
-          padding: EdgeInsets.all(20.0),
           child: Column(
             children: <Widget>[
-              Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              Stack(
                 children: <Widget>[
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Center(
-                        child: avatarImage,
-                      ),
-                    ],
+                  Container(
+                    color: Colors.blueAccent,
+                    height: 115.0,
                   ),
-                ],
-              ),
-              Spacer(),
-              Row(
-                children: <Widget>[
+                  nameText(name),
+                  avatarImage,
+                  updateAvatarButton,
                   saveAvatarButton,
                 ],
               ),
-              Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(name,
-                        style: TextStyle(
-                          fontSize: 30.0
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      FlatButton.icon(
-                        label: Text("Update Profile Image"),
-                        icon: Icon(Icons.people),
-                        // onPressed: controller.goToUpdateProfilePicture,
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) => buildProfileImageDialog(context),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
             ],
-          ),
+          )
         ),
       ),
     );
   } 
 
   /// Properties (Widgets)
-  Widget get saveAvatarButton => Conditional.single(
-    context: context,
-    conditionBuilder: (BuildContext context) => controller.userAvatar != null,
-    widgetBuilder: (BuildContext context) => Conditional.single(
+  Widget get avatarImage => Container(
+    alignment: Alignment.center,
+    padding: EdgeInsets.only(top: 65.0),
+    child: Conditional.single(
       context: context,
-      conditionBuilder: (BuildContext context) => !controller.isProcessing,
-      widgetBuilder: (BuildContext context) => RaisedButton(
-        child: Row(
-          children: <Widget>[
-            Icon(Icons.save, color: Colors.white),
-            Padding(
-              padding: EdgeInsets.only(left: 10.0),
-              child: Text("Save", 
-                style: TextStyle(
-                  fontSize: 20.0,
+      conditionBuilder: (BuildContext context) => controller.avatarPath != null || controller.userAvatar != null,
+      widgetBuilder: (BuildContext context) {
+        return Conditional.single(
+          context: context,
+          conditionBuilder: (BuildContext context) => controller.userAvatar != null,
+          widgetBuilder: (BuildContext context) {
+            return ClipRRect( 
+              borderRadius: BorderRadius.circular(75.0),
+              child: Image(
+                height: 100.0,
+                width: 100.0,
+                image: FileImage(controller.userAvatar),
+              )
+            );
+          },
+          fallbackBuilder: (BuildContext context) {
+            return Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(55.0)),
+                border: Border.all(
                   color: Colors.white,
+                  width: 5.0,
+                )
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(50.0),
+                child: CachedNetworkImage(
+                  imageUrl: controller.avatarPath,
+                  placeholder: (context, url) => CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                  width: 100.0,
+                  height: 100.0,
+                  fit: BoxFit.cover,
                 ),
               ),
-            )
-          ],
-        ),
-        onPressed: () {
-          controller.saveAvatar();
-        },
-        color: Colors.blue,
-      ),
-      fallbackBuilder: (BuildContext context) => avatarSavingButton,
+            );
+          },
+        );
+      },
+      fallbackBuilder: (BuildContext context) => CircularProgressIndicator(),
     ),
-    fallbackBuilder: (BuildContext context) => Container(
-      height: 0.0,
-      width: 0.0,
-    )
   );
-
+  
   Widget get avatarSavingButton => StreamBuilder<StorageTaskEvent>(
     stream: controller.uploadTask.events,
     builder: (_, snapshot) {
       var event = snapshot?.data?.snapshot;
 
-      double progressPercent = event != null
-          ? event.bytesTransferred / event.totalByteCount
-          : 0;
-
       if (controller.uploadTask.isComplete) {
         controller.uploadStatusOnChange(event);
       }
 
-      return Column(
-        children: [
-          Conditional.single(
-            context: context,
-            conditionBuilder: (BuildContext context) => controller.uploadTask.isComplete,
-            widgetBuilder: (BuildContext context) => RaisedButton(
-              child: Row(
-                children: <Widget>[
-                  Icon(Icons.check_circle, color: Colors.greenAccent),
-                  Padding(
-                    padding: EdgeInsets.only(left: 10.0),
-                    child: Text("Success", 
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                  )
-                ],
-              ),
-              onPressed: () => { },
-              color: Colors.blue[500],
-            ),
-            fallbackBuilder: (BuildContext context) => RaisedButton(
-              child: Row(
-                children: <Widget>[
-                  CircularProgressIndicator(
-                    value: progressPercent,
-                    backgroundColor: Colors.white,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.greenAccent),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 10.0),
-                    child: Text("Saving...", 
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                  )
-                ],
-              ),
-              onPressed: () => { },
-              color: Colors.blue[500],
+      return Container(
+        alignment: Alignment(.85, 1),
+        padding: EdgeInsets.only(top: 120.0),
+        child: FlatButton(
+          color: Colors.white,
+          padding: EdgeInsets.all(10.0),
+          child: Text("Saving...", 
+            style: TextStyle(
+              color: Colors.blueAccent,
             ),
           ),
-        ]
+          shape: RoundedRectangleBorder(
+            borderRadius: new BorderRadius.circular(18.0),
+            side: BorderSide(color: Colors.blueAccent)
+          ),
+          onPressed: () => {},
+        ),
       );
     }
   );
   
-  Widget get avatarImage => Conditional.single(
-    context: context,
-    conditionBuilder: (BuildContext context) => controller.avatarPath != null || controller.userAvatar != null,
-    widgetBuilder: (BuildContext context) {
-      return Conditional.single(
-        context: context,
-        conditionBuilder: (BuildContext context) => controller.userAvatar != null,
-        widgetBuilder: (BuildContext context) {
-          return ClipRRect(
-            borderRadius: BorderRadius.circular(75.0),
-            child: Image(
-              height: 150.0,
-              width: 150.0,
-              image: FileImage(controller.userAvatar),
-            )
-          );
-        },
-        fallbackBuilder: (BuildContext context) {
-          return ClipRRect(
-            borderRadius: BorderRadius.circular(75.0),
-            child: CachedNetworkImage(
-              imageUrl: controller.avatarPath,
-              placeholder: (context, url) => CircularProgressIndicator(),
-              errorWidget: (context, url, error) => Icon(Icons.error),
-              width: 150.0,
-              height: 150.0,
-            ),
-          );
-        },
-      );
-    },
-    fallbackBuilder: (BuildContext context) => CircularProgressIndicator(),
-  );
-
   Widget buildProfileImageDialog(BuildContext context) {
     return AlertDialog(
       shape: RoundedRectangleBorder(
@@ -285,4 +184,77 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
       ),
     );
   }
+
+  Widget nameText(name) => Center(
+    child: Container(
+      padding: EdgeInsets.only(top: 15.0),
+      child: Text(name,
+        style: TextStyle(
+          color: Colors.white54,
+          fontSize: 30.0
+        ),
+      ),
+    ),
+  );
+  
+  Widget get saveAvatarButton => Conditional.single(
+    context: context,
+    conditionBuilder: (BuildContext context) => controller.userAvatar != null,
+    widgetBuilder: (BuildContext context) => Conditional.single(
+      context: context,
+      conditionBuilder: (BuildContext context) => !controller.isProcessing,
+      widgetBuilder: (BuildContext context) => Container(
+        alignment: Alignment(.85, 1),
+        padding: EdgeInsets.only(top: 120.0),
+        child: FlatButton(
+          color: Colors.white,
+          padding: EdgeInsets.all(10.0),
+          child: Text("Save Changes", 
+            style: TextStyle(
+              color: Colors.blueAccent
+            ),
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: new BorderRadius.circular(18.0),
+            side: BorderSide(color: Colors.blueAccent)
+          ),
+          onPressed: controller.saveAvatar,
+        ),
+      ),
+      fallbackBuilder: (BuildContext context) => avatarSavingButton,
+    ),
+    fallbackBuilder: (BuildContext context) => Container(
+      height: 0.0,
+      width: 0.0,
+    )
+  );
+
+  Widget get updateAvatarButton => Conditional.single(
+    context: context,
+    conditionBuilder: (BuildContext context) => controller.userAvatar == null,
+    widgetBuilder: (BuildContext context) => Container(
+      alignment: Alignment(.85, 1),
+      padding: EdgeInsets.only(top: 120.0),
+      child: FlatButton(
+        color: Colors.white,
+        padding: EdgeInsets.all(10.0),
+        child: Text("Update Avatar", 
+          style: TextStyle(
+            color: Colors.blueAccent
+          ),
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: new BorderRadius.circular(18.0),
+          side: BorderSide(color: Colors.blueAccent)
+        ),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) => buildProfileImageDialog(context),
+          );
+        },
+      ),
+    ),
+    fallbackBuilder: (BuildContext context) => Container(width: 0, height: 0),
+  );
 }
