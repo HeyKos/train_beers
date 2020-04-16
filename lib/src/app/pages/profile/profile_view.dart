@@ -21,7 +21,7 @@ class ProfilePage extends View {
   }) : super(key: key);
   
 
-  @override
+  @override 
   // inject dependencies inwards
   _ProfilePageState createState() => _ProfilePageState(user);
 }
@@ -45,7 +45,7 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
               Stack(
                 children: <Widget>[
                   Container(
-                    color: Colors.blueAccent,
+                    color: Colors.grey[800],
                     height: 115.0,
                   ),
                   nameText(name),
@@ -54,6 +54,8 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
                   saveAvatarButton,
                 ],
               ),
+              participationStatus,
+              participationImage,
             ],
           )
         ),
@@ -127,12 +129,12 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
           padding: EdgeInsets.all(10.0),
           child: Text("Saving...", 
             style: TextStyle(
-              color: Colors.blueAccent,
+              color: Colors.lightBlue,
             ),
           ),
           shape: RoundedRectangleBorder(
             borderRadius: new BorderRadius.circular(18.0),
-            side: BorderSide(color: Colors.blueAccent)
+            side: BorderSide(color: Colors.lightBlue)
           ),
           onPressed: () => {},
         ),
@@ -190,9 +192,45 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
       padding: EdgeInsets.only(top: 15.0),
       child: Text(name,
         style: TextStyle(
-          color: Colors.white54,
+          color: Colors.white30,
           fontSize: 30.0
         ),
+      ),
+    ),
+  );
+
+  Widget get participationImage => Conditional.single(
+    context: context,
+    conditionBuilder: (BuildContext context) => controller.participationImageUrl != null && controller.participationImageUrl != "",
+    widgetBuilder: (BuildContext context) => Container(
+      margin: EdgeInsets.only(top: 20.0),
+      padding: EdgeInsets.only(left: 20.0, right: 20.0),
+      child: Image(
+        image: NetworkImage(controller.participationImageUrl)
+      ),
+    ),
+    fallbackBuilder: (BuildContext context) => Container(width: 0, height: 0), 
+  );
+
+  Widget get participationStatus => Container(
+    // color: Colors.pink,
+    margin: EdgeInsets.only(top: 10.0),
+    child: Padding(
+      padding: EdgeInsets.only(left: 20.0, right: 20.0),
+      child: Row(
+        children: <Widget>[
+          Text("Participation Status",
+            style: TextStyle(
+              fontSize: 20.0
+            ),
+          ),
+          Spacer(),
+          Switch(
+            activeColor: Colors.lightBlue,
+            value: controller.user != null ? controller.user.isActive : false,
+            onChanged: controller.onParticipationStatusChanged,
+          ),
+        ],
       ),
     ),
   );
@@ -211,12 +249,12 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
           padding: EdgeInsets.all(10.0),
           child: Text("Save Changes", 
             style: TextStyle(
-              color: Colors.blueAccent
+              color: Colors.lightBlue
             ),
           ),
           shape: RoundedRectangleBorder(
             borderRadius: new BorderRadius.circular(18.0),
-            side: BorderSide(color: Colors.blueAccent)
+            side: BorderSide(color: Colors.lightBlue)
           ),
           onPressed: controller.saveAvatar,
         ),
@@ -240,12 +278,12 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
         padding: EdgeInsets.all(10.0),
         child: Text("Update Avatar", 
           style: TextStyle(
-            color: Colors.blueAccent
+            color: Colors.lightBlue
           ),
         ),
         shape: RoundedRectangleBorder(
           borderRadius: new BorderRadius.circular(18.0),
-          side: BorderSide(color: Colors.blueAccent)
+          side: BorderSide(color: Colors.lightBlue)
         ),
         onPressed: () {
           showDialog(

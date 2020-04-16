@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:train_beers/src/domain/entities/user_entity.dart';
@@ -10,6 +11,7 @@ class ProfileController extends Controller {
   /// Members
   String _avatarPath;
   bool _isProcessing = false;
+  String _participationImageUrl;
   StorageUploadTask _uploadTask;
   UserEntity _user;
   File _userAvatar;
@@ -18,6 +20,7 @@ class ProfileController extends Controller {
   /// Properties
   String get avatarPath => _avatarPath;
   bool get isProcessing => _isProcessing;
+  String get participationImageUrl => _participationImageUrl;
   StorageUploadTask get uploadTask => _uploadTask;
   UserEntity get user => _user;
   File get userAvatar => _userAvatar;
@@ -28,6 +31,7 @@ class ProfileController extends Controller {
     _user = user,
     super() {
       getAvatarDownloadUrl(_user.id, _user.avatarPath);
+      _participationImageUrl = getParticipationImage(_user.isActive);
     }
 
   /// Overrides
@@ -141,6 +145,52 @@ class ProfileController extends Controller {
   }
 
   void getAvatarDownloadUrl(String id, String path) => profilePresenter.getAvatarDownloadUrl(id, path);
+
+  void onParticipationStatusChanged(bool isActive) {
+    user.isActive = isActive;
+    _participationImageUrl = getParticipationImage(isActive);
+    refreshUI();
+    updateUser(user);
+  }
+
+  String getParticipationImage(bool isActive) {
+    final random = new Random();
+    
+    if (isActive) {
+      List<String> activeImages = [
+        "https://media.giphy.com/media/xT1R9XnFJkL1S2BFqo/giphy.gif",
+        "https://media.giphy.com/media/J0ySNzZ5APILC/giphy.gif",
+        "https://media.giphy.com/media/l0Iy8G3PwyahZST2E/giphy.gif",
+        "https://media.giphy.com/media/SikKQ1GKktmFy/giphy.gif",
+        "https://media.giphy.com/media/AwkqAwhwqGzg4/giphy-downsized-large.gif",
+        "https://media.giphy.com/media/jJqWEAYkWrxWE/giphy.gif",
+        "https://media.giphy.com/media/NJH9I3N8E9bEI/giphy-downsized-large.gif",
+        "https://media.giphy.com/media/NmeQFehO2NQDC/giphy.gif",
+        "https://media.giphy.com/media/xPvFvShnCDsoU/giphy-downsized-large.gif",
+        "https://media.giphy.com/media/d1E1wpmnxLbCgtEs/giphy.gif",
+        "https://media.giphy.com/media/11RZG9KdXd1Nrk0ppD/giphy.gif",
+        "https://media.giphy.com/media/SEre9eirTBgdO/giphy.gif",
+      ];
+
+      return activeImages[random.nextInt(activeImages.length)];
+    }
+
+    List<String> inactiveImages = [
+      "https://media.giphy.com/media/cOkd84no1LuKc/giphy.gif",
+      "https://media.giphy.com/media/jHns0TlgQSdDa/giphy.gif",
+      "https://media.giphy.com/media/1JyWrrkCIUQyQ/giphy.gif",
+      "https://media.giphy.com/media/U4VXRfcY3zxTi/giphy.gif",
+      "https://media.giphy.com/media/H4zeDO4ocDYqY/giphy.gif",
+      "https://media.giphy.com/media/44Eq3Ab5LPYn6/giphy.gif",
+      "https://media.giphy.com/media/Qe5oD5aXjEbKw/giphy.gif",
+      "https://media.giphy.com/media/aZ3LDBs1ExsE8/giphy.gif",
+      "https://media.giphy.com/media/eIPM3j6YXHKXC/giphy.gif",
+      "https://media.giphy.com/media/xUOxf3GAHOVjTG3Juw/giphy-downsized-large.gif",
+      "https://media.giphy.com/media/BIN2S0sgQwdeE/giphy.gif",
+    ];
+
+    return inactiveImages[random.nextInt(inactiveImages.length)];
+  }
 
   void saveAvatar() {
     _isProcessing = true;
