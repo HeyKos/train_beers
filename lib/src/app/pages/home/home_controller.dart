@@ -1,5 +1,6 @@
 import 'package:train_beers/src/app/pages/pages.dart';
 import 'package:train_beers/src/domain/entities/event_entity.dart';
+import 'package:train_beers/src/domain/entities/event_participant_entity.dart';
 import 'package:train_beers/src/domain/entities/user_entity.dart';
 import './home_presenter.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ class HomeController extends Controller {
   /// Members
   String _avatarPath;
   EventEntity _event;
+  List<EventParticipantEntity> _participants;
   UserEntity _user;
   List<UserEntity> _users;
   final HomePresenter homePresenter;
@@ -16,12 +18,13 @@ class HomeController extends Controller {
   /// Properties
   String get avatarPath => _avatarPath;
   EventEntity get event => _event;
+  List<EventParticipantEntity> get participants => _participants;
   UserEntity get user => _user;
   List<UserEntity> get users => _users;
 
   // Constructor
-  HomeController(filesRepo, usersRepo, authRepo, eventsRepo, UserEntity user) :
-    homePresenter = HomePresenter(filesRepo, usersRepo, authRepo, eventsRepo),
+  HomeController(filesRepo, usersRepo, authRepo, eventsRepo, eventParticipantsRepo, UserEntity user) :
+    homePresenter = HomePresenter(filesRepo, usersRepo, authRepo, eventsRepo, eventParticipantsRepo),
     _user = user,
     super() {
       getNextEvent();
@@ -34,6 +37,7 @@ class HomeController extends Controller {
   void initListeners() {
     initGetActiveUsersListeners();
     initGetAvatarUrlListeners();
+    initGetEventParticipantsListeners();
     initGetNextEventListeners();
     initLogoutListeners();
     initUpdateUserListeners();
@@ -50,7 +54,7 @@ class HomeController extends Controller {
     homePresenter.getActiveUsersOnNext = (List<UserEntity> users) {
       print(users.toString());
       _users = users;
-      refreshUI(); // Refreshes the UI manually
+      refreshUI();
     };
     
     homePresenter.getActiveUsersOnComplete = () {
@@ -63,7 +67,7 @@ class HomeController extends Controller {
       ScaffoldState state = getState();
       state.showSnackBar(SnackBar(content: Text(e.message)));
       _users = null;
-      refreshUI(); // Refreshes the UI manually
+      refreshUI();
     };
   }
 
@@ -86,6 +90,25 @@ class HomeController extends Controller {
       refreshUI(); // Refreshes the UI manually
     };
   }
+
+  void initGetEventParticipantsListeners() {
+    homePresenter.getEventParticipantsOnNext = (List<EventParticipantEntity> eventParticipants) {
+      _participants = eventParticipants;
+      
+      refreshUI();
+    };
+    homePresenter.getEventParticipantsOnComplete = () {
+      print('Event participants retrieved');
+    };
+
+    // On error, show a snackbar, and refresh the UI
+    homePresenter.getEventParticipantsOnError = (e) {
+      print('Could not retrieve event participants.');
+      ScaffoldState state = getState();
+      state.showSnackBar(SnackBar(content: Text(e.message)));
+      refreshUI();
+    };
+  }
   
   void initGetNextEventListeners() {
     homePresenter.getNextEventOnNext = (EventEntity event) {
@@ -93,8 +116,10 @@ class HomeController extends Controller {
       if (_event.hostUser != null) {
         getAvatarDownloadUrl(_event.hostUser.id, _event.hostUser.avatarPath);
       }
+
+      getEventParticipants(_event.id);
       
-      refreshUI(); // Refreshes the UI manually
+      refreshUI();
     };
     homePresenter.getNextEventOnComplete = () {
       print('Event retrieved');
@@ -105,7 +130,7 @@ class HomeController extends Controller {
       print('Could not retrieve next event.');
       ScaffoldState state = getState();
       state.showSnackBar(SnackBar(content: Text(e.message)));
-      refreshUI(); // Refreshes the UI manually
+      refreshUI();
     };
   }
 
@@ -124,7 +149,7 @@ class HomeController extends Controller {
       print('Could not logout user.');
       ScaffoldState state = getState();
       state.showSnackBar(SnackBar(content: Text(e.message)));
-      refreshUI(); // Refreshes the UI manually
+      refreshUI();
     };
   }
 
@@ -144,7 +169,7 @@ class HomeController extends Controller {
       print('Could not update user.');
       ScaffoldState state = getState();
       state.showSnackBar(SnackBar(content: Text(e.message)));
-      refreshUI(); // Refreshes the UI manually
+      refreshUI();
     };
   }
 
@@ -155,6 +180,8 @@ class HomeController extends Controller {
   }
 
   void getAvatarDownloadUrl(String id, String path) => homePresenter.getAvatarDownloadUrl(id, path);
+
+  void getEventParticipants(String eventId) => homePresenter.getEventParticipants(eventId);
 
   void getNextEvent() => homePresenter.getNextEvent();
 

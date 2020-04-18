@@ -4,13 +4,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:train_beers/src/data/extensions/document_snapshot_extensions.dart';
 
 class FirebaseEventParticipantsRepository implements EventParticipantsRepository {
+  final eventCollection = Firestore.instance.collection("events");
   final eventParticpantsCollection = Firestore.instance.collection('event_participants');
 
   /// Overrides
   @override
   Stream<List<EventParticipantEntity>> getEventParticipants(String eventId) {
+    var eventReference = eventCollection.document(eventId);
     return eventParticpantsCollection
-      .where("eventId", isEqualTo: "events/$eventId")
+      .where("eventId", isEqualTo: eventReference)
       .snapshots()
       .asyncMap(_mapSnaphotToEventParticipants);
   }

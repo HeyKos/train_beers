@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:train_beers/src/app/utils/constants.dart';
 import 'package:train_beers/src/app/widgets/countdown_timer.dart';
 import 'package:train_beers/src/data/repositories/firebase_authenticaion_repository.dart';
+import 'package:train_beers/src/data/repositories/firebase_event_participants_repository.dart';
 import 'package:train_beers/src/data/repositories/firebase_events_repository.dart';
 import 'package:train_beers/src/data/repositories/firebase_files_repository.dart';
 import 'package:train_beers/src/domain/entities/user_entity.dart';
@@ -30,7 +31,13 @@ class HomePage extends View {
 }
 
 class _HomePageState extends ViewState<HomePage, HomeController> {
-  _HomePageState(user) : super(HomeController(FirebaseFilesRepository(), FirebaseUsersRepository(), FirebaseAuthenticationRepository(), FirebaseEventsRepository(), user));
+  _HomePageState(user) : super(HomeController(
+    FirebaseFilesRepository(),
+    FirebaseUsersRepository(),
+    FirebaseAuthenticationRepository(),
+    FirebaseEventsRepository(),
+    FirebaseEventParticipantsRepository(),
+    user));
 
   /// Overrides
   @override
@@ -196,7 +203,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
           Padding(
             padding: EdgeInsets.only(top: 40.0),
             child: Text(
-              controller.users == null ? "" : "There are ${controller.users.length} people drinking this week.",
+              controller.participants != null ? "There are ${controller.participants.length} people drinking this week." : "",
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.black,
