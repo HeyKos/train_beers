@@ -136,7 +136,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
           Colors.blue,
         ],
         textAlign: TextAlign.start,
-        alignment: AlignmentDirectional.topStart // or Alignment.topLeft
+        alignment: AlignmentDirectional.topStart
       );
     }
   );

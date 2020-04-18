@@ -1,9 +1,10 @@
 import 'package:train_beers/src/domain/entities/base_entity.dart';
+import 'package:train_beers/src/domain/entities/user_entity.dart';
 
 class EventParticipantEntity extends BaseEntity {
   /// Members
   String eventId;
-  String userId;
+  UserEntity user;
 
-  EventParticipantEntity(String id, this.eventId, this.userId) : super(id);
+  EventParticipantEntity(String id, this.eventId, this.user) : super(id);
 }

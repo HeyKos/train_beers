@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:train_beers/src/data/validators/document_snapshot_validator.dart';
 import 'package:train_beers/src/domain/entities/event_entity.dart';
+import 'package:train_beers/src/domain/entities/event_participant_entity.dart';
 import 'package:train_beers/src/domain/entities/user_entity.dart';
 
 extension Extensions on DocumentSnapshot {
@@ -20,6 +21,23 @@ extension Extensions on DocumentSnapshot {
       date != null ? date.toDate() : null,
       hostUser,
       this.data['status'],
+    );
+  }
+
+  Future<EventParticipantEntity> toEventParticipant(String docPath) async {
+    // Check if we are working with an event document
+    if (!DocumentSnapshotValidator.isDocumentOfType(this, "event_participants", docPath)) {
+      return null;
+    }
+
+    DocumentReference userRef = this.data['userId'] as DocumentReference;
+    UserEntity hostUser = await userRef.get()
+      .then((DocumentSnapshot snapshot) => snapshot.toUser(userRef.path));
+
+    return EventParticipantEntity (
+      this.documentID,
+      this.data['eventId'].toString(),
+      hostUser,
     );
   }
 
