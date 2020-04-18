@@ -84,12 +84,12 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
 
   /// Properties (Widgets)
   FloatingActionButton get actionButton => FloatingActionButton(
-    foregroundColor: controller.user.isActive ? Colors.white : Colors.black,
-    backgroundColor: controller.user.isActive ? Colors.redAccent : Colors.greenAccent,
-    tooltip: "Count me ${controller.user.isActive ? 'out' : 'in'}!",
+    foregroundColor: controller.user != null && controller.user.isActive ? Colors.white : Colors.black,
+    backgroundColor: controller.user != null && controller.user.isActive ? Colors.redAccent : Colors.greenAccent,
+    tooltip: controller.user != null ? "Count me ${controller.user.isActive ? 'out' : 'in'}!" : "",
     child: Conditional.single(
       context: context,
-      conditionBuilder: (BuildContext context) => controller.user.isActive,
+      conditionBuilder: (BuildContext context) => controller.user != null && controller.user.isActive,
       widgetBuilder: (BuildContext context) {
         return Icon(Icons.thumb_down);
       },
@@ -98,6 +98,10 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
       },
     ),
     onPressed: () {
+      if (controller.user == null) {
+        return;
+      }
+
       controller.user.userIsActive = !controller.user.isActive;
       controller.updateUser(controller.user);
     },

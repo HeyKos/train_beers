@@ -5,7 +5,7 @@ abstract class UsersRepository {
     Future<void> deleteUser(UserEntity user);
     Stream<List<UserEntity>> getActiveUsers();
     Stream<UserEntity> getLongestSincePurchased();
-    Stream<UserEntity> getUserByUid(String uid);
+    Stream<UserEntity> getByUid(String uid);
     Future<void> updateUser(UserEntity user);
     Stream<List<UserEntity>> users();
 }

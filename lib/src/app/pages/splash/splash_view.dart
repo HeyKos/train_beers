@@ -24,30 +24,32 @@ class _SplashPageState extends ViewState<SplashPage, SplashController> {
   
   @override
   Widget buildPage() {  
-    return Container(
+    return Scaffold(
       key: globalKey, // built in global key for the ViewState for easy access in the controller,
-      color: Colors.grey,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Image(
-            image: AssetImage('assets/images/splash_image.png')
-          ),
-          ScaleAnimatedTextKit(
-            text: [
-              "Loading..."
-            ],
-            textStyle: TextStyle(
-                fontSize: 30.0,
-                color: Colors.white,
-                decoration: TextDecoration.none,
+      body: Container(
+        color: Colors.grey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Image(
+              image: AssetImage('assets/images/splash_image.png')
             ),
-            textAlign: TextAlign.center,
-            alignment: AlignmentDirectional.topStart
-          ),
-        ],
-      )
+            ScaleAnimatedTextKit(
+              text: [
+                "Loading..."
+              ],
+              textStyle: TextStyle(
+                  fontSize: 30.0,
+                  color: Colors.white,
+                  decoration: TextDecoration.none,
+              ),
+              textAlign: TextAlign.center,
+              alignment: AlignmentDirectional.topStart
+            ),
+          ],
+        )
+      ),
     );
   }
 }

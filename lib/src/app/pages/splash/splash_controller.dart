@@ -25,8 +25,8 @@ class SplashController extends Controller {
     splashPresenter.getUserByUidOnError = (e) {
       print('Error getting user data.');
       ScaffoldState state = getState();
-      state.showSnackBar(SnackBar(content: Text(e.message)));
-      refreshUI(); // Refreshes the UI manually
+      state.showSnackBar(SnackBar(content: Text("Unable to retrieve user.")));
+      refreshUI();
     };
   }
 

@@ -11,7 +11,7 @@ class GetUserByUidUseCase extends UseCase<GetUserByUidUseCaseResponse, GetUserBy
   Future<Stream<GetUserByUidUseCaseResponse>> buildUseCaseStream(GetUserByUidUseCaseParams params) async {
     final StreamController<GetUserByUidUseCaseResponse> controller = StreamController();
     try {
-      UserEntity user = await usersRepository.getUserByUid(params.uid).first;
+      UserEntity user = await usersRepository.getByUid(params.uid).first;
       
       controller.add(GetUserByUidUseCaseResponse(user));
       logger.finest('GetUserByUidUseCase successful.');
