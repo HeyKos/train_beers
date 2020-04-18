@@ -6,11 +6,17 @@ import 'package:train_beers/src/data/extensions/document_snapshot_extensions.dar
 class FirebaseEventsRepository implements EventsRepository {
   final eventCollection = Firestore.instance.collection('events');
 
+  /// Overrides
   @override
   Stream<EventEntity> getNextEvent() {
     return eventCollection
       .orderBy("date", descending: true)
       .snapshots()
-      .map((snapshot) => snapshot.documents.first.toEvent(eventCollection.path));
+      .asyncMap(_mapSnaphotToEvent);
+  }
+
+  /// Methods
+  Future<EventEntity> _mapSnaphotToEvent(QuerySnapshot snapshot) async {
+    return await snapshot.documents.first.toEvent(eventCollection.path);
   }
 }

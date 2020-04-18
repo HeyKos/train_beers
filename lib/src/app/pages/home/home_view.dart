@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:train_beers/src/app/utils/constants.dart';
 import 'package:train_beers/src/app/widgets/countdown_timer.dart';
 import 'package:train_beers/src/data/repositories/firebase_authenticaion_repository.dart';
+import 'package:train_beers/src/data/repositories/firebase_events_repository.dart';
 import 'package:train_beers/src/data/repositories/firebase_files_repository.dart';
 import 'package:train_beers/src/domain/entities/user_entity.dart';
 import './home_controller.dart';
@@ -29,7 +30,7 @@ class HomePage extends View {
 }
 
 class _HomePageState extends ViewState<HomePage, HomeController> {
-  _HomePageState(user) : super(HomeController(FirebaseFilesRepository(), FirebaseUsersRepository(), FirebaseAuthenticationRepository(), user));
+  _HomePageState(user) : super(HomeController(FirebaseFilesRepository(), FirebaseUsersRepository(), FirebaseAuthenticationRepository(), FirebaseEventsRepository(), user));
 
   /// Overrides
   @override
@@ -52,6 +53,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
               countdownWidget,
               drinkingStatusContainer,
               nextTrainBeerBuyer,
+              Text(controller.event != null ? controller.event.status : ""),
               activeDrinkers,
             ],
           ),

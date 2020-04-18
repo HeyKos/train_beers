@@ -4,18 +4,20 @@ import 'package:train_beers/src/domain/entities/event_entity.dart';
 import 'package:train_beers/src/domain/entities/user_entity.dart';
 
 extension Extensions on DocumentSnapshot {
-  EventEntity toEvent(String docPath) {
+  Future<EventEntity> toEvent(String docPath) async {
     // Check if we are working with an event document
     if (!DocumentSnapshotValidator.isDocumentOfType(this, "events", docPath)) {
       return null;
     }
 
     Timestamp date = this.data['date'] as Timestamp;
+    DocumentReference userRef = this.data['hostUserId'] as DocumentReference;
+    UserEntity hostUser = await userRef.get().then((DocumentSnapshot snapshot) => snapshot.toUser(userRef.path));
 
     return EventEntity (
       this.documentID,
       date != null ? date.toDate() : null,
-      this.data['hostUserId'],
+      hostUser,
       this.data['status'],
     );
   }

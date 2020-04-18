@@ -5,6 +5,7 @@ import 'package:train_beers/src/domain/entities/user_entity.dart';
 import 'package:train_beers/src/domain/usecases/countdown_use_case.dart';
 import 'package:train_beers/src/domain/usecases/get_active_users_usecase.dart';
 import 'package:train_beers/src/domain/usecases/get_avatar_url_usecase.dart';
+import 'package:train_beers/src/domain/usecases/get_next_event_usecase..dart';
 import 'package:train_beers/src/domain/usecases/get_next_user_usecase.dart';
 import 'package:train_beers/src/domain/usecases/logout_usecase.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
@@ -19,6 +20,9 @@ class HomePresenter extends Presenter {
   Function getAvatarUrlOnNext;
   Function getAvatarUrlOnComplete;
   Function getAvatarUrlOnError;
+  Function getNextEventOnNext;
+  Function getNextEventOnComplete;
+  Function getNextEventOnError;
   Function getNextUserOnNext;
   Function getNextUserOnComplete;
   Function getNextUserOnError;
@@ -32,15 +36,17 @@ class HomePresenter extends Presenter {
   /// Use Case Objects
   final GetActiveUsersUseCase getActiveUsersUseCase;
   final GetAvatarUrlUseCase getAvatarUrlUseCase;
+  final GetNextEventUseCase getNextEventUseCase;
   final GetNextUserUseCase getNextUserUseCase;
   final LogoutUseCase logoutUseCase;
   final UpdateUserUseCase updateUserUseCase;
   final CountdownUseCase countdownUseCase;
 
   /// Constructor
-  HomePresenter(filesRepo, usersRepo, authRepo) :
+  HomePresenter(filesRepo, usersRepo, authRepo, eventsRepo) :
     getActiveUsersUseCase = GetActiveUsersUseCase(usersRepo),
     getAvatarUrlUseCase = GetAvatarUrlUseCase(filesRepo),
+    getNextEventUseCase = GetNextEventUseCase(eventsRepo),
     getNextUserUseCase = GetNextUserUseCase(usersRepo),
     logoutUseCase = LogoutUseCase(authRepo),
     updateUserUseCase = UpdateUserUseCase(usersRepo),
@@ -51,13 +57,13 @@ class HomePresenter extends Presenter {
   void dispose() {
     getActiveUsersUseCase.dispose();
     getAvatarUrlUseCase.dispose();
+    getNextEventUseCase.dispose();
     getNextUserUseCase.dispose();
     logoutUseCase.dispose();
     updateUserUseCase.dispose();
   }
 
   /// Methods
-  
   void getActiveUsers() {
     getActiveUsersUseCase.execute(_GetActiveUsersUseCaseObserver(this), null);
   }
@@ -67,8 +73,11 @@ class HomePresenter extends Presenter {
   }
   
   void getBuyer() {
-    // execute getUseruserCase
     getNextUserUseCase.execute(_GetNextUserUseCaseObserver(this), null);
+  }
+  
+  void getNextEvent() {
+    getNextEventUseCase.execute(_GetNextEventUseCaseObserver(this), null);
   }
 
   void logout() {
@@ -158,6 +167,34 @@ class _GetAvatarUrlUseCaseObserver extends Observer<GetAvatarUrlUseCaseResponse>
   void onNext(response) {
     assert(presenter.getAvatarUrlOnNext != null);
     presenter.getAvatarUrlOnNext(response.url);
+  }
+}
+
+/// An observer class for the [GetNextEventUseCase].
+class _GetNextEventUseCaseObserver extends Observer<GetNextEventUseCaseResponse> {
+  /// Members
+  final HomePresenter presenter;
+  
+  /// Constructor
+  _GetNextEventUseCaseObserver(this.presenter);
+  
+  /// Overrides
+  @override
+  void onComplete() {
+    assert(presenter.getNextEventOnComplete != null);
+    presenter.getNextUserOnComplete();
+  }
+
+  @override
+  void onError(e) {
+    assert(presenter.getNextEventOnError != null);
+    presenter.getNextEventOnError(e);
+  }
+
+  @override
+  void onNext(response) {
+    assert(presenter.getNextEventOnNext != null);
+    presenter.getNextEventOnNext(response.event);
   }
 }
 

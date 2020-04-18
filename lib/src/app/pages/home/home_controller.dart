@@ -1,4 +1,5 @@
 import 'package:train_beers/src/app/pages/pages.dart';
+import 'package:train_beers/src/domain/entities/event_entity.dart';
 import 'package:train_beers/src/domain/entities/user_entity.dart';
 import './home_presenter.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ class HomeController extends Controller {
   /// Members
   String _avatarPath;
   UserEntity _buyer;
+  EventEntity _event;
   UserEntity _user;
   List<UserEntity> _users;
   final HomePresenter homePresenter;
@@ -15,15 +17,17 @@ class HomeController extends Controller {
   /// Properties
   String get avatarPath => _avatarPath;
   UserEntity get buyer => _buyer;
+  EventEntity get event => _event;
   UserEntity get user => _user;
   List<UserEntity> get users => _users;
 
   // Constructor
-  HomeController(filesRepo, usersRepo, authRepo, UserEntity user) :
-    homePresenter = HomePresenter(filesRepo, usersRepo, authRepo),
+  HomeController(filesRepo, usersRepo, authRepo, eventsRepo, UserEntity user) :
+    homePresenter = HomePresenter(filesRepo, usersRepo, authRepo, eventsRepo),
     _user = user,
     super() {
       getBuyer();
+      getNextEvent();
       getActiveUsers();
     }
 
@@ -33,6 +37,7 @@ class HomeController extends Controller {
   void initListeners() {
     initGetActiveUsersListeners();
     initGetAvatarUrlListeners();
+    initGetNextEventListeners();
     initGetNextUserListeners();
     initLogoutListeners();
     initUpdateUserListeners();
@@ -86,6 +91,24 @@ class HomeController extends Controller {
     };
   }
   
+  void initGetNextEventListeners() {
+    homePresenter.getNextEventOnNext = (EventEntity event) {
+      _event = event;
+      refreshUI(); // Refreshes the UI manually
+    };
+    homePresenter.getNextEventOnComplete = () {
+      print('Event retrieved');
+    };
+
+    // On error, show a snackbar, and refresh the UI
+    homePresenter.getNextEventOnError = (e) {
+      print('Could not retrieve next event.');
+      ScaffoldState state = getState();
+      state.showSnackBar(SnackBar(content: Text(e.message)));
+      refreshUI(); // Refreshes the UI manually
+    };
+  }
+
   void initGetNextUserListeners() {
     homePresenter.getNextUserOnNext = (UserEntity user) {
       print(user.toString());
@@ -155,6 +178,8 @@ class HomeController extends Controller {
   void getAvatarDownloadUrl(String id, String path) => homePresenter.getAvatarDownloadUrl(id, path);
 
   void getBuyer() => homePresenter.getBuyer();
+
+  void getNextEvent() => homePresenter.getNextEvent();
 
   void logout() => homePresenter.logout();
 
