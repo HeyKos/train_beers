@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DocumentSnapshotValidator {
-  static bool isUserDocument(DocumentSnapshot document, String documentPath) {
-    if (documentPath != "users") return false;
+  static bool isDocumentOfType(DocumentSnapshot document, String documentType, String documentPath) {
+    if (documentPath.toLowerCase() != documentType.toLowerCase()) return false;
 
     if (document.data == null) return false;
     
