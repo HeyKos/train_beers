@@ -1,7 +1,8 @@
-class UserEntity {
+import 'package:train_beers/src/domain/entities/base_entity.dart';
+
+class UserEntity extends BaseEntity {
   /// Members
   String avatarPath;
-  final String id;
   bool isActive;
   String name;
   int sequence;
@@ -9,7 +10,7 @@ class UserEntity {
   String uid;
   String avatarUrl;
 
-  UserEntity(this.avatarPath, this.id, this.isActive, this.name, this.purchasedOn, this.sequence, this.uid);
+  UserEntity(String id, this.avatarPath, this.isActive, this.name, this.purchasedOn, this.sequence, this.uid) : super(id);
 
   /// Properties
   set userIsActive(bool value) {

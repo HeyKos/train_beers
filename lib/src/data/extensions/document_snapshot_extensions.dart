@@ -12,8 +12,8 @@ extension Extensions on DocumentSnapshot {
     Timestamp purchasedOn = this.data['purchasedOn'] as Timestamp;
 
     return UserEntity (
-      this.data['avatarPath'],
       this.documentID,
+      this.data['avatarPath'],
       this.data['isActive'],
       this.data['name'],
       purchasedOn != null ? purchasedOn.toDate() : null,
