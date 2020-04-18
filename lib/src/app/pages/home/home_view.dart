@@ -177,7 +177,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
             ),
           ),
           Text(
-            controller.buyer == null ? "" : "${controller.buyer.name}",
+            controller.event != null && controller.event.hostUser != null ? "${controller.event.hostUser.name}" : "",
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.black,

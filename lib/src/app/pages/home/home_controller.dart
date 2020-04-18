@@ -8,7 +8,6 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 class HomeController extends Controller {
   /// Members
   String _avatarPath;
-  UserEntity _buyer;
   EventEntity _event;
   UserEntity _user;
   List<UserEntity> _users;
@@ -16,7 +15,6 @@ class HomeController extends Controller {
   
   /// Properties
   String get avatarPath => _avatarPath;
-  UserEntity get buyer => _buyer;
   EventEntity get event => _event;
   UserEntity get user => _user;
   List<UserEntity> get users => _users;
@@ -26,7 +24,6 @@ class HomeController extends Controller {
     homePresenter = HomePresenter(filesRepo, usersRepo, authRepo, eventsRepo),
     _user = user,
     super() {
-      getBuyer();
       getNextEvent();
       getActiveUsers();
     }
@@ -38,7 +35,6 @@ class HomeController extends Controller {
     initGetActiveUsersListeners();
     initGetAvatarUrlListeners();
     initGetNextEventListeners();
-    initGetNextUserListeners();
     initLogoutListeners();
     initUpdateUserListeners();
   }
@@ -94,6 +90,10 @@ class HomeController extends Controller {
   void initGetNextEventListeners() {
     homePresenter.getNextEventOnNext = (EventEntity event) {
       _event = event;
+      if (_event.hostUser != null) {
+        getAvatarDownloadUrl(_event.hostUser.id, _event.hostUser.avatarPath);
+      }
+      
       refreshUI(); // Refreshes the UI manually
     };
     homePresenter.getNextEventOnComplete = () {
@@ -105,27 +105,6 @@ class HomeController extends Controller {
       print('Could not retrieve next event.');
       ScaffoldState state = getState();
       state.showSnackBar(SnackBar(content: Text(e.message)));
-      refreshUI(); // Refreshes the UI manually
-    };
-  }
-
-  void initGetNextUserListeners() {
-    homePresenter.getNextUserOnNext = (UserEntity user) {
-      print(user.toString());
-      _buyer = user;
-      getAvatarDownloadUrl(_buyer.id, _buyer.avatarPath);
-      refreshUI(); // Refreshes the UI manually
-    };
-    homePresenter.getNextUserOnComplete = () {
-      print('User retrieved');
-    };
-
-    // On error, show a snackbar, remove the user, and refresh the UI
-    homePresenter.getNextUserOnError = (e) {
-      print('Could not retrieve next user.');
-      ScaffoldState state = getState();
-      state.showSnackBar(SnackBar(content: Text(e.message)));
-      _buyer = null;
       refreshUI(); // Refreshes the UI manually
     };
   }
@@ -176,8 +155,6 @@ class HomeController extends Controller {
   }
 
   void getAvatarDownloadUrl(String id, String path) => homePresenter.getAvatarDownloadUrl(id, path);
-
-  void getBuyer() => homePresenter.getBuyer();
 
   void getNextEvent() => homePresenter.getNextEvent();
 

@@ -12,7 +12,8 @@ extension Extensions on DocumentSnapshot {
 
     Timestamp date = this.data['date'] as Timestamp;
     DocumentReference userRef = this.data['hostUserId'] as DocumentReference;
-    UserEntity hostUser = await userRef.get().then((DocumentSnapshot snapshot) => snapshot.toUser(userRef.path));
+    UserEntity hostUser = await userRef.get()
+      .then((DocumentSnapshot snapshot) => snapshot.toUser(userRef.path));
 
     return EventEntity (
       this.documentID,
