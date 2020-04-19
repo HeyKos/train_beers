@@ -1,7 +1,7 @@
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:train_beers/src/domain/usecases/get_avatar_url_usecase.dart';
 
-class ActiveUsersPresenter extends Presenter {
+class ParticipantsPresenter extends Presenter {
   /// Members
   /// Use Case Functions
   Function getAvatarUrlOnNext;
@@ -12,7 +12,7 @@ class ActiveUsersPresenter extends Presenter {
   final GetAvatarUrlUseCase getAvatarUrlUseCase;
 
   /// Constructor
-  ActiveUsersPresenter(filesRepo, usersRepo) :
+  ParticipantsPresenter(filesRepo, usersRepo) :
     getAvatarUrlUseCase = GetAvatarUrlUseCase(filesRepo);
     
   /// Overrides
@@ -30,7 +30,7 @@ class ActiveUsersPresenter extends Presenter {
 /// An observer class for the [GetAvatarUrlUseCase].
 class _GetAvatarUrlUseCaseObserver extends Observer<GetAvatarUrlUseCaseResponse> {
   /// Members
-  final ActiveUsersPresenter presenter;
+  final ParticipantsPresenter presenter;
   
   /// Constructor
   _GetAvatarUrlUseCaseObserver(this.presenter);

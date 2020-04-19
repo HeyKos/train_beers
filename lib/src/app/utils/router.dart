@@ -9,12 +9,6 @@ class Router {
 
   Route<dynamic> getRoute(RouteSettings settings) {
     switch (settings.name) {
-      case Pages.active_users:
-        Map<String, dynamic> args = settings.arguments as Map;
-        return _buildRoute(
-            settings,
-            ActiveUsersPage(title: "Participants", participants: args['participants'])
-        );
       case Pages.home:
         Map<String, dynamic> args = settings.arguments as Map;
         return _buildRoute(
@@ -23,6 +17,12 @@ class Router {
         );
       case Pages.login:
         return _buildRoute(settings, LoginPage(title: "Sign In"));
+      case Pages.participants:
+        Map<String, dynamic> args = settings.arguments as Map;
+        return _buildRoute(
+            settings,
+            ParticipantsPage(title: "Participants", participants: args['participants'])
+        );
       case Pages.profile:
         Map<String, dynamic> args = settings.arguments as Map;
         return _buildRoute(

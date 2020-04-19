@@ -5,13 +5,13 @@ import 'package:flutter_conditional_rendering/conditional.dart';
 import 'package:train_beers/src/data/repositories/firebase_files_repository.dart';
 import 'package:train_beers/src/data/repositories/firebase_users_repository.dart';
 import 'package:train_beers/src/domain/entities/event_participant_entity.dart';
-import 'active_users_controller.dart';
+import 'participants_controller.dart';
 
-class ActiveUsersPage extends View {
+class ParticipantsPage extends View {
   final String title;
   final List<EventParticipantEntity> participants;
   
-  ActiveUsersPage({
+  ParticipantsPage({
     Key key,
     this.title,
     @required this.participants,
@@ -20,11 +20,11 @@ class ActiveUsersPage extends View {
 
   @override
   // inject dependencies inwards
-  _ActiveUsersPageState createState() => _ActiveUsersPageState(participants);
+  _ParticipantsPageState createState() => _ParticipantsPageState(participants);
 }
 
-class _ActiveUsersPageState extends ViewState<ActiveUsersPage, ActiveUsersController> {
-  _ActiveUsersPageState(participants) : super(ActiveUsersController(FirebaseFilesRepository(), FirebaseUsersRepository(), participants));
+class _ParticipantsPageState extends ViewState<ParticipantsPage, ParticipantsController> {
+  _ParticipantsPageState(participants) : super(ParticipantsController(FirebaseFilesRepository(), FirebaseUsersRepository(), participants));
 
   @override
   Widget buildPage() {

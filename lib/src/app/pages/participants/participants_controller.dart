@@ -1,19 +1,19 @@
 import 'package:train_beers/src/domain/entities/event_participant_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
-import 'active_users_presenter.dart';
+import 'participants_presenter.dart';
 
-class ActiveUsersController extends Controller {
+class ParticipantsController extends Controller {
   /// Members
   List<EventParticipantEntity> _participants;
-  final ActiveUsersPresenter activeUsersPresenter;
+  final ParticipantsPresenter participantsPresenter;
   
   /// Properties
   List<EventParticipantEntity> get participants => _participants;
 
   // Constructor
-  ActiveUsersController(filesRepo, usersRepo, List<EventParticipantEntity> participants) :
-    activeUsersPresenter = ActiveUsersPresenter(filesRepo, usersRepo),
+  ParticipantsController(filesRepo, usersRepo, List<EventParticipantEntity> participants) :
+    participantsPresenter = ParticipantsPresenter(filesRepo, usersRepo),
     _participants = participants,
     super() {
       loadAvatars();
@@ -28,7 +28,7 @@ class ActiveUsersController extends Controller {
 
   @override
   void dispose() {
-    activeUsersPresenter.dispose();
+    participantsPresenter.dispose();
     super.dispose();
   }
 
@@ -40,7 +40,7 @@ class ActiveUsersController extends Controller {
   }
 
   void initGetAvatarUrlListeners() {
-    activeUsersPresenter.getAvatarUrlOnNext = (String id, String url) {
+    participantsPresenter.getAvatarUrlOnNext = (String id, String url) {
       print('Get avatar url onNext');
       if (_participants == null) {
         return;
@@ -50,12 +50,12 @@ class ActiveUsersController extends Controller {
       refreshUI();
     };
 
-    activeUsersPresenter.getAvatarUrlOnComplete = () {
+    participantsPresenter.getAvatarUrlOnComplete = () {
       print('Get avatar url complete');
     };
 
     // On error, show a snackbar, remove the user, and refresh the UI
-    activeUsersPresenter.getAvatarUrlOnError = (e) {
+    participantsPresenter.getAvatarUrlOnError = (e) {
       print('Could not get avatar url.');
       ScaffoldState state = getState();
       state.showSnackBar(SnackBar(content: Text(e.message)));
@@ -63,5 +63,5 @@ class ActiveUsersController extends Controller {
     };
   }
 
-  void getAvatarDownloadUrl(String id, String path) => activeUsersPresenter.getAvatarDownloadUrl(id, path);
+  void getAvatarDownloadUrl(String id, String path) => participantsPresenter.getAvatarDownloadUrl(id, path);
 }
