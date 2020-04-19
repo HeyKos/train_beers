@@ -1,28 +1,28 @@
-import 'package:train_beers/src/domain/entities/user_entity.dart';
+import 'package:train_beers/src/domain/entities/event_participant_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'active_users_presenter.dart';
 
 class ActiveUsersController extends Controller {
   /// Members
-  List<UserEntity> _users;
+  List<EventParticipantEntity> _participants;
   final ActiveUsersPresenter activeUsersPresenter;
   
   /// Properties
-  List<UserEntity> get users => _users;
+  List<EventParticipantEntity> get participants => _participants;
 
   // Constructor
-  ActiveUsersController(filesRepo, usersRepo) :
+  ActiveUsersController(filesRepo, usersRepo, List<EventParticipantEntity> participants) :
     activeUsersPresenter = ActiveUsersPresenter(filesRepo, usersRepo),
+    _participants = participants,
     super() {
-      getActiveUsers();
+      loadAvatars();
     }
 
   /// Overrides
   @override
   // this is called automatically by the parent class
   void initListeners() {
-    initGetActiveUsersListeners();
     initGetAvatarUrlListeners();
   }
 
@@ -33,38 +33,20 @@ class ActiveUsersController extends Controller {
   }
 
   /// Methods
-  void initGetActiveUsersListeners() {
-    activeUsersPresenter.getActiveUsersOnNext = (List<UserEntity> users) {
-      print(users.toString());
-      _users = users;
-      _users.forEach((user) {
-        getAvatarDownloadUrl(user.id, user.avatarPath);
-      });
-      refreshUI(); // Refreshes the UI manually
-    };
-    
-    activeUsersPresenter.getActiveUsersOnComplete = () {
-      print('Active users retrieved');
-    };
-
-    // On error, show a snackbar, remove the user, and refresh the UI
-    activeUsersPresenter.getActiveUsersOnError = (e) {
-      print('Could not retrieve active users.');
-      ScaffoldState state = getState();
-      state.showSnackBar(SnackBar(content: Text(e.message)));
-      _users = null;
-      refreshUI(); // Refreshes the UI manually
-    };
+  void loadAvatars() {
+    _participants.forEach((participant) {
+      getAvatarDownloadUrl(participant.user.id, participant.user.avatarPath);
+    });
   }
 
   void initGetAvatarUrlListeners() {
     activeUsersPresenter.getAvatarUrlOnNext = (String id, String url) {
       print('Get avatar url onNext');
-      if (_users == null) {
+      if (_participants == null) {
         return;
       }
-      var user = _users.where((user) => user.id == id).first;
-      user.avatarUrl = url;
+      var participant = _participants.where((participant) => participant.user.id == id).first;
+      participant.user.avatarUrl = url;
       refreshUI();
     };
 
@@ -80,8 +62,6 @@ class ActiveUsersController extends Controller {
       refreshUI(); // Refreshes the UI manually
     };
   }
-
-  void getActiveUsers() => activeUsersPresenter.getActiveUsers();
 
   void getAvatarDownloadUrl(String id, String path) => activeUsersPresenter.getAvatarDownloadUrl(id, path);
 }

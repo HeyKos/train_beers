@@ -4,24 +4,27 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:flutter_conditional_rendering/conditional.dart';
 import 'package:train_beers/src/data/repositories/firebase_files_repository.dart';
 import 'package:train_beers/src/data/repositories/firebase_users_repository.dart';
+import 'package:train_beers/src/domain/entities/event_participant_entity.dart';
 import 'active_users_controller.dart';
 
 class ActiveUsersPage extends View {
   final String title;
+  final List<EventParticipantEntity> participants;
   
   ActiveUsersPage({
     Key key,
     this.title,
+    @required this.participants,
   }) : super(key: key);
   
 
   @override
   // inject dependencies inwards
-  _ActiveUsersPageState createState() => _ActiveUsersPageState();
+  _ActiveUsersPageState createState() => _ActiveUsersPageState(participants);
 }
 
 class _ActiveUsersPageState extends ViewState<ActiveUsersPage, ActiveUsersController> {
-  _ActiveUsersPageState() : super(ActiveUsersController(FirebaseFilesRepository(), FirebaseUsersRepository()));
+  _ActiveUsersPageState(participants) : super(ActiveUsersController(FirebaseFilesRepository(), FirebaseUsersRepository(), participants));
 
   @override
   Widget buildPage() {
@@ -31,7 +34,7 @@ class _ActiveUsersPageState extends ViewState<ActiveUsersPage, ActiveUsersContro
       ),
       body: Scaffold(
         key: globalKey, // built in global key for the ViewState for easy access in the controller
-        body: this.usersListView(context),
+        body: this.participantsListView(context),
       ),
     );
   } 
@@ -39,14 +42,14 @@ class _ActiveUsersPageState extends ViewState<ActiveUsersPage, ActiveUsersContro
   /// Methods
 
   /// Properties (Widgets)
-  Widget usersListView(BuildContext context) {
+  Widget participantsListView(BuildContext context) {
     return ListView.builder(
-      itemCount: controller.users != null ? controller.users.length : 0,
+      itemCount: controller.participants != null ? controller.participants.length : 0,
       itemBuilder: (context, index) {
-        var text = controller.users != null ? controller.users[index].name : "";
+        var text = controller.participants != null ? controller.participants[index].user.name : "";
         // TODO: This code is shit. Clean it up.
-        var initials = controller.users != null ? controller.users[index].name.split(" ")[0] + controller.users[index].name.split(" ")[1] : "";
-        var url =  controller.users != null ? controller.users[index].avatarUrl : "";
+        var initials = controller.participants != null ? controller.participants[index].user.name.split(" ")[0] + controller.participants[index].user.name.split(" ")[1] : "";
+        var url =  controller.participants != null ? controller.participants[index].user.avatarUrl : "";
         return Card(
           child: ListTile(
             contentPadding: EdgeInsets.all(5.0),

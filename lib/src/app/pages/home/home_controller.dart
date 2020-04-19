@@ -149,7 +149,9 @@ class HomeController extends Controller {
   }
 
   void goToActiveDrinkers() {
-    Navigator.of(getContext()).pushNamed(Pages.active_users);
+    Navigator.of(getContext()).pushReplacementNamed(Pages.active_users, arguments: {
+      "participants": _participants,
+    });
   }
 
   void getAvatarDownloadUrl(String id, String path) => homePresenter.getAvatarDownloadUrl(id, path);
