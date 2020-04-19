@@ -12,7 +12,7 @@ extension Extensions on DocumentSnapshot {
     }
 
     Timestamp date = this.data['date'] as Timestamp;
-    DocumentReference userRef = this.data['hostUserId'] as DocumentReference;
+    DocumentReference userRef = this.data['hostUser'] as DocumentReference;
     UserEntity hostUser = await userRef.get()
       .then((DocumentSnapshot snapshot) => snapshot.toUser(userRef.path));
 
@@ -30,13 +30,17 @@ extension Extensions on DocumentSnapshot {
       return null;
     }
 
-    DocumentReference userRef = this.data['userId'] as DocumentReference;
+    DocumentReference userRef = this.data['user'] as DocumentReference;
     UserEntity hostUser = await userRef.get()
       .then((DocumentSnapshot snapshot) => snapshot.toUser(userRef.path));
+    
+    DocumentReference eventRef = this.data['event'] as DocumentReference;
+    EventEntity event = await eventRef.get()
+      .then((DocumentSnapshot snapshot) => snapshot.toEvent(eventRef.path));
 
     return EventParticipantEntity (
       this.documentID,
-      this.data['eventId'].toString(),
+      event.id,
       hostUser,
     );
   }

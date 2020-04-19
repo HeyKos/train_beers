@@ -12,7 +12,7 @@ class FirebaseEventParticipantsRepository implements EventParticipantsRepository
   Stream<List<EventParticipantEntity>> getEventParticipants(String eventId) {
     var eventReference = eventCollection.document(eventId);
     return eventParticpantsCollection
-      .where("eventId", isEqualTo: eventReference)
+      .where("event", isEqualTo: eventReference)
       .snapshots()
       .asyncMap(_mapSnaphotToEventParticipants);
   }

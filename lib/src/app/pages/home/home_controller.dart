@@ -12,7 +12,6 @@ class HomeController extends Controller {
   EventEntity _event;
   List<EventParticipantEntity> _participants;
   UserEntity _user;
-  List<UserEntity> _users;
   final HomePresenter homePresenter;
   
   /// Properties
@@ -20,7 +19,6 @@ class HomeController extends Controller {
   EventEntity get event => _event;
   List<EventParticipantEntity> get participants => _participants;
   UserEntity get user => _user;
-  List<UserEntity> get users => _users;
 
   // Constructor
   HomeController(filesRepo, usersRepo, authRepo, eventsRepo, eventParticipantsRepo, UserEntity user) :
@@ -28,14 +26,12 @@ class HomeController extends Controller {
     _user = user,
     super() {
       getNextEvent();
-      getActiveUsers();
     }
 
   /// Overrides
   @override
   // this is called automatically by the parent class
   void initListeners() {
-    initGetActiveUsersListeners();
     initGetAvatarUrlListeners();
     initGetEventParticipantsListeners();
     initGetNextEventListeners();
@@ -50,27 +46,6 @@ class HomeController extends Controller {
   }
 
   /// Methods
-  void initGetActiveUsersListeners() {
-    homePresenter.getActiveUsersOnNext = (List<UserEntity> users) {
-      print(users.toString());
-      _users = users;
-      refreshUI();
-    };
-    
-    homePresenter.getActiveUsersOnComplete = () {
-      print('Active users retrieved');
-    };
-
-    // On error, show a snackbar, remove the user, and refresh the UI
-    homePresenter.getActiveUsersOnError = (e) {
-      print('Could not retrieve active users.');
-      ScaffoldState state = getState();
-      state.showSnackBar(SnackBar(content: Text(e.message)));
-      _users = null;
-      refreshUI();
-    };
-  }
-
   void initGetAvatarUrlListeners() {
     homePresenter.getAvatarUrlOnNext = (String url) {
       print('Get avatar url onNext');
@@ -172,8 +147,6 @@ class HomeController extends Controller {
       refreshUI();
     };
   }
-
-  void getActiveUsers() => homePresenter.getActiveUsers();
 
   void goToActiveDrinkers() {
     Navigator.of(getContext()).pushNamed(Pages.active_users);

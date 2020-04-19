@@ -3,7 +3,6 @@ import 'package:train_beers/src/app/pages/pages.dart';
 import 'package:train_beers/src/app/utils/constants.dart';
 import 'package:train_beers/src/domain/entities/user_entity.dart';
 import 'package:train_beers/src/domain/usecases/countdown_use_case.dart';
-import 'package:train_beers/src/domain/usecases/get_active_users_usecase.dart';
 import 'package:train_beers/src/domain/usecases/get_avatar_url_usecase.dart';
 import 'package:train_beers/src/domain/usecases/get_event_participants_usecase.%20copy.dart';
 import 'package:train_beers/src/domain/usecases/get_next_event_usecase..dart';
@@ -14,9 +13,6 @@ import 'package:train_beers/src/domain/usecases/update_user_usecase.dart';
 class HomePresenter extends Presenter {
   /// Members
   /// Use Case Functions
-  Function getActiveUsersOnNext;
-  Function getActiveUsersOnComplete;
-  Function getActiveUsersOnError;
   Function getAvatarUrlOnNext;
   Function getAvatarUrlOnComplete;
   Function getAvatarUrlOnError;
@@ -34,7 +30,6 @@ class HomePresenter extends Presenter {
   Function updateUserOnError;
 
   /// Use Case Objects
-  final GetActiveUsersUseCase getActiveUsersUseCase;
   final GetAvatarUrlUseCase getAvatarUrlUseCase;
   final GetEventParticipantsUseCase getEventParticipantsUseCase;
   final GetNextEventUseCase getNextEventUseCase;
@@ -44,7 +39,6 @@ class HomePresenter extends Presenter {
 
   /// Constructor
   HomePresenter(filesRepo, usersRepo, authRepo, eventsRepo, eventParticipantsRepo) :
-    getActiveUsersUseCase = GetActiveUsersUseCase(usersRepo),
     getAvatarUrlUseCase = GetAvatarUrlUseCase(filesRepo),
     getEventParticipantsUseCase = GetEventParticipantsUseCase(eventParticipantsRepo),
     getNextEventUseCase = GetNextEventUseCase(eventsRepo),
@@ -55,7 +49,6 @@ class HomePresenter extends Presenter {
   /// Overrides
   @override
   void dispose() {
-    getActiveUsersUseCase.dispose();
     getAvatarUrlUseCase.dispose();
     getEventParticipantsUseCase.dispose();
     getNextEventUseCase.dispose();
@@ -64,10 +57,6 @@ class HomePresenter extends Presenter {
   }
 
   /// Methods
-  void getActiveUsers() {
-    getActiveUsersUseCase.execute(_GetActiveUsersUseCaseObserver(this), null);
-  }
-
   void getAvatarDownloadUrl(String id, String path) {
     getAvatarUrlUseCase.execute(_GetAvatarUrlUseCaseObserver(this), GetAvatarUrlUseCaseParams(id, path));
   }
@@ -113,34 +102,6 @@ class HomePresenter extends Presenter {
 }
 
 /// Observer Classes
-
-/// An observer class for the [GetActiveUsersUseCase].
-class _GetActiveUsersUseCaseObserver extends Observer<GetActiveUsersUseCaseResponse> {
-  /// Members
-  final HomePresenter presenter;
-  
-  /// Constructor
-  _GetActiveUsersUseCaseObserver(this.presenter);
-  
-  /// Overrides
-  @override
-  void onComplete() {
-    assert(presenter.getActiveUsersOnComplete != null);
-    presenter.getActiveUsersOnComplete();
-  }
-
-  @override
-  void onError(e) {
-    assert(presenter.getActiveUsersOnError != null);
-    presenter.getActiveUsersOnError(e);
-  }
-
-  @override
-  void onNext(response) {
-    assert(presenter.getActiveUsersOnNext != null);
-    presenter.getActiveUsersOnNext(response.users);
-  }
-}
 
 /// An observer class for the [GetAvatarUrlUseCase].
 class _GetAvatarUrlUseCaseObserver extends Observer<GetAvatarUrlUseCaseResponse> {
