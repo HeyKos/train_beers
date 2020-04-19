@@ -158,7 +158,10 @@ class HomeController extends Controller {
 
   void getEventParticipants(String eventId) => homePresenter.getEventParticipants(eventId);
 
-  void getNextEvent() => homePresenter.getNextEvent();
+  /// Note: In order to allow this method to work with a [RefreshIndicator]
+  /// we have to make it a Future. The functionality is already async, 
+  /// but accomplishes it with an observer.
+  Future<void> getNextEvent() async => await homePresenter.getNextEvent();
 
   void logout() => homePresenter.logout();
 

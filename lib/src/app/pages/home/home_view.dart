@@ -54,13 +54,15 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
       ),
       body: Scaffold(
         key: globalKey, // built in global key for the ViewState for easy access in the controller
-        body: Container(
-          child: Column(
+        body: RefreshIndicator(
+          onRefresh: controller.getNextEvent,
+          child: ListView(
+            shrinkWrap: false,
             children: <Widget>[
               countdownWidget,
               drinkingStatusContainer,
               nextTrainBeerBuyer,
-              Text(controller.event != null ? controller.event.status : ""),
+              Center(child: Text(controller.event != null ? controller.event.status : "")),
               activeDrinkers,
             ],
           ),
