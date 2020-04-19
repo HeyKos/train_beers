@@ -40,6 +40,11 @@ class _ParticipantsPageState extends ViewState<ParticipantsPage, ParticipantsCon
   } 
 
   /// Methods
+  String getInitials(int index) {
+    if (controller.participants == null) return "";
+
+    return controller.participants[index].user.initials;
+  }
 
   /// Properties (Widgets)
   Widget participantsListView(BuildContext context) {
@@ -47,8 +52,7 @@ class _ParticipantsPageState extends ViewState<ParticipantsPage, ParticipantsCon
       itemCount: controller.participants != null ? controller.participants.length : 0,
       itemBuilder: (context, index) {
         var text = controller.participants != null ? controller.participants[index].user.name : "";
-        // TODO: This code is shit. Clean it up.
-        var initials = controller.participants != null ? controller.participants[index].user.name.split(" ")[0] + controller.participants[index].user.name.split(" ")[1] : "";
+        var initials = getInitials(index);
         var url =  controller.participants != null ? controller.participants[index].user.avatarUrl : "";
         return Card(
           child: ListTile(
@@ -64,6 +68,7 @@ class _ParticipantsPageState extends ViewState<ParticipantsPage, ParticipantsCon
               fallbackBuilder: (BuildContext context) {
                 return CircleAvatar(
                   backgroundColor: Colors.grey,
+                  foregroundColor: Colors.black,
                   child: Text (initials),
                 );
               }

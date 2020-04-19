@@ -149,7 +149,7 @@ class HomeController extends Controller {
   }
 
   void goToActiveDrinkers() {
-    Navigator.of(getContext()).pushReplacementNamed(Pages.participants, arguments: {
+    Navigator.of(getContext()).pushNamed(Pages.participants, arguments: {
       "participants": _participants,
     });
   }

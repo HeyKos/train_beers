@@ -13,24 +13,30 @@ class UserEntity extends BaseEntity {
   UserEntity(String id, this.avatarPath, this.isActive, this.name, this.purchasedOn, this.sequence, this.uid) : super(id);
 
   /// Properties
-  set userIsActive(bool value) {
-    this.isActive = value;
+  String get initials {
+    var nameParts =  name.toUpperCase().split(" ");
+    if (nameParts.length >= 2) {
+      return "${nameParts[0]} ${nameParts[1]}";
+    }
+    
+    return name.toUpperCase().substring(0, 1);
   }
 
-  /// Overrides
-  @override
-  String toString() => '$name';
-
-  /// Methods
-  String getActiveStatusMessage() {
+  String get statusMessage {
     if (this.isActive) {
       return "You're in for beers 🍻";
     }
 
     return "You're not drinking 😭";
   }
-  
-  String getWelcomeText() {
-    return "Hi there ${this.name}!";
+
+  set userIsActive(bool value) {
+    this.isActive = value;
   }
+  
+  String get welcomeText => "Hi there ${this.name}!";
+
+  /// Overrides
+  @override
+  String toString() => '$name';
 }

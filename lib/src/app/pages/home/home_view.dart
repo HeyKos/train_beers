@@ -72,7 +72,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
   /// Methods
   Widget drinkingStatusText(bool isActive) {
     return Text(
-      controller.user != null ? controller.user.getActiveStatusMessage() : "",
+      controller.user != null ? controller.user.statusMessage : "",
       textAlign: TextAlign.center,
       style: TextStyle(
         color: isActive ? Colors.black : Colors.white,
