@@ -13,6 +13,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:train_beers/src/data/repositories/firebase_users_repository.dart';
 import 'package:flutter_conditional_rendering/flutter_conditional_rendering.dart';
+import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
 class HomePage extends View {
   final String title;
@@ -30,7 +31,7 @@ class HomePage extends View {
   _HomePageState createState() => _HomePageState(user);
 }
 
-class _HomePageState extends ViewState<HomePage, HomeController> {
+class _HomePageState extends ViewState<HomePage, HomeController>{
   _HomePageState(user) : super(HomeController(
     FirebaseFilesRepository(),
     FirebaseUsersRepository(),
@@ -62,7 +63,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
               countdownWidget,
               drinkingStatusContainer,
               nextTrainBeerBuyer,
-              Center(child: Text(controller.event != null ? controller.event.status : "")),
+              eventProgress,
               activeDrinkers,
             ],
           ),
@@ -125,6 +126,57 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
     }
   );
 
+  Widget get eventProgress {
+    return Container(
+      margin: EdgeInsets.only(top: 20),
+      padding: EdgeInsets.only(left: 20, right: 20),
+      child: SleekCircularSlider(
+        appearance: CircularSliderAppearance(
+          customWidths: CustomSliderWidths(progressBarWidth: 10),
+          customColors: CustomSliderColors(
+            trackColor: Colors.grey,
+            progressBarColor: controller.eventProgressColor,
+            hideShadow: true,
+          ),
+        ),
+        innerWidget: (double curentValue) => Container(
+          margin: EdgeInsets.only(top: 25),
+          child: Column(
+            children: <Widget>[
+              nextTrainBeerBuyerAvatar,
+              Text(controller.eventProgressMessage)
+            ],
+          ),
+        ),
+        min: 0,
+        max: 100,
+        initialValue: controller.eventProgressPercent,
+      ),
+    );
+  }
+
+  Widget get nextTrainBeerBuyerAvatar {
+    return Center(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(75.0),
+        child: Conditional.single(
+          context: context,
+          conditionBuilder: (BuildContext context) => controller.avatarPath != null,
+          widgetBuilder: (BuildContext context) {
+            return CachedNetworkImage(
+              imageUrl: controller.avatarPath,
+              placeholder: (context, url) => CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Icon(Icons.error),
+              width: 100.0,
+              height: 100.0,
+            );
+          },
+          fallbackBuilder: (BuildContext context) => CircularProgressIndicator(),
+        ),
+      )
+    );
+  }
+
   Widget get nextTrainBeerBuyer {
     return Container(
       padding: new EdgeInsets.only(top: 20.0),
@@ -136,28 +188,6 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
             style: TextStyle(
               color: Colors.black,
               fontSize: 25.0,
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 20.0, bottom: 10.0),
-            child: Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(75.0),
-                child: Conditional.single(
-                  context: context,
-                  conditionBuilder: (BuildContext context) => controller.avatarPath != null,
-                  widgetBuilder: (BuildContext context) {
-                    return CachedNetworkImage(
-                      imageUrl: controller.avatarPath,
-                      placeholder: (context, url) => CircularProgressIndicator(),
-                      errorWidget: (context, url, error) => Icon(Icons.error),
-                      width: 100.0,
-                      height: 100.0,
-                    );
-                  },
-                  fallbackBuilder: (BuildContext context) => CircularProgressIndicator(),
-                ),
-              )
             ),
           ),
           Text(

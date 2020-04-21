@@ -10,6 +10,9 @@ class HomeController extends Controller {
   /// Members
   String _avatarPath;
   EventEntity _event;
+  Color _eventProgressColor = Colors.blue;
+  String _eventProgressMessage = "Buy Beer";
+  double _eventProgressPercent = 0;
   List<EventParticipantEntity> _participants;
   UserEntity _user;
   final HomePresenter homePresenter;
@@ -17,6 +20,9 @@ class HomeController extends Controller {
   /// Properties
   String get avatarPath => _avatarPath;
   EventEntity get event => _event;
+  Color get eventProgressColor => _eventProgressColor;
+  String get eventProgressMessage => _eventProgressMessage;
+  double get eventProgressPercent => _eventProgressPercent;
   List<EventParticipantEntity> get participants => _participants;
   UserEntity get user => _user;
 
@@ -69,7 +75,7 @@ class HomeController extends Controller {
   void initGetEventParticipantsListeners() {
     homePresenter.getEventParticipantsOnNext = (List<EventParticipantEntity> eventParticipants) {
       _participants = eventParticipants;
-      
+      setPercent();
       refreshUI();
     };
     homePresenter.getEventParticipantsOnComplete = () {
@@ -84,6 +90,24 @@ class HomeController extends Controller {
       refreshUI();
     };
   }
+
+  Future<void> setPercent() async {
+    while (_eventProgressPercent < 100) {
+      _eventProgressPercent++;
+      if (_eventProgressPercent < 33) {
+        _eventProgressMessage = "Buy Beer";
+      } 
+      else if (_eventProgressPercent < 100) {
+        _eventProgressMessage = "Bring Beer";
+      }
+      else {
+        _eventProgressMessage = "Drink Beer";
+        _eventProgressColor = Colors.green;
+      }
+      refreshUI();
+      await new Future.delayed(const Duration(milliseconds: 10));
+    }
+  }
   
   void initGetNextEventListeners() {
     homePresenter.getNextEventOnNext = (EventEntity event) {
@@ -93,7 +117,6 @@ class HomeController extends Controller {
       }
 
       getEventParticipants(_event.id);
-      
       refreshUI();
     };
     homePresenter.getNextEventOnComplete = () {
