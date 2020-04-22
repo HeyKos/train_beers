@@ -1,21 +1,24 @@
-import 'package:train_beers/src/app/pages/pages.dart';
-import './splash_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
-import 'package:train_beers/src/domain/entities/user_entity.dart';
+
+import '../../../domain/entities/user_entity.dart';
+import '../pages.dart';
+import './splash_presenter.dart';
 
 class SplashController extends Controller {
   final SplashPresenter splashPresenter;
 
   // Presenter should always be initialized this way
-  SplashController(userRepo, uid) : splashPresenter = SplashPresenter(userRepo, uid), super() {
+  SplashController(userRepo, uid)
+      : splashPresenter = SplashPresenter(userRepo, uid),
+        super() {
     getUserbyUid(uid);
   }
 
   @override
   void initListeners() {
-    splashPresenter.getUserByUidOnNext = (UserEntity user) async {
-      await new Future.delayed(const Duration(seconds: 5));
+    splashPresenter.getUserByUidOnNext = (user) async {
+      await Future.delayed(const Duration(seconds: 5));
       goHome(user);
     };
 
@@ -35,10 +38,8 @@ class SplashController extends Controller {
   }
 
   void goHome(UserEntity user) {
-    Navigator.of(getContext()).pushReplacementNamed(Pages.home, arguments: {
-      "key": "Home",
-      "user": user
-    });
+    Navigator.of(getContext()).pushReplacementNamed(Pages.home,
+        arguments: {"key": "Home", "user": user});
   }
 
   @override

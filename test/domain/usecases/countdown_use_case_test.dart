@@ -12,7 +12,7 @@ void main() {
       final useCase = CountdownUseCase(clock: mockClock);
 
       // Act
-      bool result = useCase.shouldDisplayCountdown();
+      var result = useCase.shouldDisplayCountdown();
 
       // Assert
       expect(result, true);
@@ -25,7 +25,7 @@ void main() {
       final useCase = CountdownUseCase(clock: mockClock);
 
       // Act
-      bool result = useCase.shouldDisplayCountdown();
+      var result = useCase.shouldDisplayCountdown();
 
       // Assert
       expect(result, true);
@@ -38,7 +38,7 @@ void main() {
       final useCase = CountdownUseCase(clock: mockClock);
 
       // Act
-      bool result = useCase.shouldDisplayCountdown();
+      var result = useCase.shouldDisplayCountdown();
 
       // Assert
       expect(result, true);
@@ -51,72 +51,77 @@ void main() {
       final useCase = CountdownUseCase(clock: mockClock);
 
       // Act
-      bool result = useCase.shouldDisplayCountdown();
+      var result = useCase.shouldDisplayCountdown();
 
       // Assert
       expect(result, true);
     });
 
-    test('Should return true when day of week is Friday AND time is earlier than 4:00 PM', () {
+    test('''Should return true when day of week is Friday AND time is earlier
+    than 4:00 PM''', () {
       // Arrange
       final mockClock = Clock.fixed(DateTime(2020, 3, 27, 15, 59));
 
       final useCase = CountdownUseCase(clock: mockClock);
 
       // Act
-      bool result = useCase.shouldDisplayCountdown();
+      var result = useCase.shouldDisplayCountdown();
 
       // Assert
       expect(result, true);
     });
 
-    test('Should return true when day of week is Friday AND time is later than 5:00 PM', () {
+    test('''Should return true when day of week is Friday AND time is later
+    than 5:00 PM''', () {
       // Arrange
       final mockClock = Clock.fixed(DateTime(2020, 3, 27, 17, 1));
 
       final useCase = CountdownUseCase(clock: mockClock);
 
       // Act
-      bool result = useCase.shouldDisplayCountdown();
+      var result = useCase.shouldDisplayCountdown();
 
       // Assert
       expect(result, true);
     });
 
-    test('Should return false when day of week is Friday AND time is 4:00 PM', () {
+    test('Should return false when day of week is Friday AND time is 4:00 PM',
+        () {
       // Arrange
       final mockClock = Clock.fixed(DateTime(2020, 3, 27, 16, 0));
 
       final useCase = CountdownUseCase(clock: mockClock);
 
       // Act
-      bool result = useCase.shouldDisplayCountdown();
+      var result = useCase.shouldDisplayCountdown();
 
       // Assert
       expect(result, false);
     });
 
-    test('Should return false when day of week is Friday AND time is 5:00 PM', () {
+    test('Should return false when day of week is Friday AND time is 5:00 PM',
+        () {
       // Arrange
       final mockClock = Clock.fixed(DateTime(2020, 3, 27, 17, 0));
 
       final useCase = CountdownUseCase(clock: mockClock);
 
       // Act
-      bool result = useCase.shouldDisplayCountdown();
+      var result = useCase.shouldDisplayCountdown();
 
       // Assert
       expect(result, false);
     });
 
-    test('Should return false when day of week is Friday AND time is between 4:00 PM and 5:00 PM', () {
+    test('''Should return false when day of week is Friday AND time is between
+    4:00 PM and 5:00 PM''', () {
       // Arrange
       final mockClock = Clock.fixed(DateTime(2020, 3, 27, 16, 30));
 
       final useCase = CountdownUseCase(clock: mockClock);
 
       // Act
-      bool result = useCase.shouldDisplayCountdown();
+      var result = useCase.shouldDisplayCountdown();
 
       // Assert
       expect(result, false);

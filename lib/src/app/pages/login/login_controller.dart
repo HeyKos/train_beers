@@ -1,8 +1,8 @@
-import 'package:train_beers/src/app/pages/pages.dart';
-
-import './login_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
+
+import '../pages.dart';
+import './login_presenter.dart';
 
 class LoginController extends Controller {
   // Text Field controllers
@@ -14,7 +14,9 @@ class LoginController extends Controller {
   String _userIdentifier;
   String get userIdentifier => _userIdentifier;
   // Presenter should always be initialized this way
-  LoginController(loginRepo) : loginPresenter = LoginPresenter(loginRepo), super() {
+  LoginController(loginRepo)
+      : loginPresenter = LoginPresenter(loginRepo),
+        super() {
     emailTextController = TextEditingController();
     passwordTextController = TextEditingController();
   }
@@ -22,14 +24,13 @@ class LoginController extends Controller {
   // this is called automatically by the parent class
   @override
   void initListeners() {
-    loginPresenter.loginOnNext = (bool success, String userIdentifier) {
+    loginPresenter.loginOnNext = (success, userIdentifier) {
       _success = success;
       _userIdentifier = userIdentifier;
     };
     loginPresenter.loginOnComplete = () {
-      Navigator.of(getContext()).pushReplacementNamed(Pages.splash, arguments: {
-        "uid": _userIdentifier
-      });
+      Navigator.of(getContext()).pushReplacementNamed(Pages.splash,
+          arguments: {"uid": _userIdentifier});
     };
 
     // On error, show a snackbar, remove the user, and refresh the UI

@@ -1,6 +1,11 @@
-import 'package:train_beers/src/domain/entities/base_entity.dart';
+import 'base_entity.dart';
 
 class UserEntity extends BaseEntity {
+  UserEntity(String id, this.avatarPath, this.name, this.purchasedOn,
+      this.sequence, this.uid,
+      {this.isActive = false})
+      : super(id);
+
   /// Members
   String avatarPath;
   bool isActive;
@@ -10,31 +15,27 @@ class UserEntity extends BaseEntity {
   String uid;
   String avatarUrl;
 
-  UserEntity(String id, this.avatarPath, this.isActive, this.name, this.purchasedOn, this.sequence, this.uid) : super(id);
-
   /// Properties
   String get initials {
-    var nameParts =  name.toUpperCase().split(" ");
+    final nameParts = name.toUpperCase().split(' ');
     if (nameParts.length >= 2) {
-      return "${nameParts[0]} ${nameParts[1]}";
+      var firstInitial = nameParts[0].substring(0, 1);
+      var lastInitial = nameParts[1].substring(0, 1);
+      return '$firstInitial $lastInitial';
     }
-    
+
     return name.toUpperCase().substring(0, 1);
   }
 
   String get statusMessage {
-    if (this.isActive) {
+    if (isActive) {
       return "You're in for beers 🍻";
     }
 
     return "You're not drinking 😭";
   }
 
-  set userIsActive(bool value) {
-    this.isActive = value;
-  }
-  
-  String get welcomeText => "Hi there ${this.name}!";
+  String get welcomeText => 'Hi there $name!';
 
   /// Overrides
   @override

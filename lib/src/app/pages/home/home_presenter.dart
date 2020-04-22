@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:train_beers/src/app/pages/pages.dart';
-import 'package:train_beers/src/app/utils/constants.dart';
-import 'package:train_beers/src/domain/entities/user_entity.dart';
-import 'package:train_beers/src/domain/usecases/countdown_use_case.dart';
-import 'package:train_beers/src/domain/usecases/get_avatar_url_usecase.dart';
-import 'package:train_beers/src/domain/usecases/get_event_participants_usecase.%20copy.dart';
-import 'package:train_beers/src/domain/usecases/get_next_event_usecase..dart';
-import 'package:train_beers/src/domain/usecases/logout_usecase.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
-import 'package:train_beers/src/domain/usecases/update_user_usecase.dart';
+
+import '../../../domain/entities/user_entity.dart';
+import '../../../domain/usecases/countdown_use_case.dart';
+import '../../../domain/usecases/get_avatar_url_usecase.dart';
+import '../../../domain/usecases/get_event_participants_usecase.%20copy.dart';
+import '../../../domain/usecases/get_next_event_usecase.dart';
+import '../../../domain/usecases/logout_usecase.dart';
+import '../../../domain/usecases/update_user_usecase.dart';
+import '../../utils/constants.dart';
+import '../pages.dart';
 
 class HomePresenter extends Presenter {
   /// Members
@@ -38,13 +39,15 @@ class HomePresenter extends Presenter {
   final CountdownUseCase countdownUseCase;
 
   /// Constructor
-  HomePresenter(filesRepo, usersRepo, authRepo, eventsRepo, eventParticipantsRepo) :
-    getAvatarUrlUseCase = GetAvatarUrlUseCase(filesRepo),
-    getEventParticipantsUseCase = GetEventParticipantsUseCase(eventParticipantsRepo),
-    getNextEventUseCase = GetNextEventUseCase(eventsRepo),
-    logoutUseCase = LogoutUseCase(authRepo),
-    updateUserUseCase = UpdateUserUseCase(usersRepo),
-    countdownUseCase = CountdownUseCase();
+  HomePresenter(
+      filesRepo, usersRepo, authRepo, eventsRepo, eventParticipantsRepo)
+      : getAvatarUrlUseCase = GetAvatarUrlUseCase(filesRepo),
+        getEventParticipantsUseCase =
+            GetEventParticipantsUseCase(eventParticipantsRepo),
+        getNextEventUseCase = GetNextEventUseCase(eventsRepo),
+        logoutUseCase = LogoutUseCase(authRepo),
+        updateUserUseCase = UpdateUserUseCase(usersRepo),
+        countdownUseCase = CountdownUseCase();
 
   /// Overrides
   @override
@@ -58,13 +61,16 @@ class HomePresenter extends Presenter {
 
   /// Methods
   void getAvatarDownloadUrl(String id, String path) {
-    getAvatarUrlUseCase.execute(_GetAvatarUrlUseCaseObserver(this), GetAvatarUrlUseCaseParams(id, path));
+    getAvatarUrlUseCase.execute(_GetAvatarUrlUseCaseObserver(this),
+        GetAvatarUrlUseCaseParams(id, path));
   }
 
   void getEventParticipants(String eventId) {
-    getEventParticipantsUseCase.execute(_GetEventParticipantsUseCaseObserver(this), GetEventParticipantsUseCaseParams(eventId));
+    getEventParticipantsUseCase.execute(
+        _GetEventParticipantsUseCaseObserver(this),
+        GetEventParticipantsUseCaseParams(eventId));
   }
-  
+
   void getNextEvent() {
     getNextEventUseCase.execute(_GetNextEventUseCaseObserver(this), null);
   }
@@ -74,26 +80,25 @@ class HomePresenter extends Presenter {
   }
 
   void updateUser(UserEntity user) {
-    updateUserUseCase.execute(_UpdateUserUseCaseObserver(this), UpdateUserUseCaseParams(user));
+    updateUserUseCase.execute(
+        _UpdateUserUseCaseObserver(this), UpdateUserUseCaseParams(user));
   }
 
   void goToProfile(UserEntity user, BuildContext context) {
-    Navigator.pushNamed(context, Pages.profile, arguments: {
-      "user": user
-    });
+    Navigator.pushNamed(context, Pages.profile, arguments: {"user": user});
   }
 
   bool shouldDisplayCountdown() => countdownUseCase.shouldDisplayCountdown();
 
   void onMenuOptionChange(String value, UserEntity user, BuildContext context) {
-    switch(value) {
-      case Constants.PROFILE:
+    switch (value) {
+      case Constants.profile:
         goToProfile(user, context);
         break;
-      case Constants.SETTINGS:
+      case Constants.settings:
         print("Tapped Settings");
         break;
-      case Constants.SIGN_OUT:
+      case Constants.signOut:
       default:
         logout();
         break;
@@ -104,13 +109,14 @@ class HomePresenter extends Presenter {
 /// Observer Classes
 
 /// An observer class for the [GetAvatarUrlUseCase].
-class _GetAvatarUrlUseCaseObserver extends Observer<GetAvatarUrlUseCaseResponse> {
+class _GetAvatarUrlUseCaseObserver
+    extends Observer<GetAvatarUrlUseCaseResponse> {
   /// Members
   final HomePresenter presenter;
-  
+
   /// Constructor
   _GetAvatarUrlUseCaseObserver(this.presenter);
-  
+
   /// Overrides
   @override
   void onComplete() {
@@ -119,26 +125,27 @@ class _GetAvatarUrlUseCaseObserver extends Observer<GetAvatarUrlUseCaseResponse>
   }
 
   @override
-  void onError(e) {
+  void onError(dynamic e) {
     assert(presenter.getAvatarUrlOnError != null);
     presenter.getAvatarUrlOnError(e);
   }
 
   @override
-  void onNext(response) {
+  void onNext(GetAvatarUrlUseCaseResponse response) {
     assert(presenter.getAvatarUrlOnNext != null);
     presenter.getAvatarUrlOnNext(response.url);
   }
 }
 
 /// An observer class for the [GetEventParticipantsUseCase].
-class _GetEventParticipantsUseCaseObserver extends Observer<GetEventParticipantsUseCaseResponse> {
+class _GetEventParticipantsUseCaseObserver
+    extends Observer<GetEventParticipantsUseCaseResponse> {
   /// Members
   final HomePresenter presenter;
-  
+
   /// Constructor
   _GetEventParticipantsUseCaseObserver(this.presenter);
-  
+
   /// Overrides
   @override
   void onComplete() {
@@ -147,26 +154,27 @@ class _GetEventParticipantsUseCaseObserver extends Observer<GetEventParticipants
   }
 
   @override
-  void onError(e) {
+  void onError(dynamic e) {
     assert(presenter.getEventParticipantsOnError != null);
     presenter.getEventParticipantsOnError(e);
   }
 
   @override
-  void onNext(response) {
+  void onNext(GetEventParticipantsUseCaseResponse response) {
     assert(presenter.getEventParticipantsOnNext != null);
     presenter.getEventParticipantsOnNext(response.eventParticipants);
   }
 }
 
 /// An observer class for the [GetNextEventUseCase].
-class _GetNextEventUseCaseObserver extends Observer<GetNextEventUseCaseResponse> {
+class _GetNextEventUseCaseObserver
+    extends Observer<GetNextEventUseCaseResponse> {
   /// Members
   final HomePresenter presenter;
-  
+
   /// Constructor
   _GetNextEventUseCaseObserver(this.presenter);
-  
+
   /// Overrides
   @override
   void onComplete() {
@@ -175,13 +183,13 @@ class _GetNextEventUseCaseObserver extends Observer<GetNextEventUseCaseResponse>
   }
 
   @override
-  void onError(e) {
+  void onError(dynamic e) {
     assert(presenter.getNextEventOnError != null);
     presenter.getNextEventOnError(e);
   }
 
   @override
-  void onNext(response) {
+  void onNext(GetNextEventUseCaseResponse response) {
     assert(presenter.getNextEventOnNext != null);
     presenter.getNextEventOnNext(response.event);
   }
@@ -194,7 +202,7 @@ class _LogoutUseCaseObserver extends Observer<void> {
 
   /// Constructor
   _LogoutUseCaseObserver(this.presenter);
-  
+
   /// Overrides
   @override
   void onComplete() {
@@ -203,13 +211,13 @@ class _LogoutUseCaseObserver extends Observer<void> {
   }
 
   @override
-  void onError(e) {
+  void onError(dynamic e) {
     assert(presenter.logoutOnError != null);
     presenter.logoutOnError(e);
   }
 
   @override
-  void onNext(response) {
+  void onNext(void response) {
     assert(presenter.logoutOnNext != null);
     presenter.logoutOnNext();
   }
@@ -219,10 +227,10 @@ class _LogoutUseCaseObserver extends Observer<void> {
 class _UpdateUserUseCaseObserver extends Observer<UpdateUserUseCaseResponse> {
   /// Members
   final HomePresenter presenter;
-  
+
   /// Constructor
   _UpdateUserUseCaseObserver(this.presenter);
-  
+
   /// Overrides
   @override
   void onComplete() {
@@ -231,13 +239,13 @@ class _UpdateUserUseCaseObserver extends Observer<UpdateUserUseCaseResponse> {
   }
 
   @override
-  void onError(e) {
+  void onError(dynamic e) {
     assert(presenter.updateUserOnError != null);
     presenter.updateUserOnError(e);
   }
 
   @override
-  void onNext(response) {
+  void onNext(UpdateUserUseCaseResponse response) {
     assert(presenter.updateUserOnNext != null);
     presenter.updateUserOnNext(response.user);
   }

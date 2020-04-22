@@ -1,12 +1,33 @@
-import 'package:train_beers/src/app/pages/pages.dart';
-import 'package:train_beers/src/domain/entities/event_entity.dart';
-import 'package:train_beers/src/domain/entities/event_participant_entity.dart';
-import 'package:train_beers/src/domain/entities/user_entity.dart';
-import './home_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 
+import '../../../domain/entities/event_entity.dart';
+import '../../../domain/entities/event_participant_entity.dart';
+import '../../../domain/entities/user_entity.dart';
+import '../../../domain/repositories/authentication_repository.dart';
+import '../../../domain/repositories/event_participants_repository.dart';
+import '../../../domain/repositories/events_repository.dart';
+import '../../../domain/repositories/files_repository.dart';
+import '../../../domain/repositories/users_repository.dart';
+import '../pages.dart';
+import './home_presenter.dart';
+
 class HomeController extends Controller {
+  // Constructor
+  HomeController(
+      FilesRepository filesRepo,
+      UsersRepository usersRepo,
+      AuthenticationRepository authRepo,
+      EventsRepository eventsRepo,
+      EventParticipantsRepository eventParticipantsRepo,
+      UserEntity user)
+      : homePresenter = HomePresenter(
+            filesRepo, usersRepo, authRepo, eventsRepo, eventParticipantsRepo),
+        _user = user,
+        super() {
+    getNextEvent();
+  }
+
   /// Members
   String _avatarPath;
   EventEntity _event;
@@ -16,7 +37,7 @@ class HomeController extends Controller {
   List<EventParticipantEntity> _participants;
   UserEntity _user;
   final HomePresenter homePresenter;
-  
+
   /// Properties
   String get avatarPath => _avatarPath;
   EventEntity get event => _event;
@@ -26,17 +47,8 @@ class HomeController extends Controller {
   List<EventParticipantEntity> get participants => _participants;
   UserEntity get user => _user;
 
-  // Constructor
-  HomeController(filesRepo, usersRepo, authRepo, eventsRepo, eventParticipantsRepo, UserEntity user) :
-    homePresenter = HomePresenter(filesRepo, usersRepo, authRepo, eventsRepo, eventParticipantsRepo),
-    _user = user,
-    super() {
-      getNextEvent();
-    }
-
   /// Overrides
   @override
-  // this is called automatically by the parent class
   void initListeners() {
     initGetAvatarUrlListeners();
     initGetEventParticipantsListeners();
@@ -53,7 +65,7 @@ class HomeController extends Controller {
 
   /// Methods
   void initGetAvatarUrlListeners() {
-    homePresenter.getAvatarUrlOnNext = (String url) {
+    homePresenter.getAvatarUrlOnNext = (url) {
       print('Get avatar url onNext');
       _avatarPath = url;
       refreshUI();
@@ -64,18 +76,18 @@ class HomeController extends Controller {
     };
 
     // On error, show a snackbar, remove the user, and refresh the UI
-    homePresenter.getAvatarUrlOnError = (e) {
+    homePresenter.getAvatarUrlOnError = (dynamic e) {
       print('Could not get avatar url.');
-      ScaffoldState state = getState();
-      state.showSnackBar(SnackBar(content: Text(e.message)));
+      final ScaffoldState state = getState();
+      state.showSnackBar(SnackBar(content: Text(e.message.toString())));
       refreshUI(); // Refreshes the UI manually
     };
   }
 
   void initGetEventParticipantsListeners() {
-    homePresenter.getEventParticipantsOnNext = (List<EventParticipantEntity> eventParticipants) {
+    homePresenter.getEventParticipantsOnNext = (eventParticipants) {
       _participants = eventParticipants;
-      setPercent();
+      setPercent;
       refreshUI();
     };
     homePresenter.getEventParticipantsOnComplete = () {
@@ -83,34 +95,32 @@ class HomeController extends Controller {
     };
 
     // On error, show a snackbar, and refresh the UI
-    homePresenter.getEventParticipantsOnError = (e) {
+    homePresenter.getEventParticipantsOnError = (dynamic e) {
       print('Could not retrieve event participants.');
-      ScaffoldState state = getState();
-      state.showSnackBar(SnackBar(content: Text(e.message)));
+      final ScaffoldState state = getState();
+      state.showSnackBar(SnackBar(content: Text(e.message.toString())));
       refreshUI();
     };
   }
 
-  Future<void> setPercent() async {
+  Future<void> get setPercent async {
     while (_eventProgressPercent < 100) {
       _eventProgressPercent++;
       if (_eventProgressPercent < 33) {
-        _eventProgressMessage = "Buy Beer";
-      } 
-      else if (_eventProgressPercent < 100) {
-        _eventProgressMessage = "Bring Beer";
-      }
-      else {
-        _eventProgressMessage = "Drink Beer";
+        _eventProgressMessage = 'Buy Beer';
+      } else if (_eventProgressPercent < 100) {
+        _eventProgressMessage = 'Bring Beer';
+      } else {
+        _eventProgressMessage = 'Drink Beer';
         _eventProgressColor = Colors.green;
       }
       refreshUI();
-      await new Future.delayed(const Duration(milliseconds: 10));
+      await Future<dynamic>.delayed(const Duration(milliseconds: 10));
     }
   }
-  
+
   void initGetNextEventListeners() {
-    homePresenter.getNextEventOnNext = (EventEntity event) {
+    homePresenter.getNextEventOnNext = (event) {
       _event = event;
       if (_event.hostUser != null) {
         getAvatarDownloadUrl(_event.hostUser.id, _event.hostUser.avatarPath);
@@ -126,7 +136,7 @@ class HomeController extends Controller {
     // On error, show a snackbar, and refresh the UI
     homePresenter.getNextEventOnError = (e) {
       print('Could not retrieve next event.');
-      ScaffoldState state = getState();
+      final ScaffoldState state = getState();
       state.showSnackBar(SnackBar(content: Text(e.message)));
       refreshUI();
     };
@@ -139,20 +149,21 @@ class HomeController extends Controller {
 
     homePresenter.logoutOnComplete = () {
       // Take the user to the login page, and pop all existing routes.
-      Navigator.of(getContext()).pushNamedAndRemoveUntil(Pages.login, ModalRoute.withName(Pages.login));
+      var route = ModalRoute.withName(Pages.login);
+      Navigator.of(getContext()).pushNamedAndRemoveUntil(Pages.login, route);
     };
 
     // On error, show a snackbar, remove the user, and refresh the UI
     homePresenter.logoutOnError = (e) {
       print('Could not logout user.');
-      ScaffoldState state = getState();
+      final ScaffoldState state = getState();
       state.showSnackBar(SnackBar(content: Text(e.message)));
       refreshUI();
     };
   }
 
   void initUpdateUserListeners() {
-    homePresenter.updateUserOnNext = (UserEntity user) {
+    homePresenter.updateUserOnNext = (user) {
       print('Update user onNext');
       _user = user;
       refreshUI();
@@ -165,7 +176,7 @@ class HomeController extends Controller {
     // On error, show a snackbar, remove the user, and refresh the UI
     homePresenter.updateUserOnError = (e) {
       print('Could not update user.');
-      ScaffoldState state = getState();
+      final ScaffoldState state = getState();
       state.showSnackBar(SnackBar(content: Text(e.message)));
       refreshUI();
     };
@@ -177,12 +188,16 @@ class HomeController extends Controller {
     });
   }
 
-  void getAvatarDownloadUrl(String id, String path) => homePresenter.getAvatarDownloadUrl(id, path);
+  void getAvatarDownloadUrl(String id, String path) {
+    homePresenter.getAvatarDownloadUrl(id, path);
+  }
 
-  void getEventParticipants(String eventId) => homePresenter.getEventParticipants(eventId);
+  void getEventParticipants(String eventId) {
+    homePresenter.getEventParticipants(eventId);
+  }
 
   /// Note: In order to allow this method to work with a [RefreshIndicator]
-  /// we have to make it a Future. The functionality is already async, 
+  /// we have to make it a Future. The functionality is already async,
   /// but accomplishes it with an observer.
   Future<void> getNextEvent() async => await homePresenter.getNextEvent();
 
@@ -192,5 +207,7 @@ class HomeController extends Controller {
 
   bool shouldDisplayCountdown() => homePresenter.shouldDisplayCountdown();
 
-  void onMenuOptionChange(String value) => homePresenter.onMenuOptionChange(value, _user, getContext());
+  void onMenuOptionChange(String value) {
+    homePresenter.onMenuOptionChange(value, _user, getContext());
+  }
 }

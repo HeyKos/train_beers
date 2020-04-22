@@ -1,24 +1,27 @@
 import 'dart:async';
-import 'package:train_beers/src/domain/entities/user_entity.dart';
-import '../repositories/users_repository.dart';
+
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
+
+import '../entities/user_entity.dart';
+import '../repositories/users_repository.dart';
 
 class GetNextUserUseCase extends UseCase<GetNextUserUseCaseResponse, void> {
   final UsersRepository usersRepository;
   GetNextUserUseCase(this.usersRepository);
 
   @override
-  Future<Stream<GetNextUserUseCaseResponse>> buildUseCaseStream(void params) async {
-    final StreamController<GetNextUserUseCaseResponse> controller = StreamController();
+  Future<Stream<GetNextUserUseCaseResponse>> buildUseCaseStream(
+      void params) async {
+    final controller = StreamController<GetNextUserUseCaseResponse>();
+
     try {
-      UserEntity user = await usersRepository.getLongestSincePurchased().first;
-      
+      var user = await usersRepository.getLongestSincePurchased().first;
+
       controller.add(GetNextUserUseCaseResponse(user));
       logger.finest('GetNextUserUseCase successful.');
       controller.close();
-    } catch (e) {
+    } on Exception catch (e) {
       logger.severe('GetNextUserUseCase unsuccessful.');
-      // Trigger .onError
       controller.addError(e);
     }
     return controller.stream;

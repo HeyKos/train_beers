@@ -1,9 +1,10 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
-import 'package:train_beers/src/app/pages/splash/splash_controller.dart';
-import 'package:train_beers/src/data/repositories/firebase_users_repository.dart';
-import 'package:animated_text_kit/animated_text_kit.dart';
+
+import '../../../data/repositories/firebase_users_repository.dart';
+import 'splash_controller.dart';
 
 class SplashPage extends View {
   final String uid;
@@ -16,16 +17,18 @@ class SplashPage extends View {
   }) : super(key: key);
 
   @override
-  _SplashPageState createState() => _SplashPageState(this.uid);
+  _SplashPageState createState() => _SplashPageState(uid);
 }
 
 class _SplashPageState extends ViewState<SplashPage, SplashController> {
-  _SplashPageState(String uid) : super(SplashController(FirebaseUsersRepository(), uid));
+  _SplashPageState(String uid) : super(
+    SplashController(FirebaseUsersRepository(), uid)
+  );
   
   @override
   Widget buildPage() {  
     return Scaffold(
-      key: globalKey, // built in global key for the ViewState for easy access in the controller,
+      key: globalKey,
       body: Container(
         color: Colors.grey,
         child: Column(

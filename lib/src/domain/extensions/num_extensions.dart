@@ -1,8 +1,8 @@
 extension StringFormatting on num {
   String toTwoDigitString() {
     if (this >= 10) {
-      return "$this";
+      return '$this';
     }
-    return "0$this";
+    return '0$this';
   }
 }

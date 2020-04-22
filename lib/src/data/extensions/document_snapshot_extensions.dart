@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:train_beers/src/data/validators/document_snapshot_validator.dart';
-import 'package:train_beers/src/domain/entities/event_entity.dart';
-import 'package:train_beers/src/domain/entities/event_participant_entity.dart';
-import 'package:train_beers/src/domain/entities/user_entity.dart';
+
+import '../../domain/entities/event_entity.dart';
+import '../../domain/entities/event_participant_entity.dart';
+import '../../domain/entities/user_entity.dart';
+import '../validators/document_snapshot_validator.dart';
 
 extension Extensions on DocumentSnapshot {
   Future<EventEntity> toEvent(String docPath) async {
@@ -11,35 +12,52 @@ extension Extensions on DocumentSnapshot {
       return null;
     }
 
-    Timestamp date = this.data['date'] as Timestamp;
-    DocumentReference userRef = this.data['hostUser'] as DocumentReference;
-    UserEntity hostUser = await userRef.get()
-      .then((DocumentSnapshot snapshot) => snapshot.toUser(userRef.path));
+    var date = data['date'] as Timestamp;
+    var userRef = data['hostUser'] as DocumentReference;
 
-    return EventEntity (
-      this.documentID,
+    var hostUser = await userRef
+        .get()
+        // Ignore linting to support extension method on DocumentSnapshot.
+        // ignore: avoid_types_on_closure_parameters
+        .then((DocumentSnapshot snapshot) => snapshot.toUser(userRef.path));
+
+    return EventEntity(
+      documentID,
       date != null ? date.toDate() : null,
       hostUser,
-      this.data['status'],
+      data['status'],
     );
   }
 
   Future<EventParticipantEntity> toEventParticipant(String docPath) async {
     // Check if we are working with an event document
-    if (!DocumentSnapshotValidator.isDocumentOfType(this, "event_participants", docPath)) {
+    var isEventParticipantDoc = DocumentSnapshotValidator.isDocumentOfType(
+        this, "event_participants", docPath);
+
+    if (!isEventParticipantDoc) {
       return null;
     }
 
-    DocumentReference userRef = this.data['user'] as DocumentReference;
-    UserEntity hostUser = await userRef.get()
-      .then((DocumentSnapshot snapshot) => snapshot.toUser(userRef.path));
-    
-    DocumentReference eventRef = this.data['event'] as DocumentReference;
-    EventEntity event = await eventRef.get()
-      .then((DocumentSnapshot snapshot) => snapshot.toEvent(eventRef.path));
+    var userRef = data['user'] as DocumentReference;
+    var hostUser = await userRef
+        .get()
+        // Ignore linting to support extension method on DocumentSnapshot.
+        // ignore: avoid_types_on_closure_parameters
+        .then((DocumentSnapshot snapshot) => snapshot.toUser(userRef.path));
 
-    return EventParticipantEntity (
-      this.documentID,
+    var eventRef = data['event'] as DocumentReference;
+    var event = await eventRef
+        .get()
+        // Ignore linting to support extension method on DocumentSnapshot.
+        // ignore: avoid_types_on_closure_parameters
+        .then((DocumentSnapshot snapshot) => snapshot.toEvent(eventRef.path));
+
+    if (event == null) {
+      return null;
+    }
+
+    return EventParticipantEntity(
+      documentID,
       event.id,
       hostUser,
     );
@@ -51,16 +69,16 @@ extension Extensions on DocumentSnapshot {
       return null;
     }
 
-    Timestamp purchasedOn = this.data['purchasedOn'] as Timestamp;
+    var purchasedOn = data['purchasedOn'] as Timestamp;
 
-    return UserEntity (
-      this.documentID,
-      this.data['avatarPath'],
-      this.data['isActive'],
-      this.data['name'],
+    return UserEntity(
+      documentID,
+      data['avatarPath'],
+      data['name'],
       purchasedOn != null ? purchasedOn.toDate() : null,
-      this.data['sequence'],
-      this.data['uid'],
+      data['sequence'],
+      data['uid'],
+      isActive: data['isActive'],
     );
   }
 }

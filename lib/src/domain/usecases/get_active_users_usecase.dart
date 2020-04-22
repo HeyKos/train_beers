@@ -1,24 +1,28 @@
 import 'dart:async';
-import 'package:train_beers/src/domain/entities/user_entity.dart';
-import '../repositories/users_repository.dart';
+
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 
-class GetActiveUsersUseCase extends UseCase<GetActiveUsersUseCaseResponse, void> {
+import '../entities/user_entity.dart';
+import '../repositories/users_repository.dart';
+
+class GetActiveUsersUseCase
+    extends UseCase<GetActiveUsersUseCaseResponse, void> {
   final UsersRepository usersRepository;
   GetActiveUsersUseCase(this.usersRepository);
 
   @override
-  Future<Stream<GetActiveUsersUseCaseResponse>> buildUseCaseStream(void params) async {
-    final StreamController<GetActiveUsersUseCaseResponse> controller = StreamController();
+  Future<Stream<GetActiveUsersUseCaseResponse>> buildUseCaseStream(
+      void params) async {
+    final controller = StreamController<GetActiveUsersUseCaseResponse>();
+    
     try {
       List<UserEntity> users;
       users = await usersRepository.getActiveUsers().first;
       controller.add(GetActiveUsersUseCaseResponse(users));
       logger.finest('GetActiveUsersUseCase successful.');
       controller.close();
-    } catch (e) {
+    } on Exception catch (e) {
       logger.severe('GetActiveUsersUseCase unsuccessful.');
-      // Trigger .onError
       controller.addError(e);
     }
     return controller.stream;

@@ -1,23 +1,24 @@
-import 'package:train_beers/src/domain/entities/event_participant_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
+
+import '../../../domain/entities/event_participant_entity.dart';
 import 'participants_presenter.dart';
 
 class ParticipantsController extends Controller {
   /// Members
-  List<EventParticipantEntity> _participants;
+  final List<EventParticipantEntity> _participants;
   final ParticipantsPresenter participantsPresenter;
-  
+
   /// Properties
   List<EventParticipantEntity> get participants => _participants;
 
   // Constructor
-  ParticipantsController(filesRepo, usersRepo, List<EventParticipantEntity> participants) :
-    participantsPresenter = ParticipantsPresenter(filesRepo, usersRepo),
-    _participants = participants,
-    super() {
-      loadAvatars();
-    }
+  ParticipantsController(filesRepo, usersRepo, participants)
+      : participantsPresenter = ParticipantsPresenter(filesRepo, usersRepo),
+        _participants = participants,
+        super() {
+    loadAvatars();
+  }
 
   /// Overrides
   @override
@@ -34,18 +35,20 @@ class ParticipantsController extends Controller {
 
   /// Methods
   void loadAvatars() {
-    _participants.forEach((participant) {
+    for (var participant in _participants) {
       getAvatarDownloadUrl(participant.user.id, participant.user.avatarPath);
-    });
+    }
   }
 
   void initGetAvatarUrlListeners() {
-    participantsPresenter.getAvatarUrlOnNext = (String id, String url) {
+    participantsPresenter.getAvatarUrlOnNext = (id, url) {
       print('Get avatar url onNext');
       if (_participants == null) {
         return;
       }
-      var participant = _participants.where((participant) => participant.user.id == id).first;
+      var participant = _participants.where((participant) {
+        return participant.user.id == id;
+      }).first;
       participant.user.avatarUrl = url;
       refreshUI();
     };
@@ -63,5 +66,7 @@ class ParticipantsController extends Controller {
     };
   }
 
-  void getAvatarDownloadUrl(String id, String path) => participantsPresenter.getAvatarDownloadUrl(id, path);
+  void getAvatarDownloadUrl(String id, String path) {
+    participantsPresenter.getAvatarDownloadUrl(id, path);
+  }
 }

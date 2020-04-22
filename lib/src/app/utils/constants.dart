@@ -1,11 +1,11 @@
 class Constants {
-  static const String PROFILE = "Profile";
-  static const String SIGN_OUT = "Sign Out";
-  static const String SETTINGS = "Settings";
+  static const String profile = 'Profile';
+  static const String signOut = 'Sign Out';
+  static const String settings = 'Settings';
 
   static const List<String> homeMenuOptions = <String>[
-    PROFILE,
-    SETTINGS,
-    SIGN_OUT
+    profile,
+    settings,
+    signOut
   ];
 }

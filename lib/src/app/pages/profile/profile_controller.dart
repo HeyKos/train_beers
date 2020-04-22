@@ -1,10 +1,12 @@
 import 'dart:io';
 import 'dart:math';
+
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:train_beers/src/domain/entities/user_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
+import 'package:image_picker/image_picker.dart';
+
+import '../../../domain/entities/user_entity.dart';
 import 'profile_presenter.dart';
 
 class ProfileController extends Controller {
@@ -31,7 +33,7 @@ class ProfileController extends Controller {
     _user = user,
     super() {
       getAvatarDownloadUrl(_user.id, _user.avatarPath);
-      _participationImageUrl = getParticipationImage(_user.isActive);
+      _participationImageUrl = getParticipationImage(isActive: _user.isActive);
     }
 
   /// Overrides
@@ -54,14 +56,14 @@ class ProfileController extends Controller {
   void cropImage() => profilePresenter.cropImage(userAvatar);
   
   Future<void> pickImage(ImageSource source) async {
-    File selected = await ImagePicker.pickImage(source: source);
+    var selected = await ImagePicker.pickImage(source: source);
     _userAvatar = selected;
     cropImage();
     refreshUI();
   }
 
   void initCropImageListeners() {
-    profilePresenter.cropImageOnNext = (File croppedImage) {
+    profilePresenter.cropImageOnNext = (croppedImage) {
       print('Crop image onNext');
       _userAvatar = croppedImage;
       Navigator.of(getContext(), rootNavigator: true).pop();
@@ -82,7 +84,7 @@ class ProfileController extends Controller {
   }
 
   void initGetAvatarUrlListeners() {
-    profilePresenter.getAvatarUrlOnNext = (String url) {
+    profilePresenter.getAvatarUrlOnNext = (url) {
       print('Get avatar url onNext');
       _avatarPath = url;
       _userAvatar = null;
@@ -103,7 +105,7 @@ class ProfileController extends Controller {
   }
 
   void initUpdateUserListeners() {
-    profilePresenter.updateUserOnNext = (UserEntity user) {
+    profilePresenter.updateUserOnNext = (user) {
       print('Update user onNext');
       _user = user;
       getAvatarDownloadUrl(_user.id, _user.avatarPath);
@@ -112,7 +114,7 @@ class ProfileController extends Controller {
 
     profilePresenter.updateUserOnComplete = () {
       print('Update user complete');
-      this._isProcessing = false;
+      _isProcessing = false;
     };
 
     // On error, show a snackbar, remove the user, and refresh the UI
@@ -125,7 +127,7 @@ class ProfileController extends Controller {
   }
 
   void initUploadFileListeners() {
-    profilePresenter.uploadFileOnNext = (StorageUploadTask uploadTask) {
+    profilePresenter.uploadFileOnNext = (uploadTask) {
       print('Upload file onNext');
       _uploadTask = uploadTask;
       refreshUI();
@@ -144,20 +146,22 @@ class ProfileController extends Controller {
     };
   }
 
-  void getAvatarDownloadUrl(String id, String path) => profilePresenter.getAvatarDownloadUrl(id, path);
+  void getAvatarDownloadUrl(String id, String path) {
+    profilePresenter.getAvatarDownloadUrl(id, path);
+  }
 
-  void onParticipationStatusChanged(bool isActive) {
+  void onParticipationStatusChanged({bool isActive = false}) {
     user.isActive = isActive;
-    _participationImageUrl = getParticipationImage(isActive);
+    _participationImageUrl = getParticipationImage(isActive: isActive);
     refreshUI();
     updateUser(user);
   }
 
-  String getParticipationImage(bool isActive) {
-    final random = new Random();
+  String getParticipationImage({bool isActive = false}) {
+    final random = Random();
     
     if (isActive) {
-      List<String> activeImages = [
+      var activeImages = [
         "https://media.giphy.com/media/xT1R9XnFJkL1S2BFqo/giphy.gif",
         "https://media.giphy.com/media/J0ySNzZ5APILC/giphy.gif",
         "https://media.giphy.com/media/l0Iy8G3PwyahZST2E/giphy.gif",
@@ -175,7 +179,7 @@ class ProfileController extends Controller {
       return activeImages[random.nextInt(activeImages.length)];
     }
 
-    List<String> inactiveImages = [
+    var inactiveImages = [
       "https://media.giphy.com/media/cOkd84no1LuKc/giphy.gif",
       "https://media.giphy.com/media/jHns0TlgQSdDa/giphy.gif",
       "https://media.giphy.com/media/1JyWrrkCIUQyQ/giphy.gif",
@@ -217,7 +221,11 @@ class ProfileController extends Controller {
       return;
     }
 
-    if (event.storageMetadata.name.isEmpty || event.storageMetadata.path.isEmpty) {
+    if (event.storageMetadata.name.isEmpty) {
+      return;
+    }
+
+    if (event.storageMetadata.path.isEmpty) {
       return;
     }
 

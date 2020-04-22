@@ -1,6 +1,8 @@
 import 'dart:async';
-import '../repositories/authentication_repository.dart';
+
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
+
+import '../repositories/authentication_repository.dart';
 
 class LogoutUseCase extends UseCase<void, void> {
   final AuthenticationRepository authenticationRepository;
@@ -8,14 +10,14 @@ class LogoutUseCase extends UseCase<void, void> {
 
   @override
   Future<Stream<void>> buildUseCaseStream(void params) async {
-    final StreamController<void> controller = StreamController();
+    final controller = StreamController<void>();
+
     try {
       await authenticationRepository.logout();
       logger.finest('Logout successful.');
       controller.close();
-    } catch (e) {
+    } on Exception catch (e) {
       logger.severe('LogoutUseCase unsuccessful.');
-      // Trigger .onError
       controller.addError(e);
     }
     return controller.stream;

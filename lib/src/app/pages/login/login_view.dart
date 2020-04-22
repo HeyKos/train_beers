@@ -1,8 +1,9 @@
-import 'package:train_beers/src/data/repositories/firebase_authenticaion_repository.dart';
-import './login_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
+
+import '../../../data/repositories/firebase_authentication_repository.dart';
+import './login_controller.dart';
 
 class LoginPage extends View {
   LoginPage({Key key, this.title}) : super(key: key);
@@ -15,7 +16,8 @@ class LoginPage extends View {
 }
 
 class _LoginPageState extends ViewState<LoginPage, LoginController> {
-  _LoginPageState() : super(LoginController(FirebaseAuthenticationRepository()));
+  _LoginPageState() : 
+    super(LoginController(FirebaseAuthenticationRepository()));
 
   @override
   Widget buildPage() {  
@@ -24,17 +26,16 @@ class _LoginPageState extends ViewState<LoginPage, LoginController> {
         title: Text(widget.title),
       ),
       body: Scaffold(
-        key:
-            globalKey, // built in global key for the ViewState for easy access in the controller
+        key: globalKey,
         body: Padding(
-          padding: EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(20.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               TextFormField(
                 controller: controller.emailTextController,
                 decoration: const InputDecoration(labelText: 'Email'),
-                validator: (String value) {
+                validator: (value) {
                   if (value.isEmpty) {
                     return 'Please enter some text';
                   }
@@ -45,7 +46,7 @@ class _LoginPageState extends ViewState<LoginPage, LoginController> {
                 controller: controller.passwordTextController,
                 decoration: const InputDecoration(labelText: 'Password'),
                 obscureText: true,
-                validator: (String value) {
+                validator: (value) {
                   if (value.isEmpty) {
                     return 'Please enter some text';
                   }
@@ -55,7 +56,7 @@ class _LoginPageState extends ViewState<LoginPage, LoginController> {
               RaisedButton(
                 onPressed: controller.login,
                 child: Text(
-                  "Sign In",
+                  'Sign In',
                   style: TextStyle(color: Colors.black),
                 ),
                 color: Colors.white,

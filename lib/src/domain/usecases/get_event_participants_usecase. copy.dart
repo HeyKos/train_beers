@@ -1,24 +1,28 @@
 import 'dart:async';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
-import 'package:train_beers/src/domain/entities/event_participant_entity.dart';
-import 'package:train_beers/src/domain/repositories/event_participants_repository.dart';
+import '../entities/event_participant_entity.dart';
+import '../repositories/event_participants_repository.dart';
 
-class GetEventParticipantsUseCase extends UseCase<GetEventParticipantsUseCaseResponse, GetEventParticipantsUseCaseParams> {
+class GetEventParticipantsUseCase extends UseCase<
+    GetEventParticipantsUseCaseResponse, GetEventParticipantsUseCaseParams> {
   final EventParticipantsRepository eventParticipantsRepository;
   GetEventParticipantsUseCase(this.eventParticipantsRepository);
 
   @override
-  Future<Stream<GetEventParticipantsUseCaseResponse>> buildUseCaseStream(GetEventParticipantsUseCaseParams params) async {
-    final StreamController<GetEventParticipantsUseCaseResponse> controller = StreamController();
+  Future<Stream<GetEventParticipantsUseCaseResponse>> buildUseCaseStream(
+      GetEventParticipantsUseCaseParams params) async {
+    final controller = StreamController<GetEventParticipantsUseCaseResponse>();
+    
     try {
-      List<EventParticipantEntity> eventParticipants = await eventParticipantsRepository.getEventParticipants(params.eventId).first;
-      
+      var eventParticipants = await eventParticipantsRepository
+          .getEventParticipants(params.eventId)
+          .first;
+
       controller.add(GetEventParticipantsUseCaseResponse(eventParticipants));
       logger.finest('GetEventParticipantsUseCase successful.');
       controller.close();
-    } catch (e) {
+    } on Exception catch (e) {
       logger.severe('GetEventParticipantsUseCase unsuccessful.');
-      // Trigger .onError
       controller.addError(e);
     }
     return controller.stream;

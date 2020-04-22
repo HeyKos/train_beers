@@ -1,10 +1,12 @@
 import 'dart:io';
-import 'package:train_beers/src/domain/entities/user_entity.dart';
+
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
-import 'package:train_beers/src/domain/usecases/crop_image_usecase.dart';
-import 'package:train_beers/src/domain/usecases/get_avatar_url_usecase.dart';
-import 'package:train_beers/src/domain/usecases/update_user_usecase.dart';
-import 'package:train_beers/src/domain/usecases/upload_file_usecase.dart';
+
+import '../../../domain/entities/user_entity.dart';
+import '../../../domain/usecases/crop_image_usecase.dart';
+import '../../../domain/usecases/get_avatar_url_usecase.dart';
+import '../../../domain/usecases/update_user_usecase.dart';
+import '../../../domain/usecases/upload_file_usecase.dart';
 
 class ProfilePresenter extends Presenter {
   /// Members
@@ -46,19 +48,31 @@ class ProfilePresenter extends Presenter {
 
   /// Methods
   void cropImage(File image) {
-    cropImageUseCase.execute(_CropImageUseCaseObserver(this), CropImageUseCaseParams(image));
+    cropImageUseCase.execute(
+      _CropImageUseCaseObserver(this),
+      CropImageUseCaseParams(image)
+    );
   }
 
   void getAvatarDownloadUrl(String id, String path) {
-    getAvatarUrlUseCase.execute(_GetAvatarUrlUseCaseObserver(this), GetAvatarUrlUseCaseParams(id, path));
+    getAvatarUrlUseCase.execute(
+      _GetAvatarUrlUseCaseObserver(this),
+      GetAvatarUrlUseCaseParams(id, path)
+    );
   }
 
   void updateUser(UserEntity user) {
-    updateUserUseCase.execute(_UpdateUserUseCaseObserver(this), UpdateUserUseCaseParams(user));
+    updateUserUseCase.execute(
+      _UpdateUserUseCaseObserver(this),
+      UpdateUserUseCaseParams(user)
+    );
   }
 
   void uploadAvatar(File file) {
-    uploadFileUseCase.execute(_UploadFileUseCaseObserver(this), UploadFileUseCaseParams(file));
+    uploadFileUseCase.execute(
+      _UploadFileUseCaseObserver(this),
+      UploadFileUseCaseParams(file)
+    );
   }
 }
 
@@ -79,20 +93,22 @@ class _CropImageUseCaseObserver extends Observer<CropImageUseCaseResponse> {
   }
 
   @override
-  void onError(e) {
+  void onError(dynamic e) {
     assert(presenter.cropImageOnError != null);
     presenter.cropImageOnError(e);
   }
 
   @override
-  void onNext(response) {
+  void onNext(CropImageUseCaseResponse response) {
     assert(presenter.cropImageOnNext != null);
     presenter.cropImageOnNext(response.croppedImage);
   }
 }
 
 /// An observer class for the [GetAvatarUrlUseCase].
-class _GetAvatarUrlUseCaseObserver extends Observer<GetAvatarUrlUseCaseResponse> {
+class _GetAvatarUrlUseCaseObserver
+  extends Observer<GetAvatarUrlUseCaseResponse> {
+  
   /// Members
   final ProfilePresenter presenter;
   
@@ -107,13 +123,13 @@ class _GetAvatarUrlUseCaseObserver extends Observer<GetAvatarUrlUseCaseResponse>
   }
 
   @override
-  void onError(e) {
+  void onError(dynamic e) {
     assert(presenter.getAvatarUrlOnError != null);
     presenter.getAvatarUrlOnError(e);
   }
 
   @override
-  void onNext(response) {
+  void onNext(GetAvatarUrlUseCaseResponse response) {
     assert(presenter.getAvatarUrlOnNext != null);
     presenter.getAvatarUrlOnNext(response.url);
   }
@@ -135,13 +151,13 @@ class _UpdateUserUseCaseObserver extends Observer<UpdateUserUseCaseResponse> {
   }
 
   @override
-  void onError(e) {
+  void onError(dynamic e) {
     assert(presenter.updateUserOnError != null);
     presenter.updateUserOnError(e);
   }
 
   @override
-  void onNext(response) {
+  void onNext(UpdateUserUseCaseResponse response) {
     assert(presenter.updateUserOnNext != null);
     presenter.updateUserOnNext(response.user);
   }
@@ -163,13 +179,13 @@ class _UploadFileUseCaseObserver extends Observer<UploadFileUseCaseResponse> {
   }
 
   @override
-  void onError(e) {
+  void onError(dynamic e) {
     assert(presenter.uploadFileOnError != null);
     presenter.uploadFileOnError(e);
   }
 
   @override
-  void onNext(response) {
+  void onNext(UploadFileUseCaseResponse response) {
     assert(presenter.uploadFileOnNext != null);
     presenter.uploadFileOnNext(response.uploadTask);
   }

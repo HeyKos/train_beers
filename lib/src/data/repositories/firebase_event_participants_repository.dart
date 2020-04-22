@@ -1,31 +1,39 @@
-import 'package:train_beers/src/domain/entities/event_participant_entity.dart';
-import 'package:train_beers/src/domain/repositories/event_participants_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:train_beers/src/data/extensions/document_snapshot_extensions.dart';
 
-class FirebaseEventParticipantsRepository implements EventParticipantsRepository {
-  final eventCollection = Firestore.instance.collection("events");
-  final eventParticpantsCollection = Firestore.instance.collection('event_participants');
+import '../../domain/entities/event_participant_entity.dart';
+import '../../domain/repositories/event_participants_repository.dart';
+import '../extensions/document_snapshot_extensions.dart';
+
+class FirebaseEventParticipantsRepository
+    implements EventParticipantsRepository {
+  static Firestore firestore = Firestore.instance;
+  final CollectionReference eventCollection = firestore.collection('events');
+  final CollectionReference eventParticpantsCollection =
+      firestore.collection('event_participants');
 
   /// Overrides
   @override
   Stream<List<EventParticipantEntity>> getEventParticipants(String eventId) {
-    var eventReference = eventCollection.document(eventId);
+    final eventReference = eventCollection.document(eventId);
     return eventParticpantsCollection
-      .where("event", isEqualTo: eventReference)
-      .snapshots()
-      .asyncMap(_mapSnaphotToEventParticipants);
+        .where('event', isEqualTo: eventReference)
+        .snapshots()
+        .asyncMap(_mapSnaphotToEventParticipants);
   }
 
   /// Methods
-  Future<List<EventParticipantEntity>> _mapSnaphotToEventParticipants(QuerySnapshot snapshot) async {
-    List<EventParticipantEntity> _partcipants = [];
+  Future<List<EventParticipantEntity>> _mapSnaphotToEventParticipants(
+      QuerySnapshot snapshot) async {
+    final _participants = <EventParticipantEntity>[];
 
+    // Need to ignore linting to support extension method on DocumentSnapshot.
+    // ignore: avoid_types_on_closure_parameters
     await Future.forEach(snapshot.documents, (DocumentSnapshot doc) async {
-      var paricipant = await doc.toEventParticipant(eventParticpantsCollection.path);
-      _partcipants.add(paricipant);
-    });   
-    
-    return _partcipants; 
+      final participant =
+          await doc.toEventParticipant(eventParticpantsCollection.path);
+      _participants.add(participant);
+    });
+
+    return _participants;
   }
 }

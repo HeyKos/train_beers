@@ -1,26 +1,31 @@
 import 'dart:async';
-import 'package:train_beers/src/domain/entities/user_entity.dart';
-import 'package:train_beers/src/domain/repositories/users_repository.dart';
+
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 
-class GetUserByUidUseCase extends UseCase<GetUserByUidUseCaseResponse, GetUserByUidUseCaseParams> {
+import '../entities/user_entity.dart';
+import '../repositories/users_repository.dart';
+
+class GetUserByUidUseCase
+    extends UseCase<GetUserByUidUseCaseResponse, GetUserByUidUseCaseParams> {
   final UsersRepository usersRepository;
   GetUserByUidUseCase(this.usersRepository);
 
   @override
-  Future<Stream<GetUserByUidUseCaseResponse>> buildUseCaseStream(GetUserByUidUseCaseParams params) async {
-    final StreamController<GetUserByUidUseCaseResponse> controller = StreamController();
+  Future<Stream<GetUserByUidUseCaseResponse>> buildUseCaseStream(
+      GetUserByUidUseCaseParams params) async {
+    final controller = StreamController<GetUserByUidUseCaseResponse>();
+
     try {
-      UserEntity user = await usersRepository.getByUid(params.uid).first;
-      
+      var user = await usersRepository.getByUid(params.uid).first;
+
       controller.add(GetUserByUidUseCaseResponse(user));
       logger.finest('GetUserByUidUseCase successful.');
       controller.close();
-    } catch (e) {
+    } on Exception catch (e) {
       logger.severe('GetUserByUidUseCase unsuccessful.');
-      // Trigger .onError
       controller.addError(e);
     }
+
     return controller.stream;
   }
 }

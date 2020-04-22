@@ -1,27 +1,27 @@
-import 'package:train_beers/src/domain/entities/user_entity.dart';
+import '../entities/user_entity.dart';
 
 extension Extensions on UserEntity {
   Map<String, Object> toDocument() {
     return {
-      'avatarPath': this.avatarPath,
-      'id': this.id,
-      'isActive': this.isActive,
-      'name': this.name,
-      'purchasedOn': this.purchasedOn,
-      'sequence': this.sequence,
-      'uid': this.uid,
+      'avatarPath': avatarPath,
+      'id': id,
+      'isActive': isActive,
+      'name': name,
+      'purchasedOn': purchasedOn,
+      'sequence': sequence,
+      'uid': uid,
     };
   }
-  
+
   Map<String, Object> toMap() {
     return {
-      'avatarPath': this.avatarPath,
-      'id': this.id,
-      'isActive': this.isActive,
-      'name': this.name,
-      'purchasedOn': this.purchasedOn.toString(),
-      'sequenece': this.sequence,
-      'uid': this.uid,
+      'avatarPath': avatarPath,
+      'id': id,
+      'isActive': isActive,
+      'name': name,
+      'purchasedOn': purchasedOn.toString(),
+      'sequenece': sequence,
+      'uid': uid,
     };
   }
 }

@@ -1,27 +1,31 @@
 import 'dart:async';
-import 'package:train_beers/src/domain/repositories/files_repository.dart';
+
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 
-class GetAvatarUrlUseCase extends UseCase<GetAvatarUrlUseCaseResponse, GetAvatarUrlUseCaseParams> {
+import '../repositories/files_repository.dart';
+
+class GetAvatarUrlUseCase
+    extends UseCase<GetAvatarUrlUseCaseResponse, GetAvatarUrlUseCaseParams> {
   final FilesRepository filesRepository;
   GetAvatarUrlUseCase(this.filesRepository);
 
   @override
-  Future<Stream<GetAvatarUrlUseCaseResponse>> buildUseCaseStream(GetAvatarUrlUseCaseParams params) async {
-    final StreamController<GetAvatarUrlUseCaseResponse> controller = StreamController();
+  Future<Stream<GetAvatarUrlUseCaseResponse>> buildUseCaseStream(
+      GetAvatarUrlUseCaseParams params) async {
+    final controller = StreamController<GetAvatarUrlUseCaseResponse>();
+    
     try {
-      String url = await filesRepository.getDownloadUrl(params.path);
+      var url = await filesRepository.getDownloadUrl(params.path);
       if (url.isEmpty) {
         logger.warning('No image found at path: ${params.path}.');
-        controller.close();  
+        controller.close();
       }
-      
+
       controller.add(GetAvatarUrlUseCaseResponse(params.id, url));
       logger.finest('GetAvatarUrlUseCase successful.');
       controller.close();
-    } catch (e) {
+    } on Exception catch (e) {
       logger.severe('GetAvatarUrlUseCase unsuccessful.');
-      // Trigger .onError
       controller.addError(e);
     }
     return controller.stream;

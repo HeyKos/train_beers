@@ -1,22 +1,26 @@
 import 'dart:async';
-import 'package:train_beers/src/domain/entities/event_entity.dart';
+
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
-import 'package:train_beers/src/domain/repositories/events_repository.dart';
+
+import '../entities/event_entity.dart';
+import '../repositories/events_repository.dart';
 
 class GetNextEventUseCase extends UseCase<GetNextEventUseCaseResponse, void> {
   final EventsRepository eventsRepository;
   GetNextEventUseCase(this.eventsRepository);
 
   @override
-  Future<Stream<GetNextEventUseCaseResponse>> buildUseCaseStream(void params) async {
-    final StreamController<GetNextEventUseCaseResponse> controller = StreamController();
+  Future<Stream<GetNextEventUseCaseResponse>> buildUseCaseStream(
+      void params) async {
+    final controller = StreamController<GetNextEventUseCaseResponse>();
+
     try {
-      EventEntity event = await eventsRepository.getNextEvent().first;
-      
+      var event = await eventsRepository.getNextEvent().first;
+
       controller.add(GetNextEventUseCaseResponse(event));
       logger.finest('GetNextEventUseCase successful.');
       controller.close();
-    } catch (e) {
+    } on Exception catch (e) {
       logger.severe('GetNextEventUseCase unsuccessful.');
       // Trigger .onError
       controller.addError(e);

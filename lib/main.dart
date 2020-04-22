@@ -1,18 +1,20 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:logging/logging.dart';
-import 'package:train_beers/src/app/pages/login/login_view.dart';
-import 'package:train_beers/src/app/pages/splash/splash_view.dart';
-import 'package:train_beers/src/app/utils/router.dart';
-import 'package:train_beers/src/data/repositories/firebase_authenticaion_repository.dart';
-import 'package:flutter/material.dart';
+
+import 'src/app/pages/login/login_view.dart';
+import 'src/app/pages/splash/splash_view.dart';
+import 'src/app/utils/router.dart';
+import 'src/data/repositories/firebase_authentication_repository.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  final Router _router;
   MyApp() : _router = Router() {
     initLogger();
   }
+
+  final Router _router;
 
   // This widget is the root of your application.
   @override
@@ -23,13 +25,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.grey,
       ),
-      home: StreamBuilder(
-        stream: FirebaseAuthenticationRepository().user, // TODO: This should probably use a use case, not reference the repository directly.
+      home: StreamBuilder<String>(
+        stream: FirebaseAuthenticationRepository().user,
         builder: (context, snapshot) {
-          if(snapshot.hasData){
-            return SplashPage(title: "Splash", uid: snapshot.data); 
+          if (snapshot.hasData) {
+            return SplashPage(title: 'Splash', uid: snapshot.data.toString());
           } else {
-            return LoginPage(title: "Sign In");
+            return LoginPage(title: 'Sign In');
           }
         },
       ),
@@ -43,9 +45,14 @@ class MyApp extends StatelessWidget {
 void initLogger() {
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((record) {
-    dynamic e = record.error;
-    print(
-        '${record.loggerName}: ${record.level.name}: ${record.message} ${e != 'null' ? e.toString() : ''}');
+    final dynamic e = record.error;
+    final loggerName = record.loggerName;
+    final levelName = record.level.name;
+    final message = record.message;
+    final error = e != 'null' ? e.toString() : '';
+
+    print('$loggerName: $levelName: $message $error');
   });
-  Logger.root.info("Logger initialized.");
+
+  Logger.root.info('Logger initialized.');
 }

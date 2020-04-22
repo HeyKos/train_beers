@@ -1,24 +1,28 @@
 import 'dart:async';
-import 'package:train_beers/src/domain/entities/user_entity.dart';
-import 'package:train_beers/src/domain/repositories/users_repository.dart';
+
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 
-class UpdateUserUseCase extends UseCase<UpdateUserUseCaseResponse, UpdateUserUseCaseParams> {
+import '../entities/user_entity.dart';
+import '../repositories/users_repository.dart';
+
+class UpdateUserUseCase
+    extends UseCase<UpdateUserUseCaseResponse, UpdateUserUseCaseParams> {
   final UsersRepository usersRepository;
   UpdateUserUseCase(this.usersRepository);
 
   @override
-  Future<Stream<UpdateUserUseCaseResponse>> buildUseCaseStream(UpdateUserUseCaseParams params) async {
-    final StreamController<UpdateUserUseCaseResponse> controller = StreamController();
+  Future<Stream<UpdateUserUseCaseResponse>> buildUseCaseStream(
+      UpdateUserUseCaseParams params) async {
+    final controller = StreamController<UpdateUserUseCaseResponse>();
+
     try {
       await usersRepository.updateUser(params.user);
-      
+
       controller.add(UpdateUserUseCaseResponse(params.user));
       logger.finest('UpdateUserUseCase successful.');
       controller.close();
-    } catch (e) {
+    } on Exception catch (e) {
       logger.severe('UpdateUserUseCase unsuccessful.');
-      // Trigger .onError
       controller.addError(e);
     }
     return controller.stream;

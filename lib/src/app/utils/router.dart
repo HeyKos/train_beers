@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:train_beers/src/app/pages/pages.dart';
+
+import '../pages/pages.dart';
 
 class Router {
   final RouteObserver<PageRoute> routeObserver;
@@ -12,33 +13,30 @@ class Router {
       case Pages.home:
         Map<String, dynamic> args = settings.arguments as Map;
         return _buildRoute(
-            settings,
-            HomePage(title: "Home", user: args['user'])
-        );
+            settings, HomePage(title: "Home", user: args['user']));
       case Pages.login:
         return _buildRoute(settings, LoginPage(title: "Sign In"));
       case Pages.participants:
         Map<String, dynamic> args = settings.arguments as Map;
         return _buildRoute(
             settings,
-            ParticipantsPage(title: "Participants", participants: args['participants'])
-        );
+            ParticipantsPage(
+                title: "Participants", participants: args['participants']));
       case Pages.profile:
         Map<String, dynamic> args = settings.arguments as Map;
         return _buildRoute(
-            settings,
-            ProfilePage(title: "Profile", user: args['user'])
-        );
+            settings, ProfilePage(title: "Profile", user: args['user']));
       case Pages.splash:
         Map<String, dynamic> args = settings.arguments as Map;
-        return _buildRoute(settings, SplashPage(title: "Splash", uid: args['uid']));
+        return _buildRoute(
+            settings, SplashPage(title: "Splash", uid: args['uid']));
       default:
         return null;
     }
   }
 
   MaterialPageRoute _buildRoute(RouteSettings settings, Widget builder) {
-    return new MaterialPageRoute(
+    return MaterialPageRoute(
       settings: settings,
       builder: (ctx) => builder,
     );

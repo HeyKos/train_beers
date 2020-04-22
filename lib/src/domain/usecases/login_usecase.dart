@@ -1,34 +1,38 @@
 import 'dart:async';
-import '../repositories/authentication_repository.dart';
+
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
+
+import '../repositories/authentication_repository.dart';
 
 class LoginUseCase extends UseCase<LoginUseCaseResponse, LoginUseCaseParams> {
   final AuthenticationRepository authenticationRepository;
   LoginUseCase(this.authenticationRepository);
 
   @override
-  Future<Stream<LoginUseCaseResponse>> buildUseCaseStream(LoginUseCaseParams params) async {
-    final StreamController<LoginUseCaseResponse> controller = StreamController();
+  Future<Stream<LoginUseCaseResponse>> buildUseCaseStream(
+      LoginUseCaseParams params) async {
+    final controller = StreamController<LoginUseCaseResponse>();
+
     try {
-      bool success = false;
-      String userIdentifier = await authenticationRepository.login(params.email, params.password);
+      var success = false;
+      var userIdentifier =
+          await authenticationRepository.login(params.email, params.password);
 
       // If no user is returned, then return an unsuccessful login attempt
       if (userIdentifier == "") {
         logger.finest('Login attempt failed.');
-        controller.add(LoginUseCaseResponse(success, ""));
+        controller.add(LoginUseCaseResponse("", success: success));
         logger.finest('GetNextUserUseCase successful.');
-        controller.close();  
+        controller.close();
         return controller.stream;
       }
 
       success = true;
-      controller.add(LoginUseCaseResponse(success, userIdentifier));
+      controller.add(LoginUseCaseResponse(userIdentifier, success: success));
       logger.finest('Login successful.');
       controller.close();
-    } catch (e) {
+    } on Exception catch (e) {
       logger.severe('LoginUseCase unsuccessful.');
-      // Trigger .onError
       controller.addError(e);
     }
     return controller.stream;
@@ -46,5 +50,5 @@ class LoginUseCaseParams {
 class LoginUseCaseResponse {
   final bool success;
   final String userIdentifier;
-  LoginUseCaseResponse(this.success, this.userIdentifier);
+  LoginUseCaseResponse(this.userIdentifier, {this.success = false});
 }
