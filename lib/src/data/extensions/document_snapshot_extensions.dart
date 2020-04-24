@@ -58,7 +58,7 @@ extension Extensions on DocumentSnapshot {
 
     return EventParticipantEntity(
       documentID,
-      event.id,
+      event,
       hostUser,
     );
   }

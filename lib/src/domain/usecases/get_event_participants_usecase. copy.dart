@@ -15,7 +15,7 @@ class GetEventParticipantsUseCase extends UseCase<
     
     try {
       var eventParticipants = await eventParticipantsRepository
-          .getEventParticipants(params.eventId)
+          .getByEventId(params.eventId)
           .first;
 
       controller.add(GetEventParticipantsUseCaseResponse(eventParticipants));
