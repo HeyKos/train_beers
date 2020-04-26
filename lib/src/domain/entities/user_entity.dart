@@ -2,13 +2,11 @@ import 'base_entity.dart';
 
 class UserEntity extends BaseEntity {
   UserEntity(String id, this.avatarPath, this.name, this.purchasedOn,
-      this.sequence, this.uid,
-      {this.isActive = false})
+      this.sequence, this.uid)
       : super(id);
 
   /// Members
   String avatarPath;
-  bool isActive;
   String name;
   int sequence;
   DateTime purchasedOn;
@@ -26,16 +24,6 @@ class UserEntity extends BaseEntity {
 
     return name.toUpperCase().substring(0, 1);
   }
-
-  String get statusMessage {
-    if (isActive) {
-      return "You're in for beers 🍻";
-    }
-
-    return "You're not drinking 😭";
-  }
-
-  String get welcomeText => 'Hi there $name!';
 
   /// Overrides
   @override

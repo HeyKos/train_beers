@@ -78,7 +78,6 @@ extension Extensions on DocumentSnapshot {
       purchasedOn != null ? purchasedOn.toDate() : null,
       data['sequence'],
       data['uid'],
-      isActive: data['isActive'],
     );
   }
 }

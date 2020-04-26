@@ -70,7 +70,6 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
             shrinkWrap: false,
             children: <Widget>[
               countdownWidget,
-              drinkingStatusContainer,
               nextTrainBeerBuyer,
               eventProgress,
               activeDrinkers,
@@ -82,15 +81,6 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
   }
 
   /// Methods
-  Widget drinkingStatusText({bool isActive = false}) => Text(
-        controller.user != null ? controller.user.statusMessage : "",
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          color: isActive ? Colors.black : Colors.white,
-          fontSize: 20.0,
-        ),
-      );
-
   List<PopupMenuItem<String>> getMenuItems(BuildContext context) {
     return Constants.homeMenuOptions.map((option) {
       return PopupMenuItem<String>(
@@ -235,16 +225,4 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
         ),
         color: Colors.blueAccent,
       );
-
-  Widget get drinkingStatusContainer {
-    var isActive = controller.user != null && controller.user.isActive;
-    return Container(
-      color: isActive ? Colors.greenAccent : Colors.redAccent,
-      height: 40.0,
-      alignment: Alignment.topLeft,
-      child: Center(
-        child: drinkingStatusText(isActive: isActive),
-      ),
-    );
-  }
 }
