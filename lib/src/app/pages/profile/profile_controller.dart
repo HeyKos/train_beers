@@ -116,6 +116,7 @@ class ProfileController extends Controller {
       _participant = participant;
       _participationImageUrl =
           getParticipationImage(isParticipating: participant != null);
+      _isParticipating = _participant != null;
       _loadingParticipant = false;
       refreshUI();
     };
