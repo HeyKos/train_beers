@@ -44,6 +44,7 @@ class ProfileController extends Controller {
         _user = user,
         super() {
     getAvatarDownloadUrl(_user.id, _user.avatarPath);
+    getParticipant(event, user);
     _participationImageUrl =
         getParticipationImage(isParticipating: _isParticipating);
   }
@@ -54,6 +55,7 @@ class ProfileController extends Controller {
   void initListeners() {
     initCropImageListeners();
     initGetAvatarUrlListeners();
+    initGetEventParticipantListeners();
     initUpdateParticipationListeners();
     initUpdateUserListeners();
     initUploadFileListeners();
@@ -65,16 +67,7 @@ class ProfileController extends Controller {
     super.dispose();
   }
 
-  /// Methods
-  void cropImage() => profilePresenter.cropImage(userAvatar);
-
-  Future<void> pickImage(ImageSource source) async {
-    var selected = await ImagePicker.pickImage(source: source);
-    _userAvatar = selected;
-    cropImage();
-    refreshUI();
-  }
-
+  /// Listener Initializers
   void initCropImageListeners() {
     profilePresenter.cropImageOnNext = (croppedImage) {
       print('Crop image onNext');
@@ -111,6 +104,26 @@ class ProfileController extends Controller {
     // On error, show a snackbar, remove the user, and refresh the UI
     profilePresenter.getAvatarUrlOnError = (e) {
       print('Could not get avatar url.');
+      ScaffoldState state = getState();
+      state.showSnackBar(SnackBar(content: Text(e.message)));
+      refreshUI(); // Refreshes the UI manually
+    };
+  }
+
+  void initGetEventParticipantListeners() {
+    profilePresenter.getEventParticipantOnNext = (participant) {
+      print('Get event participant onNext');
+      _participant = participant;
+      refreshUI();
+    };
+
+    profilePresenter.getEventParticipantOnComplete = () {
+      print('Get event participant complete');
+    };
+
+    // On error, show a snackbar, remove the user, and refresh the UI
+    profilePresenter.getEventParticipantOnError = (e) {
+      print('Could not get event participant.');
       ScaffoldState state = getState();
       state.showSnackBar(SnackBar(content: Text(e.message)));
       refreshUI(); // Refreshes the UI manually
@@ -178,17 +191,21 @@ class ProfileController extends Controller {
     };
   }
 
-  void getAvatarDownloadUrl(String id, String path) {
-    profilePresenter.getAvatarDownloadUrl(id, path);
+  /// Methods
+  void cropImage() => profilePresenter.cropImage(userAvatar);
+
+  Future<void> pickImage(ImageSource source) async {
+    var selected = await ImagePicker.pickImage(source: source);
+    _userAvatar = selected;
+    cropImage();
+    refreshUI();
   }
 
-  void onParticipationStatusChanged({bool isParticipating = false}) {
-    _isParticipating = isParticipating;
-    _participationImageUrl =
-        getParticipationImage(isParticipating: isParticipating);
-    refreshUI();
-    updateParticipation(_event, _user);
-  }
+  void getAvatarDownloadUrl(String id, String path) =>
+    profilePresenter.getAvatarDownloadUrl(id, path);
+
+  void getParticipant(EventEntity event, UserEntity user) =>
+    profilePresenter.getEventParticipant(event, user);
 
   String getParticipationImage({bool isParticipating = false}) {
     final random = Random();
@@ -227,6 +244,14 @@ class ProfileController extends Controller {
     ];
 
     return inactiveImages[random.nextInt(inactiveImages.length)];
+  }
+
+  void onParticipationStatusChanged({bool isParticipating = false}) {
+    _isParticipating = isParticipating;
+    _participationImageUrl =
+        getParticipationImage(isParticipating: isParticipating);
+    refreshUI();
+    updateParticipation(_event, _user);
   }
 
   void saveAvatar() {

@@ -6,6 +6,7 @@ import '../../../domain/entities/event_entity.dart';
 import '../../../domain/entities/user_entity.dart';
 import '../../../domain/usecases/crop_image_usecase.dart';
 import '../../../domain/usecases/get_avatar_url_usecase.dart';
+import '../../../domain/usecases/get_event_participant_usecase.dart';
 import '../../../domain/usecases/update_event_participation_usecase.dart';
 import '../../../domain/usecases/update_user_usecase.dart';
 import '../../../domain/usecases/upload_file_usecase.dart';
@@ -19,6 +20,9 @@ class ProfilePresenter extends Presenter {
   Function getAvatarUrlOnNext;
   Function getAvatarUrlOnComplete;
   Function getAvatarUrlOnError;
+  Function getEventParticipantOnNext;
+  Function getEventParticipantOnComplete;
+  Function getEventParticipantOnError;
   Function updateParticipationOnNext;
   Function updateParticipationOnComplete;
   Function updateParticipationOnError;
@@ -32,6 +36,7 @@ class ProfilePresenter extends Presenter {
   /// Use Case Objects
   final CropImageUseCase cropImageUseCase;
   final GetAvatarUrlUseCase getAvatarUrlUseCase;
+  final GetEventParticipantUseCase getParticipantUseCase;
   final UpdateEventParticipationUseCase updateParticipationUseCase;
   final UpdateUserUseCase updateUserUseCase;
   final UploadFileUseCase uploadFileUseCase;
@@ -40,6 +45,7 @@ class ProfilePresenter extends Presenter {
   ProfilePresenter(filesRepo, usersRepo, particpantsRepo)
       : cropImageUseCase = CropImageUseCase(),
         getAvatarUrlUseCase = GetAvatarUrlUseCase(filesRepo),
+        getParticipantUseCase = GetEventParticipantUseCase(particpantsRepo),
         updateParticipationUseCase =
             UpdateEventParticipationUseCase(particpantsRepo),
         updateUserUseCase = UpdateUserUseCase(usersRepo),
@@ -64,6 +70,11 @@ class ProfilePresenter extends Presenter {
   void getAvatarDownloadUrl(String id, String path) {
     getAvatarUrlUseCase.execute(_GetAvatarUrlUseCaseObserver(this),
         GetAvatarUrlUseCaseParams(id, path));
+  }
+
+  void getEventParticipant(EventEntity event, UserEntity user) {
+    getParticipantUseCase.execute(_GetEventParticipantUseCaseObserver(this),
+        GetEventParticipantUseCaseParams(event, user));
   }
 
   void updateParticipation(EventEntity event, UserEntity user,
@@ -140,6 +151,35 @@ class _GetAvatarUrlUseCaseObserver
   void onNext(GetAvatarUrlUseCaseResponse response) {
     assert(presenter.getAvatarUrlOnNext != null);
     presenter.getAvatarUrlOnNext(response.url);
+  }
+}
+
+/// An observer class for the [GetEventParticipantUseCase].
+class _GetEventParticipantUseCaseObserver
+    extends Observer<GetEventParticipantUseCaseResponse> {
+  /// Members
+  final ProfilePresenter presenter;
+
+  /// Constructor
+  _GetEventParticipantUseCaseObserver(this.presenter);
+
+  /// Overrides
+  @override
+  void onComplete() {
+    assert(presenter.getEventParticipantOnComplete != null);
+    presenter.getEventParticipantOnComplete();
+  }
+
+  @override
+  void onError(dynamic e) {
+    assert(presenter.getEventParticipantOnError != null);
+    presenter.getEventParticipantOnError(e);
+  }
+
+  @override
+  void onNext(GetEventParticipantUseCaseResponse response) {
+    assert(presenter.getEventParticipantOnNext != null);
+    presenter.getEventParticipantOnNext(response.eventParticipant);
   }
 }
 
