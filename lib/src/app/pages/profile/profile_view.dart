@@ -206,7 +206,8 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
 
   Widget get participationImage {
     var imageUrlNotNull = controller.participationImageUrl != null;
-    var hasImageUrl = controller.participationImageUrl.isNotEmpty;
+    var hasImageUrl = controller.participationImageUrl != null &&
+        controller.participationImageUrl.isNotEmpty;
 
     return Conditional.single(
       context: context,
@@ -222,6 +223,10 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
 
   Widget get participationStatus {
     var isParticipating = controller.participant != null;
+    var onChanged = controller.loadingParticipant
+        ? null
+        : (value) =>
+            controller.onParticipationStatusChanged(isParticipating: value);
 
     return Container(
       margin: EdgeInsets.only(top: 10.0),
@@ -237,8 +242,7 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
             Switch(
               activeColor: Colors.lightBlue,
               value: isParticipating,
-              onChanged: (value) => controller.onParticipationStatusChanged(
-                  isParticipating: value),
+              onChanged: onChanged,
             ),
           ],
         ),

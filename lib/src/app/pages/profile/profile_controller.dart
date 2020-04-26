@@ -17,6 +17,7 @@ class ProfileController extends Controller {
   final EventEntity _event;
   bool _isParticipating = false;
   bool _isProcessing = false;
+  bool _loadingParticipant = true;
   EventParticipantEntity _participant;
   String _participationImageUrl;
   StorageUploadTask _uploadTask;
@@ -29,6 +30,7 @@ class ProfileController extends Controller {
   EventEntity get event => _event;
   bool get isParticipating => _isParticipating;
   bool get isProcessing => _isProcessing;
+  bool get loadingParticipant => _loadingParticipant;
   EventParticipantEntity get participant => _participant;
   String get participationImageUrl => _participationImageUrl;
   StorageUploadTask get uploadTask => _uploadTask;
@@ -45,8 +47,6 @@ class ProfileController extends Controller {
         super() {
     getAvatarDownloadUrl(_user.id, _user.avatarPath);
     getParticipant(event, user);
-    _participationImageUrl =
-        getParticipationImage(isParticipating: _isParticipating);
   }
 
   /// Overrides
@@ -114,6 +114,9 @@ class ProfileController extends Controller {
     profilePresenter.getEventParticipantOnNext = (participant) {
       print('Get event participant onNext');
       _participant = participant;
+      _participationImageUrl =
+          getParticipationImage(isParticipating: participant != null);
+      _loadingParticipant = false;
       refreshUI();
     };
 
@@ -202,10 +205,10 @@ class ProfileController extends Controller {
   }
 
   void getAvatarDownloadUrl(String id, String path) =>
-    profilePresenter.getAvatarDownloadUrl(id, path);
+      profilePresenter.getAvatarDownloadUrl(id, path);
 
   void getParticipant(EventEntity event, UserEntity user) =>
-    profilePresenter.getEventParticipant(event, user);
+      profilePresenter.getEventParticipant(event, user);
 
   String getParticipationImage({bool isParticipating = false}) {
     final random = Random();
