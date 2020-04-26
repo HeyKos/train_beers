@@ -5,7 +5,7 @@ import '../../../domain/entities/event_entity.dart';
 import '../../../domain/entities/user_entity.dart';
 import '../../../domain/usecases/countdown_use_case.dart';
 import '../../../domain/usecases/get_avatar_url_usecase.dart';
-import '../../../domain/usecases/get_event_participants_usecase.%20copy.dart';
+import '../../../domain/usecases/get_event_participants_usecase.dart';
 import '../../../domain/usecases/get_next_event_usecase.dart';
 import '../../../domain/usecases/logout_usecase.dart';
 import '../../../domain/usecases/update_user_usecase.dart';

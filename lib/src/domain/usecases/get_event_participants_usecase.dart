@@ -1,5 +1,7 @@
 import 'dart:async';
+
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
+
 import '../entities/event_participant_entity.dart';
 import '../repositories/event_participants_repository.dart';
 
