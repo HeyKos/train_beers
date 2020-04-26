@@ -6,35 +6,47 @@ import 'package:flutter/material.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../domain/entities/event_entity.dart';
+import '../../../domain/entities/event_participant_entity.dart';
 import '../../../domain/entities/user_entity.dart';
 import 'profile_presenter.dart';
 
 class ProfileController extends Controller {
   /// Members
   String _avatarPath;
+  final EventEntity _event;
+  bool _isParticipating = false;
   bool _isProcessing = false;
+  EventParticipantEntity _participant;
   String _participationImageUrl;
   StorageUploadTask _uploadTask;
   UserEntity _user;
   File _userAvatar;
   final ProfilePresenter profilePresenter;
-  
+
   /// Properties
   String get avatarPath => _avatarPath;
+  EventEntity get event => _event;
+  bool get isParticipating => _isParticipating;
   bool get isProcessing => _isProcessing;
+  EventParticipantEntity get participant => _participant;
   String get participationImageUrl => _participationImageUrl;
   StorageUploadTask get uploadTask => _uploadTask;
   UserEntity get user => _user;
   File get userAvatar => _userAvatar;
 
   // Constructor
-  ProfileController(filesRepo, usersRepo, UserEntity user) :
-    profilePresenter = ProfilePresenter(filesRepo, usersRepo),
-    _user = user,
-    super() {
-      getAvatarDownloadUrl(_user.id, _user.avatarPath);
-      _participationImageUrl = getParticipationImage(isActive: _user.isActive);
-    }
+  ProfileController(filesRepo, usersRepo, participationRepo, EventEntity event,
+      UserEntity user)
+      : profilePresenter =
+            ProfilePresenter(filesRepo, usersRepo, participationRepo),
+        _event = event,
+        _user = user,
+        super() {
+    getAvatarDownloadUrl(_user.id, _user.avatarPath);
+    _participationImageUrl =
+        getParticipationImage(isParticipating: _isParticipating);
+  }
 
   /// Overrides
   // this is called automatically by the parent class
@@ -42,6 +54,7 @@ class ProfileController extends Controller {
   void initListeners() {
     initCropImageListeners();
     initGetAvatarUrlListeners();
+    initUpdateParticipationListeners();
     initUpdateUserListeners();
     initUploadFileListeners();
   }
@@ -54,7 +67,7 @@ class ProfileController extends Controller {
 
   /// Methods
   void cropImage() => profilePresenter.cropImage(userAvatar);
-  
+
   Future<void> pickImage(ImageSource source) async {
     var selected = await ImagePicker.pickImage(source: source);
     _userAvatar = selected;
@@ -98,6 +111,25 @@ class ProfileController extends Controller {
     // On error, show a snackbar, remove the user, and refresh the UI
     profilePresenter.getAvatarUrlOnError = (e) {
       print('Could not get avatar url.');
+      ScaffoldState state = getState();
+      state.showSnackBar(SnackBar(content: Text(e.message)));
+      refreshUI(); // Refreshes the UI manually
+    };
+  }
+
+  void initUpdateParticipationListeners() {
+    profilePresenter.updateParticipationOnNext = (participant) {
+      _participant = participant;
+      print('Update participation onNext');
+    };
+
+    profilePresenter.updateUserOnComplete = () {
+      print('Update participation complete');
+    };
+
+    // On error, show a snackbar, remove the user, and refresh the UI
+    profilePresenter.updateParticipationOnError = (e) {
+      print('Could not update participation.');
       ScaffoldState state = getState();
       state.showSnackBar(SnackBar(content: Text(e.message)));
       refreshUI(); // Refreshes the UI manually
@@ -150,17 +182,18 @@ class ProfileController extends Controller {
     profilePresenter.getAvatarDownloadUrl(id, path);
   }
 
-  void onParticipationStatusChanged({bool isActive = false}) {
-    user.isActive = isActive;
-    _participationImageUrl = getParticipationImage(isActive: isActive);
+  void onParticipationStatusChanged({bool isParticipating = false}) {
+    _isParticipating = isParticipating;
+    _participationImageUrl =
+        getParticipationImage(isParticipating: isParticipating);
     refreshUI();
-    updateUser(user);
+    updateParticipation(_event, _user);
   }
 
-  String getParticipationImage({bool isActive = false}) {
+  String getParticipationImage({bool isParticipating = false}) {
     final random = Random();
-    
-    if (isActive) {
+
+    if (isParticipating) {
       var activeImages = [
         "https://media.giphy.com/media/xT1R9XnFJkL1S2BFqo/giphy.gif",
         "https://media.giphy.com/media/J0ySNzZ5APILC/giphy.gif",
@@ -206,7 +239,7 @@ class ProfileController extends Controller {
     if (event == null) {
       return;
     }
-    
+
     if (event.bytesTransferred != event.totalByteCount) {
       return;
     }
@@ -233,6 +266,9 @@ class ProfileController extends Controller {
     _userAvatar = null;
     updateUser(user);
   }
+
+  void updateParticipation(EventEntity event, UserEntity user) =>
+      profilePresenter.updateParticipation(event, user);
 
   void updateUser(UserEntity user) => profilePresenter.updateUser(user);
 

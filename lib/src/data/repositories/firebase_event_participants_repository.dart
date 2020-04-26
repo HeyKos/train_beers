@@ -23,10 +23,8 @@ class FirebaseEventParticipantsRepository
     final eventRef = eventCollection.document(eventParticipant.event.id);
 
     return eventParticpantsCollection
-        .add({'event': eventRef, 'user': userRef}).then((participantRef) {
-      eventParticipant.id = participantRef.documentID;
-      return eventParticipant;
-    });
+        .add({'event': eventRef, 'user': userRef}).then((participantRef) =>
+            _onCreateParticipant(eventParticipant, participantRef));
   }
 
   @override
@@ -55,10 +53,21 @@ class FirebaseEventParticipantsRepository
         .where('user', isEqualTo: userRef)
         .snapshots()
         .first
-        .then((participantRef) {
-      return participantRef.documents.first
-          .toEventParticipant(eventParticpantsCollection.path);
-    });
+        .then(_onGetParticipant);
+  }
+
+  @override
+  Future<EventParticipantEntity> updateParticipationStatus(
+      EventEntity event, UserEntity user,
+      {bool isParticipating = false}) async {
+    if (isParticipating) {
+      var participant = EventParticipantEntity("", event, user);
+      return create(participant);
+    } else {
+      var participant = await getByEventAndUser(event, user);
+      await delete(participant.id);
+      return null;
+    }
   }
 
   /// Methods
@@ -76,4 +85,15 @@ class FirebaseEventParticipantsRepository
 
     return _participants;
   }
+
+  EventParticipantEntity _onCreateParticipant(
+      EventParticipantEntity eventParticipant,
+      DocumentReference participantRef) {
+    eventParticipant.id = participantRef.documentID;
+    return eventParticipant;
+  }
+
+  Future<EventParticipantEntity> _onGetParticipant(QuerySnapshot snapshot) =>
+      snapshot.documents.first
+          .toEventParticipant(eventParticpantsCollection.path);
 }

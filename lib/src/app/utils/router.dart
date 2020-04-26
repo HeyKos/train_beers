@@ -25,7 +25,9 @@ class Router {
       case Pages.profile:
         Map<String, dynamic> args = settings.arguments as Map;
         return _buildRoute(
-            settings, ProfilePage(title: "Profile", user: args['user']));
+            settings,
+            ProfilePage(
+                title: "Profile", event: args['event'], user: args['user']));
       case Pages.splash:
         Map<String, dynamic> args = settings.arguments as Map;
         return _buildRoute(

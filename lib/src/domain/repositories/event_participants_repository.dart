@@ -9,4 +9,7 @@ abstract class EventParticipantsRepository {
   Stream<List<EventParticipantEntity>> getByEventId(String eventId);
   Future<EventParticipantEntity> getByEventAndUser(
       EventEntity event, UserEntity user);
+  Future<EventParticipantEntity> updateParticipationStatus(
+      EventEntity event, UserEntity user,
+      {bool isParticipating = false});
 }

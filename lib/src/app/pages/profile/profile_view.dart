@@ -6,30 +6,39 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:flutter_conditional_rendering/conditional.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../data/repositories/firebase_events_repository.dart';
 import '../../../data/repositories/firebase_files_repository.dart';
 import '../../../data/repositories/firebase_users_repository.dart';
+import '../../../domain/entities/event_entity.dart';
 import '../../../domain/entities/user_entity.dart';
+import '../../widgets/empty_container.dart';
 import 'profile_controller.dart';
 
 class ProfilePage extends View {
+  final EventEntity event;
   final String title;
   final UserEntity user;
 
   ProfilePage({
     Key key,
     this.title,
+    @required this.event,
     @required this.user,
   }) : super(key: key);
 
   @override
   // inject dependencies inwards
-  _ProfilePageState createState() => _ProfilePageState(user);
+  _ProfilePageState createState() => _ProfilePageState(event, user);
 }
 
 class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
-  _ProfilePageState(user)
+  _ProfilePageState(event, user)
       : super(ProfileController(
-            FirebaseFilesRepository(), FirebaseUsersRepository(), user));
+            FirebaseFilesRepository(),
+            FirebaseEventsRepository(),
+            FirebaseUsersRepository(),
+            event,
+            user));
 
   @override
   Widget buildPage() {
@@ -207,34 +216,35 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
         padding: EdgeInsets.only(left: 20.0, right: 20.0),
         child: Image(image: NetworkImage(controller.participationImageUrl)),
       ),
-      fallbackBuilder: (context) => Container(width: 0, height: 0),
+      fallbackBuilder: (context) => EmptyContainer(),
     );
   }
 
-  Widget get participationStatus => Container(
-        // color: Colors.pink,
-        margin: EdgeInsets.only(top: 10.0),
-        child: Padding(
-          padding: EdgeInsets.only(left: 20.0, right: 20.0),
-          child: Row(
-            children: <Widget>[
-              Text(
-                "Participation Status",
-                style: TextStyle(fontSize: 20.0),
-              ),
-              Spacer(),
-              Switch(
-                  activeColor: Colors.lightBlue,
-                  value: controller.user != null
-                      ? controller.user.isActive
-                      : false,
-                  onChanged: (value) {
-                    controller.onParticipationStatusChanged(isActive: value);
-                  }),
-            ],
-          ),
+  Widget get participationStatus {
+    var isParticipating = controller.participant != null;
+
+    return Container(
+      margin: EdgeInsets.only(top: 10.0),
+      child: Padding(
+        padding: EdgeInsets.only(left: 20.0, right: 20.0),
+        child: Row(
+          children: <Widget>[
+            Text(
+              "Participation Status",
+              style: TextStyle(fontSize: 20.0),
+            ),
+            Spacer(),
+            Switch(
+              activeColor: Colors.lightBlue,
+              value: isParticipating,
+              onChanged: (value) => controller.onParticipationStatusChanged(
+                  isParticipating: value),
+            ),
+          ],
         ),
-      );
+      ),
+    );
+  }
 
   Widget get saveAvatarButton => Conditional.single(
       context: context,
@@ -260,10 +270,7 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
             ),
             fallbackBuilder: (context) => avatarSavingButton,
           ),
-      fallbackBuilder: (context) => Container(
-            height: 0.0,
-            width: 0.0,
-          ));
+      fallbackBuilder: (context) => EmptyContainer());
 
   Widget get updateAvatarButton => Conditional.single(
         context: context,
@@ -289,6 +296,6 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
             },
           ),
         ),
-        fallbackBuilder: (context) => Container(width: 0, height: 0),
+        fallbackBuilder: (context) => EmptyContainer(),
       );
 }

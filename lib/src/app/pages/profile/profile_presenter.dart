@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 
+import '../../../domain/entities/event_entity.dart';
 import '../../../domain/entities/user_entity.dart';
 import '../../../domain/usecases/crop_image_usecase.dart';
 import '../../../domain/usecases/get_avatar_url_usecase.dart';
+import '../../../domain/usecases/update_event_participation_usecase.dart';
 import '../../../domain/usecases/update_user_usecase.dart';
 import '../../../domain/usecases/upload_file_usecase.dart';
 
@@ -17,6 +19,9 @@ class ProfilePresenter extends Presenter {
   Function getAvatarUrlOnNext;
   Function getAvatarUrlOnComplete;
   Function getAvatarUrlOnError;
+  Function updateParticipationOnNext;
+  Function updateParticipationOnComplete;
+  Function updateParticipationOnError;
   Function updateUserOnNext;
   Function updateUserOnComplete;
   Function updateUserOnError;
@@ -27,21 +32,25 @@ class ProfilePresenter extends Presenter {
   /// Use Case Objects
   final CropImageUseCase cropImageUseCase;
   final GetAvatarUrlUseCase getAvatarUrlUseCase;
+  final UpdateEventParticipationUseCase updateParticipationUseCase;
   final UpdateUserUseCase updateUserUseCase;
   final UploadFileUseCase uploadFileUseCase;
 
   /// Constructor
-  ProfilePresenter(filesRepo, usersRepo) :
-    cropImageUseCase = CropImageUseCase(),
-    getAvatarUrlUseCase = GetAvatarUrlUseCase(filesRepo),
-    updateUserUseCase = UpdateUserUseCase(usersRepo),
-    uploadFileUseCase = UploadFileUseCase(filesRepo);
+  ProfilePresenter(filesRepo, usersRepo, particpantsRepo)
+      : cropImageUseCase = CropImageUseCase(),
+        getAvatarUrlUseCase = GetAvatarUrlUseCase(filesRepo),
+        updateParticipationUseCase =
+            UpdateEventParticipationUseCase(particpantsRepo),
+        updateUserUseCase = UpdateUserUseCase(usersRepo),
+        uploadFileUseCase = UploadFileUseCase(filesRepo);
 
   /// Overrides
   @override
   void dispose() {
     cropImageUseCase.dispose();
     getAvatarUrlUseCase.dispose();
+    updateParticipationUseCase.dispose();
     updateUserUseCase.dispose();
     uploadFileUseCase.dispose();
   }
@@ -49,30 +58,30 @@ class ProfilePresenter extends Presenter {
   /// Methods
   void cropImage(File image) {
     cropImageUseCase.execute(
-      _CropImageUseCaseObserver(this),
-      CropImageUseCaseParams(image)
-    );
+        _CropImageUseCaseObserver(this), CropImageUseCaseParams(image));
   }
 
   void getAvatarDownloadUrl(String id, String path) {
-    getAvatarUrlUseCase.execute(
-      _GetAvatarUrlUseCaseObserver(this),
-      GetAvatarUrlUseCaseParams(id, path)
-    );
+    getAvatarUrlUseCase.execute(_GetAvatarUrlUseCaseObserver(this),
+        GetAvatarUrlUseCaseParams(id, path));
+  }
+
+  void updateParticipation(EventEntity event, UserEntity user,
+      {bool isParticipating = false}) {
+    var params = UpdateEventParticipationUseCaseParams(event, user,
+        isParticipating: isParticipating);
+    updateParticipationUseCase.execute(
+        _UpdateEventParticipationUseCaseObserver(this), params);
   }
 
   void updateUser(UserEntity user) {
     updateUserUseCase.execute(
-      _UpdateUserUseCaseObserver(this),
-      UpdateUserUseCaseParams(user)
-    );
+        _UpdateUserUseCaseObserver(this), UpdateUserUseCaseParams(user));
   }
 
   void uploadAvatar(File file) {
     uploadFileUseCase.execute(
-      _UploadFileUseCaseObserver(this),
-      UploadFileUseCaseParams(file)
-    );
+        _UploadFileUseCaseObserver(this), UploadFileUseCaseParams(file));
   }
 }
 
@@ -81,10 +90,10 @@ class ProfilePresenter extends Presenter {
 class _CropImageUseCaseObserver extends Observer<CropImageUseCaseResponse> {
   /// Members
   final ProfilePresenter presenter;
-  
+
   /// Constructor
   _CropImageUseCaseObserver(this.presenter);
-  
+
   /// Overrides
   @override
   void onComplete() {
@@ -107,14 +116,13 @@ class _CropImageUseCaseObserver extends Observer<CropImageUseCaseResponse> {
 
 /// An observer class for the [GetAvatarUrlUseCase].
 class _GetAvatarUrlUseCaseObserver
-  extends Observer<GetAvatarUrlUseCaseResponse> {
-  
+    extends Observer<GetAvatarUrlUseCaseResponse> {
   /// Members
   final ProfilePresenter presenter;
-  
+
   /// Constructor
   _GetAvatarUrlUseCaseObserver(this.presenter);
-  
+
   /// Overrides
   @override
   void onComplete() {
@@ -136,13 +144,42 @@ class _GetAvatarUrlUseCaseObserver
 }
 
 /// An observer class for the [UpdateUserUseCase].
+class _UpdateEventParticipationUseCaseObserver
+    extends Observer<UpdateEventParticipationUseCaseResponse> {
+  /// Members
+  final ProfilePresenter presenter;
+
+  /// Constructor
+  _UpdateEventParticipationUseCaseObserver(this.presenter);
+
+  /// Overrides
+  @override
+  void onComplete() {
+    assert(presenter.updateParticipationOnComplete != null);
+    presenter.updateParticipationOnComplete();
+  }
+
+  @override
+  void onError(dynamic e) {
+    assert(presenter.updateParticipationOnNext != null);
+    presenter.updateParticipationOnNext(e);
+  }
+
+  @override
+  void onNext(UpdateEventParticipationUseCaseResponse response) {
+    assert(presenter.updateParticipationOnNext != null);
+    presenter.updateParticipationOnNext(response.participant);
+  }
+}
+
+/// An observer class for the [UpdateUserUseCase].
 class _UpdateUserUseCaseObserver extends Observer<UpdateUserUseCaseResponse> {
   /// Members
   final ProfilePresenter presenter;
-  
+
   /// Constructor
   _UpdateUserUseCaseObserver(this.presenter);
-  
+
   /// Overrides
   @override
   void onComplete() {
@@ -167,10 +204,10 @@ class _UpdateUserUseCaseObserver extends Observer<UpdateUserUseCaseResponse> {
 class _UploadFileUseCaseObserver extends Observer<UploadFileUseCaseResponse> {
   /// Members
   final ProfilePresenter presenter;
-  
+
   /// Constructor
   _UploadFileUseCaseObserver(this.presenter);
-  
+
   /// Overrides
   @override
   void onComplete() {
