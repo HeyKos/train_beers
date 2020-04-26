@@ -21,7 +21,7 @@ class UpdateEventParticipationUseCase
 
     try {
       var participant = await participationRepository.updateParticipationStatus(
-          params.event, params.user);
+          params.event, params.user, isParticipating: params.isParticipating);
 
       controller.add(UpdateEventParticipationUseCaseResponse(participant));
       logger.finest('UpdateEventParticipationUseCase successful.');

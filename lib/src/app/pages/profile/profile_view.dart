@@ -222,11 +222,9 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
   }
 
   Widget get participationStatus {
-    var isParticipating = controller.participant != null;
     var onChanged = controller.loadingParticipant
         ? null
-        : (value) =>
-            controller.onParticipationStatusChanged(isParticipating: value);
+        : _onParticipatingChanged;
 
     return Container(
       margin: EdgeInsets.only(top: 10.0),
@@ -241,7 +239,7 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
             Spacer(),
             Switch(
               activeColor: Colors.lightBlue,
-              value: isParticipating,
+              value: controller.isParticipating,
               onChanged: onChanged,
             ),
           ],
@@ -302,4 +300,8 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
         ),
         fallbackBuilder: (context) => EmptyContainer(),
       );
+
+  /// Methods
+  void _onParticipatingChanged(bool isParticipating) =>
+      controller.onParticipationStatusChanged(isParticipating: isParticipating);
 }

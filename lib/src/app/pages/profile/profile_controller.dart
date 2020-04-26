@@ -135,11 +135,13 @@ class ProfileController extends Controller {
 
   void initUpdateParticipationListeners() {
     profilePresenter.updateParticipationOnNext = (participant) {
-      _participant = participant;
       print('Update participation onNext');
+      _participant = participant;
+      _loadingParticipant = false;
+      refreshUI();
     };
 
-    profilePresenter.updateUserOnComplete = () {
+    profilePresenter.updateParticipationOnComplete = () {
       print('Update participation complete');
     };
 
@@ -251,10 +253,11 @@ class ProfileController extends Controller {
 
   void onParticipationStatusChanged({bool isParticipating = false}) {
     _isParticipating = isParticipating;
+    _loadingParticipant = true;
     _participationImageUrl =
         getParticipationImage(isParticipating: isParticipating);
     refreshUI();
-    updateParticipation(_event, _user);
+    updateParticipation(_event, _user, isParticipating: isParticipating);
   }
 
   void saveAvatar() {
@@ -295,8 +298,10 @@ class ProfileController extends Controller {
     updateUser(user);
   }
 
-  void updateParticipation(EventEntity event, UserEntity user) =>
-      profilePresenter.updateParticipation(event, user);
+  void updateParticipation(EventEntity event, UserEntity user,
+          {bool isParticipating = false}) =>
+      profilePresenter.updateParticipation(event, user,
+          isParticipating: isParticipating);
 
   void updateUser(UserEntity user) => profilePresenter.updateUser(user);
 

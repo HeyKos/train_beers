@@ -28,9 +28,8 @@ class FirebaseEventParticipantsRepository
   }
 
   @override
-  Future<void> delete(String eventParticipantId) {
-    return userCollection.document(eventParticipantId).delete();
-  }
+  Future<void> delete(String eventParticipantId) =>
+      eventParticpantsCollection.document(eventParticipantId).delete();
 
   @override
   Stream<List<EventParticipantEntity>> getByEventId(String eventId) {
@@ -65,6 +64,9 @@ class FirebaseEventParticipantsRepository
       return create(participant);
     } else {
       var participant = await getByEventAndUser(event, user);
+      if (participant == null) {
+        return null;
+      }
       await delete(participant.id);
       return null;
     }
@@ -93,7 +95,20 @@ class FirebaseEventParticipantsRepository
     return eventParticipant;
   }
 
-  Future<EventParticipantEntity> _onGetParticipant(QuerySnapshot snapshot) =>
-      snapshot.documents.first
-          .toEventParticipant(eventParticpantsCollection.path);
+  Future<EventParticipantEntity> _onGetParticipant(QuerySnapshot snapshot) {
+    if (snapshot == null) {
+      return null;
+    }
+
+    if (snapshot.documents == null) {
+      return null;
+    }
+
+    if (snapshot.documents == null || snapshot.documents.isEmpty) {
+      return null;
+    }
+
+    return snapshot.documents.first
+        .toEventParticipant(eventParticpantsCollection.path);
+  }
 }
