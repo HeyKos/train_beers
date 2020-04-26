@@ -6,7 +6,7 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:flutter_conditional_rendering/conditional.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../data/repositories/firebase_events_repository.dart';
+import '../../../data/repositories/firebase_event_participants_repository.dart';
 import '../../../data/repositories/firebase_files_repository.dart';
 import '../../../data/repositories/firebase_users_repository.dart';
 import '../../../domain/entities/event_entity.dart';
@@ -35,8 +35,8 @@ class _ProfilePageState extends ViewState<ProfilePage, ProfileController> {
   _ProfilePageState(event, user)
       : super(ProfileController(
             FirebaseFilesRepository(),
-            FirebaseEventsRepository(),
             FirebaseUsersRepository(),
+            FirebaseEventParticipantsRepository(),
             event,
             user));
 
