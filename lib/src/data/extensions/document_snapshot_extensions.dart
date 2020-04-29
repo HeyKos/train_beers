@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entities/event_entity.dart';
 import '../../domain/entities/event_participant_entity.dart';
 import '../../domain/entities/user_entity.dart';
+import '../../domain/enums/event_status.dart';
 import '../validators/document_snapshot_validator.dart';
 
 extension Extensions on DocumentSnapshot {
@@ -14,6 +15,7 @@ extension Extensions on DocumentSnapshot {
 
     var date = data['date'] as Timestamp;
     var userRef = data['hostUser'] as DocumentReference;
+    var status = data['status'];
 
     var hostUser = await userRef
         .get()
@@ -25,7 +27,7 @@ extension Extensions on DocumentSnapshot {
       documentID,
       date != null ? date.toDate() : null,
       hostUser,
-      data['status'],
+      EventStatus.values.contains(status) ? status : EventStatus.buyBeer,
     );
   }
 

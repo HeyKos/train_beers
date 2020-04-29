@@ -5,7 +5,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:flutter_conditional_rendering/flutter_conditional_rendering.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
-import 'package:train_beers/src/app/widgets/empty_container.dart';
 
 import '../../../data/repositories/firebase_authentication_repository.dart';
 import '../../../data/repositories/firebase_event_participants_repository.dart';
@@ -15,6 +14,7 @@ import '../../../data/repositories/firebase_users_repository.dart';
 import '../../../domain/entities/user_entity.dart';
 import '../../utils/constants.dart';
 import '../../widgets/countdown_timer.dart';
+import '../../widgets/empty_container.dart';
 import './home_controller.dart';
 
 class HomePage extends View {
@@ -99,14 +99,18 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
     var isCurrentUserHost = userId != null && userId == hostUserId;
 
     return Conditional.single(
-      context: context,
-      conditionBuilder: (context) => isCurrentUserHost,
-      widgetBuilder: (context) => Container(
-        color: Colors.pink,
-        height: 100,
-        width: 100,
-      ),
-      fallbackBuilder: (context) => EmptyContainer());
+        context: context,
+        conditionBuilder: (context) => isCurrentUserHost,
+        widgetBuilder: (context) => Container(
+              color: Colors.pink,
+              height: 100,
+              child: Text(
+                controller.getNextStep(),
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.black, fontSize: 20),
+              ),
+            ),
+        fallbackBuilder: (context) => EmptyContainer());
   }
 
   Widget get countdownWidget => Conditional.single(

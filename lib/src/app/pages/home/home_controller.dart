@@ -4,6 +4,7 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import '../../../domain/entities/event_entity.dart';
 import '../../../domain/entities/event_participant_entity.dart';
 import '../../../domain/entities/user_entity.dart';
+import '../../../domain/enums/event_status.dart';
 import '../../../domain/repositories/authentication_repository.dart';
 import '../../../domain/repositories/event_participants_repository.dart';
 import '../../../domain/repositories/events_repository.dart';
@@ -32,7 +33,7 @@ class HomeController extends Controller {
   String _avatarPath;
   EventEntity _event;
   Color _eventProgressColor = Colors.blue;
-  String _eventProgressMessage = "Buy Beer";
+  String _eventProgressMessage = EventStatus.buyBeer.value;
   double _eventProgressPercent = 0;
   List<EventParticipantEntity> _participants;
   UserEntity _user;
@@ -180,6 +181,20 @@ class HomeController extends Controller {
   /// but accomplishes it with an observer.
   Future<void> getNextEvent() async => await homePresenter.getNextEvent();
 
+  String getNextStep() {
+    if (_event == null) {
+      return EventStatus.buyBeer.value;
+    }
+
+    switch(_event.status) {
+      case EventStatus.buyBeer:
+        return EventStatus.bringBeer.value;
+      case EventStatus.bringBeer:
+      default:
+        return EventStatus.drinkBeer.value;
+    }
+  }
+
   void goToActiveDrinkers() {
     Navigator.of(getContext()).pushNamed(Pages.participants, arguments: {
       "participants": _participants,
@@ -198,11 +213,11 @@ class HomeController extends Controller {
     while (_eventProgressPercent < 100) {
       _eventProgressPercent++;
       if (_eventProgressPercent < 33) {
-        _eventProgressMessage = 'Buy Beer';
+        _eventProgressMessage = EventStatus.buyBeer.value;
       } else if (_eventProgressPercent < 100) {
-        _eventProgressMessage = 'Bring Beer';
+        _eventProgressMessage = EventStatus.bringBeer.value;
       } else {
-        _eventProgressMessage = 'Drink Beer';
+        _eventProgressMessage = EventStatus.drinkBeer.value;
         _eventProgressColor = Colors.green;
       }
       refreshUI();

@@ -1,3 +1,4 @@
+import '../enums/event_status.dart';
 import 'base_entity.dart';
 import 'user_entity.dart';
 
@@ -7,5 +8,5 @@ class EventEntity extends BaseEntity {
   /// Members
   DateTime date;
   UserEntity hostUser;
-  String status;
+  EventStatus status;
 }
