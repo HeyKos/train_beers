@@ -63,7 +63,7 @@ class HomeController extends Controller {
     super.dispose();
   }
 
-  /// Methods
+  /// Listener Initializers
   void initGetAvatarUrlListeners() {
     homePresenter.getAvatarUrlOnNext = (url) {
       print('Get avatar url onNext');
@@ -87,7 +87,7 @@ class HomeController extends Controller {
   void initGetEventParticipantsListeners() {
     homePresenter.getEventParticipantsOnNext = (eventParticipants) {
       _participants = eventParticipants;
-      setPercent;
+      updateProgress();
       refreshUI();
     };
     homePresenter.getEventParticipantsOnComplete = () {
@@ -101,22 +101,6 @@ class HomeController extends Controller {
       state.showSnackBar(SnackBar(content: Text(e.message.toString())));
       refreshUI();
     };
-  }
-
-  Future<void> get setPercent async {
-    while (_eventProgressPercent < 100) {
-      _eventProgressPercent++;
-      if (_eventProgressPercent < 33) {
-        _eventProgressMessage = 'Buy Beer';
-      } else if (_eventProgressPercent < 100) {
-        _eventProgressMessage = 'Bring Beer';
-      } else {
-        _eventProgressMessage = 'Drink Beer';
-        _eventProgressColor = Colors.green;
-      }
-      refreshUI();
-      await Future<dynamic>.delayed(const Duration(milliseconds: 10));
-    }
   }
 
   void initGetNextEventListeners() {
@@ -182,12 +166,7 @@ class HomeController extends Controller {
     };
   }
 
-  void goToActiveDrinkers() {
-    Navigator.of(getContext()).pushNamed(Pages.participants, arguments: {
-      "participants": _participants,
-    });
-  }
-
+  /// Methods  
   void getAvatarDownloadUrl(String id, String path) {
     homePresenter.getAvatarDownloadUrl(id, path);
   }
@@ -201,13 +180,35 @@ class HomeController extends Controller {
   /// but accomplishes it with an observer.
   Future<void> getNextEvent() async => await homePresenter.getNextEvent();
 
+  void goToActiveDrinkers() {
+    Navigator.of(getContext()).pushNamed(Pages.participants, arguments: {
+      "participants": _participants,
+    });
+  }
+
   void logout() => homePresenter.logout();
-
-  void updateUser(UserEntity user) => homePresenter.updateUser(user);
-
-  bool shouldDisplayCountdown() => homePresenter.shouldDisplayCountdown();
 
   void onMenuOptionChange(String value) {
     homePresenter.onMenuOptionChange(value, _event, _user, getContext());
   }
+
+  bool shouldDisplayCountdown() => homePresenter.shouldDisplayCountdown();
+
+  Future<void> updateProgress() async {
+    while (_eventProgressPercent < 100) {
+      _eventProgressPercent++;
+      if (_eventProgressPercent < 33) {
+        _eventProgressMessage = 'Buy Beer';
+      } else if (_eventProgressPercent < 100) {
+        _eventProgressMessage = 'Bring Beer';
+      } else {
+        _eventProgressMessage = 'Drink Beer';
+        _eventProgressColor = Colors.green;
+      }
+      refreshUI();
+      return await Future<dynamic>.delayed(const Duration(milliseconds: 10));
+    }
+  }
+
+  void updateUser(UserEntity user) => homePresenter.updateUser(user);
 }

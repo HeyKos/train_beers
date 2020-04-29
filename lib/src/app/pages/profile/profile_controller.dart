@@ -50,7 +50,6 @@ class ProfileController extends Controller {
   }
 
   /// Overrides
-  // this is called automatically by the parent class
   @override
   void initListeners() {
     initCropImageListeners();
