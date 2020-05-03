@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../domain/entities/event_entity.dart';
+import '../../domain/extensions/event_entity_extensions.dart';
 import '../../domain/repositories/events_repository.dart';
 import '../extensions/document_snapshot_extensions.dart';
 
@@ -15,6 +16,11 @@ class FirebaseEventsRepository implements EventsRepository {
         .orderBy('date', descending: true)
         .snapshots()
         .asyncMap(_mapSnaphotToEvent);
+  }
+
+  @override
+  Future<void> update(EventEntity event) {
+    return eventCollection.document(event.id).updateData(event.toDocument());
   }
 
   /// Methods
