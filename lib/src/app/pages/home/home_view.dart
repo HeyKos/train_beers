@@ -12,6 +12,7 @@ import '../../../data/repositories/firebase_events_repository.dart';
 import '../../../data/repositories/firebase_files_repository.dart';
 import '../../../data/repositories/firebase_users_repository.dart';
 import '../../../domain/entities/user_entity.dart';
+import '../../../domain/enums/event_status.dart';
 import '../../utils/constants.dart';
 import '../../widgets/countdown_timer.dart';
 import '../../widgets/empty_container.dart';
@@ -104,10 +105,16 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
         widgetBuilder: (context) => Container(
               color: Colors.pink,
               height: 100,
-              child: Text(
-                controller.getNextStep(),
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.black, fontSize: 20),
+              child: DropdownButtonFormField(
+                decoration: InputDecoration(labelText: 'Set Status'),
+                value: controller.eventStatus,
+                items: EventStatus.values
+                    .map((status) => DropdownMenuItem<EventStatus>(
+                          child: Text(status.value),
+                          value: status,
+                        ))
+                    .toList(),
+                onChanged: (newStatus) => controller.eventStatus = newStatus,
               ),
             ),
         fallbackBuilder: (context) => EmptyContainer());

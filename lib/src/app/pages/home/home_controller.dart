@@ -45,6 +45,19 @@ class HomeController extends Controller {
   Color get eventProgressColor => _eventProgressColor;
   String get eventProgressMessage => _eventProgressMessage;
   double get eventProgressPercent => _eventProgressPercent;
+  EventStatus get eventStatus {
+    if (_event == null) {
+      return EventStatus.buyBeer;
+    }
+
+    return _event.status;
+  }
+
+  set eventStatus(EventStatus status) {
+    _event.status = status;
+    refreshUI();
+  }
+
   List<EventParticipantEntity> get participants => _participants;
   UserEntity get user => _user;
 
@@ -167,7 +180,7 @@ class HomeController extends Controller {
     };
   }
 
-  /// Methods  
+  /// Methods
   void getAvatarDownloadUrl(String id, String path) {
     homePresenter.getAvatarDownloadUrl(id, path);
   }
@@ -181,17 +194,17 @@ class HomeController extends Controller {
   /// but accomplishes it with an observer.
   Future<void> getNextEvent() async => await homePresenter.getNextEvent();
 
-  String getNextStep() {
+  EventStatus getNextStep() {
     if (_event == null) {
-      return EventStatus.buyBeer.value;
+      return EventStatus.buyBeer;
     }
 
-    switch(_event.status) {
+    switch (_event.status) {
       case EventStatus.buyBeer:
-        return EventStatus.bringBeer.value;
+        return EventStatus.bringBeer;
       case EventStatus.bringBeer:
       default:
-        return EventStatus.drinkBeer.value;
+        return EventStatus.drinkBeer;
     }
   }
 
