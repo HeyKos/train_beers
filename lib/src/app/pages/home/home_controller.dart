@@ -56,6 +56,7 @@ class HomeController extends Controller {
   set eventStatus(EventStatus status) {
     _event.status = status;
     refreshUI();
+    updateEvent(_event);
   }
 
   List<EventParticipantEntity> get participants => _participants;
@@ -68,6 +69,7 @@ class HomeController extends Controller {
     initGetEventParticipantsListeners();
     initGetNextEventListeners();
     initLogoutListeners();
+    initUpdateEventListeners();
     initUpdateUserListeners();
   }
 
@@ -160,6 +162,26 @@ class HomeController extends Controller {
     };
   }
 
+  void initUpdateEventListeners() {
+    homePresenter.updateEventOnNext = (event) {
+      print('Update event onNext');
+      _event = event;
+      refreshUI();
+    };
+
+    homePresenter.updateEventOnComplete = () {
+      print('Update event complete');
+    };
+
+    // On error, show a snackbar, remove the user, and refresh the UI
+    homePresenter.updateEventOnError = (e) {
+      print('Could not update event.');
+      final ScaffoldState state = getState();
+      state.showSnackBar(SnackBar(content: Text(e.message)));
+      refreshUI();
+    };
+  }
+
   void initUpdateUserListeners() {
     homePresenter.updateUserOnNext = (user) {
       print('Update user onNext');
@@ -237,6 +259,8 @@ class HomeController extends Controller {
       return await Future<dynamic>.delayed(const Duration(milliseconds: 10));
     }
   }
+
+  void updateEvent(EventEntity event) => homePresenter.updateEvent(event);
 
   void updateUser(UserEntity user) => homePresenter.updateUser(user);
 }

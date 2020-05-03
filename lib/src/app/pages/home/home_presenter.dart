@@ -8,6 +8,7 @@ import '../../../domain/usecases/get_avatar_url_usecase.dart';
 import '../../../domain/usecases/get_event_participants_usecase.dart';
 import '../../../domain/usecases/get_next_event_usecase.dart';
 import '../../../domain/usecases/logout_usecase.dart';
+import '../../../domain/usecases/update_event_usecase.dart';
 import '../../../domain/usecases/update_user_usecase.dart';
 import '../../utils/constants.dart';
 import '../pages.dart';
@@ -27,28 +28,33 @@ class HomePresenter extends Presenter {
   Function logoutOnNext;
   Function logoutOnComplete;
   Function logoutOnError;
+  Function updateEventOnNext;
+  Function updateEventOnComplete;
+  Function updateEventOnError;
   Function updateUserOnNext;
   Function updateUserOnComplete;
   Function updateUserOnError;
 
   /// Use Case Objects
+  final CountdownUseCase countdownUseCase;
   final GetAvatarUrlUseCase getAvatarUrlUseCase;
   final GetEventParticipantsUseCase getEventParticipantsUseCase;
   final GetNextEventUseCase getNextEventUseCase;
   final LogoutUseCase logoutUseCase;
+  final UpdateEventUseCase updateEventUseCase;
   final UpdateUserUseCase updateUserUseCase;
-  final CountdownUseCase countdownUseCase;
 
   /// Constructor
   HomePresenter(
       filesRepo, usersRepo, authRepo, eventsRepo, eventParticipantsRepo)
-      : getAvatarUrlUseCase = GetAvatarUrlUseCase(filesRepo),
+      : countdownUseCase = CountdownUseCase(),
+        getAvatarUrlUseCase = GetAvatarUrlUseCase(filesRepo),
         getEventParticipantsUseCase =
             GetEventParticipantsUseCase(eventParticipantsRepo),
         getNextEventUseCase = GetNextEventUseCase(eventsRepo),
         logoutUseCase = LogoutUseCase(authRepo),
-        updateUserUseCase = UpdateUserUseCase(usersRepo),
-        countdownUseCase = CountdownUseCase();
+        updateEventUseCase = UpdateEventUseCase(eventsRepo),
+        updateUserUseCase = UpdateUserUseCase(usersRepo);
 
   /// Overrides
   @override
@@ -57,6 +63,7 @@ class HomePresenter extends Presenter {
     getEventParticipantsUseCase.dispose();
     getNextEventUseCase.dispose();
     logoutUseCase.dispose();
+    updateEventUseCase.dispose();
     updateUserUseCase.dispose();
   }
 
@@ -76,21 +83,14 @@ class HomePresenter extends Presenter {
     getNextEventUseCase.execute(_GetNextEventUseCaseObserver(this), null);
   }
 
-  void logout() {
-    logoutUseCase.execute(_LogoutUseCaseObserver(this));
-  }
-
-  void updateUser(UserEntity user) {
-    updateUserUseCase.execute(
-        _UpdateUserUseCaseObserver(this), UpdateUserUseCaseParams(user));
-  }
-
   void goToProfile(EventEntity event, UserEntity user, BuildContext context) {
     Navigator.pushNamed(context, Pages.profile,
         arguments: {"user": user, "event": event});
   }
 
-  bool shouldDisplayCountdown() => countdownUseCase.shouldDisplayCountdown();
+  void logout() {
+    logoutUseCase.execute(_LogoutUseCaseObserver(this));
+  }
 
   void onMenuOptionChange(
       String value, EventEntity event, UserEntity user, BuildContext context) {
@@ -106,6 +106,18 @@ class HomePresenter extends Presenter {
         logout();
         break;
     }
+  }
+
+  bool shouldDisplayCountdown() => countdownUseCase.shouldDisplayCountdown();
+
+  void updateEvent(EventEntity event) {
+    updateEventUseCase.execute(
+        _UpdateEventUseCaseObserver(this), UpdateEventUseCaseParams(event));
+  }
+
+  void updateUser(UserEntity user) {
+    updateUserUseCase.execute(
+        _UpdateUserUseCaseObserver(this), UpdateUserUseCaseParams(user));
   }
 }
 
@@ -223,6 +235,34 @@ class _LogoutUseCaseObserver extends Observer<void> {
   void onNext(void response) {
     assert(presenter.logoutOnNext != null);
     presenter.logoutOnNext();
+  }
+}
+
+/// An observer class for the [UpdateEventUseCase].
+class _UpdateEventUseCaseObserver extends Observer<UpdateEventUseCaseResponse> {
+  /// Members
+  final HomePresenter presenter;
+
+  /// Constructor
+  _UpdateEventUseCaseObserver(this.presenter);
+
+  /// Overrides
+  @override
+  void onComplete() {
+    assert(presenter.updateEventOnComplete != null);
+    presenter.updateEventOnComplete();
+  }
+
+  @override
+  void onError(dynamic e) {
+    assert(presenter.updateEventOnError != null);
+    presenter.updateEventOnError(e);
+  }
+
+  @override
+  void onNext(UpdateEventUseCaseResponse response) {
+    assert(presenter.updateEventOnNext != null);
+    presenter.updateEventOnNext(response.event);
   }
 }
 

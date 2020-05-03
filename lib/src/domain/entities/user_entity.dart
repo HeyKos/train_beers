@@ -25,8 +25,6 @@ class UserEntity extends BaseEntity {
     return name.toUpperCase().substring(0, 1);
   }
 
-  String get referencePath => 'users/$id';
-
   /// Overrides
   @override
   String toString() => '$name';
