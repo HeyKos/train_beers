@@ -166,6 +166,20 @@ class HomeController extends Controller {
     homePresenter.updateEventOnNext = (event) {
       print('Update event onNext');
       _event = event;
+      switch (_event.status) {
+        case EventStatus.bringBeer:
+          _eventProgressPercent = EventStatus.buyBeer.percent;
+          break;
+        case EventStatus.drinkBeer:
+          _eventProgressPercent = EventStatus.bringBeer.percent;
+          break;
+        case EventStatus.notStarted:
+        case EventStatus.buyBeer:
+        default:
+          _eventProgressPercent = 0;
+          break;
+      }
+      updateProgress();
       refreshUI();
     };
 
@@ -245,18 +259,23 @@ class HomeController extends Controller {
   bool shouldDisplayCountdown() => homePresenter.shouldDisplayCountdown();
 
   Future<void> updateProgress() async {
-    while (_eventProgressPercent < 100) {
-      _eventProgressPercent++;
-      if (_eventProgressPercent < 33) {
+    while (_eventProgressPercent < _event.status.percent) {
+      if (_eventProgressPercent < EventStatus.buyBeer.percent) {
+        _eventProgressMessage = EventStatus.notStarted.value;
+      } else if (_eventProgressPercent < EventStatus.bringBeer.percent) {
         _eventProgressMessage = EventStatus.buyBeer.value;
-      } else if (_eventProgressPercent < 100) {
-        _eventProgressMessage = EventStatus.bringBeer.value;
       } else {
         _eventProgressMessage = EventStatus.drinkBeer.value;
         _eventProgressColor = Colors.green;
       }
+      print(
+          'progress percent: $_eventProgressPercent / ${event.status.percent}');
       refreshUI();
-      return await Future<dynamic>.delayed(const Duration(milliseconds: 10));
+      _eventProgressPercent =
+          _eventProgressPercent + 1 > EventStatus.drinkBeer.percent
+              ? EventStatus.drinkBeer.percent
+              : eventProgressPercent + 1;
+      // return await Future<dynamic>.delayed(const Duration(milliseconds: 10));
     }
   }
 

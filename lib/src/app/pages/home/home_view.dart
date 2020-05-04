@@ -103,10 +103,12 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
         context: context,
         conditionBuilder: (context) => isCurrentUserHost,
         widgetBuilder: (context) => Container(
-              color: Colors.pink,
+              padding: EdgeInsets.only(left: 20, right: 20),
               height: 100,
               child: DropdownButtonFormField(
-                decoration: InputDecoration(labelText: 'Set Status'),
+                decoration: InputDecoration(
+                    labelText: 'Update Progress',
+                    labelStyle: TextStyle(fontSize: 20.0)),
                 value: controller.eventStatus,
                 items: EventStatus.values
                     .map((status) => DropdownMenuItem<EventStatus>(
