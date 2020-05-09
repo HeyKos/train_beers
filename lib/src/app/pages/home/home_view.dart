@@ -150,30 +150,37 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
       });
 
   Widget get eventProgress {
+    var circularSliderAppearance = CircularSliderAppearance(
+      // animationEnabled: false,
+      customWidths: CustomSliderWidths(progressBarWidth: 10),
+      customColors: CustomSliderColors(
+        trackColor: Colors.grey,
+        progressBarColor: controller.eventProgressColor,
+        hideShadow: true,
+      ),
+    );
+
+    var progressMessage = controller.event != null
+        ? controller.event.status.value
+        : EventStatus.notStarted.value;
+
+    var progressPercent =
+        controller.event != null ? controller.event.status.percent : 0.0;
+
     return Container(
       margin: EdgeInsets.only(top: 20),
       padding: EdgeInsets.only(left: 20, right: 20),
       child: SleekCircularSlider(
-        appearance: CircularSliderAppearance(
-          customWidths: CustomSliderWidths(progressBarWidth: 10),
-          customColors: CustomSliderColors(
-            trackColor: Colors.grey,
-            progressBarColor: controller.eventProgressColor,
-            hideShadow: true,
-          ),
-        ),
+        appearance: circularSliderAppearance,
         innerWidget: (curentValue) => Container(
           margin: EdgeInsets.only(top: 25),
           child: Column(
-            children: <Widget>[
-              nextTrainBeerBuyerAvatar,
-              Text(controller.eventProgressMessage)
-            ],
+            children: <Widget>[nextTrainBeerBuyerAvatar, Text(progressMessage)],
           ),
         ),
         min: 0,
         max: 100,
-        initialValue: controller.eventProgressPercent,
+        initialValue: progressPercent,
       ),
     );
   }

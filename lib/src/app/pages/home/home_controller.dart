@@ -33,8 +33,6 @@ class HomeController extends Controller {
   String _avatarPath;
   EventEntity _event;
   Color _eventProgressColor = Colors.blue;
-  String _eventProgressMessage = EventStatus.buyBeer.value;
-  double _eventProgressPercent = 0;
   List<EventParticipantEntity> _participants;
   UserEntity _user;
   final HomePresenter homePresenter;
@@ -43,11 +41,9 @@ class HomeController extends Controller {
   String get avatarPath => _avatarPath;
   EventEntity get event => _event;
   Color get eventProgressColor => _eventProgressColor;
-  String get eventProgressMessage => _eventProgressMessage;
-  double get eventProgressPercent => _eventProgressPercent;
   EventStatus get eventStatus {
     if (_event == null) {
-      return EventStatus.buyBeer;
+      return EventStatus.notStarted;
     }
 
     return _event.status;
@@ -166,19 +162,6 @@ class HomeController extends Controller {
     homePresenter.updateEventOnNext = (event) {
       print('Update event onNext');
       _event = event;
-      switch (_event.status) {
-        case EventStatus.bringBeer:
-          _eventProgressPercent = EventStatus.buyBeer.percent;
-          break;
-        case EventStatus.drinkBeer:
-          _eventProgressPercent = EventStatus.bringBeer.percent;
-          break;
-        case EventStatus.notStarted:
-        case EventStatus.buyBeer:
-        default:
-          _eventProgressPercent = 0;
-          break;
-      }
       updateProgress();
       refreshUI();
     };
@@ -258,25 +241,13 @@ class HomeController extends Controller {
 
   bool shouldDisplayCountdown() => homePresenter.shouldDisplayCountdown();
 
-  Future<void> updateProgress() async {
-    while (_eventProgressPercent < _event.status.percent) {
-      if (_eventProgressPercent < EventStatus.buyBeer.percent) {
-        _eventProgressMessage = EventStatus.notStarted.value;
-      } else if (_eventProgressPercent < EventStatus.bringBeer.percent) {
-        _eventProgressMessage = EventStatus.buyBeer.value;
-      } else {
-        _eventProgressMessage = EventStatus.drinkBeer.value;
-        _eventProgressColor = Colors.green;
-      }
-      print(
-          'progress percent: $_eventProgressPercent / ${event.status.percent}');
-      refreshUI();
-      _eventProgressPercent =
-          _eventProgressPercent + 1 > EventStatus.drinkBeer.percent
-              ? EventStatus.drinkBeer.percent
-              : eventProgressPercent + 1;
-      // return await Future<dynamic>.delayed(const Duration(milliseconds: 10));
+  void updateProgress() {
+    if (_event.status == EventStatus.drinkBeer) {
+      _eventProgressColor = Colors.green;
+      return;
     }
+
+    _eventProgressColor = Colors.blue;
   }
 
   void updateEvent(EventEntity event) => homePresenter.updateEvent(event);

@@ -27,7 +27,9 @@ extension Extensions on DocumentSnapshot {
       documentID,
       date != null ? date.toDate() : null,
       hostUser,
-      EventStatus.values.contains(status) ? status : EventStatus.buyBeer,
+      EventStatus.values[status] != null
+          ? EventStatus.values[status]
+          : EventStatus.notStarted,
     );
   }
 
