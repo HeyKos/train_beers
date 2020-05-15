@@ -62,14 +62,10 @@ class CountdownUseCase {
     return nextBeerDate.difference(clock.now()).inSeconds;
   }
 
-  /// Gets a formatted string of the current countdown value. The [newDuration]
-  /// is calculated by multiplying the supplied [duration] by the supplied
-  /// [currentAnimationValue]. The [newDuration] is then parsed into days,
-  /// hours, minutes, and seconds. The returned value follows the following
-  /// format: "dd:hh:mm:ss".
-  String getTimerString(Duration duration, double currentAnimationValue) {
-    duration = duration * currentAnimationValue;
-
+  /// Gets a formatted string of the current countdown value. The [duration] is
+  /// parsed into days, hours, minutes, and seconds. The returned value follows
+  /// the following format: "dd:hh:mm:ss".
+  String getTimerString(Duration duration) {
     var twoDigitDays = duration.inDays.remainder(7).toTwoDigitString();
     var twoDigitHours = duration.inHours.remainder(24).toTwoDigitString();
     var twoDigitMinutes = duration.inMinutes.remainder(60).toTwoDigitString();
