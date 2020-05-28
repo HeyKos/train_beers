@@ -1,15 +1,16 @@
 import 'base_entity.dart';
 
 class UserEntity extends BaseEntity {
-  UserEntity(String id, this.avatarPath, this.name, this.purchasedOn,
+  UserEntity(String id, this.avatarPath, this.name, this.lastHostedOn,
       this.sequence, this.uid)
       : super(id);
 
   /// Members
   String avatarPath;
+  bool isActive;
   String name;
   int sequence;
-  DateTime purchasedOn;
+  DateTime lastHostedOn;
   String uid;
   String avatarUrl;
 

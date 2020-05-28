@@ -5,8 +5,9 @@ extension Extensions on UserEntity {
     return {
       'avatarPath': avatarPath,
       'id': id,
+      'isActive': isActive,
       'name': name,
-      'purchasedOn': purchasedOn,
+      'lastHostedOn': lastHostedOn,
       'sequence': sequence,
       'uid': uid,
     };
@@ -16,8 +17,9 @@ extension Extensions on UserEntity {
     return {
       'avatarPath': avatarPath,
       'id': id,
+      'isActive': isActive,
       'name': name,
-      'purchasedOn': purchasedOn.toString(),
+      'lastHostedOn': lastHostedOn.toString(),
       'sequenece': sequence,
       'uid': uid,
     };
