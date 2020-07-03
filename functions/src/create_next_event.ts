@@ -1,5 +1,4 @@
 import * as admin from 'firebase-admin';
-// import * as functions from 'firebase-functions';
 
 // Type aliases
 type DocData = FirebaseFirestore.DocumentData;
@@ -22,22 +21,6 @@ interface Event {
     hostUser: DocRef,
     status: EventStatus,
 }
-
-/*
-    Runs at 6:00pm, every Friday, every month to update the purchasedOn timestamp for the user
-    that is currently set to purchase train beers.
-*/
-// export const initializeNextEvent = functions.pubsub.schedule('0 0 18 ? * FRI *')
-//     .timeZone('America/New_York')
-//     .onRun((context) => {
-//         // Get the active user who has gone the longest without hosting an event.
-//         getNextEventHost()
-//             .then(onGetNextEventHostSuccess)
-//             .catch((e) => {
-//                 console.error("An error occurred while getting the next host user.", e);
-//             });
-//     });
-
 export const initializeNextEvent = function () {
     getNextEventHost()
         .then(onGetNextEventHostSuccess)
