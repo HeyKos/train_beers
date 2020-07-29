@@ -16,4 +16,6 @@ export const scheduleNextEvent = functions.pubsub.schedule('0 0 18 ? * FRI *')
     Updates the purchasedOn timestamp for the user that is currently set to
     purchase train beers.
 */
-export const scheduleNextEventOnDemand = functions.https.onCall((context) => initializeNextEvent);
+export const scheduleNextEventOnDemand = functions.https.onRequest((req, res) => {
+    initializeNextEvent();
+});
