@@ -5,4 +5,8 @@ lib/*.js.map
 # Typescript v1 declaration files
 typings/
 
+# Node
 node_modules/
+
+# Firebase
+train-beers-firebase-adminsdk-bw0mb-12fb9c2d77.json
