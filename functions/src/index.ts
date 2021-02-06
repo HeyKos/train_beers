@@ -25,7 +25,7 @@ export const scheduleNextEventOnDemand = functions.https.onRequest((req, res) =>
 /*
     Toggles a user's participation status for the current train beer event.
 */
-export const toggleEventParticipationOnDemand = functions.https.onRequest((req, res) => {
-    toggleEventParticipation();
+export const toggleEventParticipationOnDemand = functions.https.onRequest(async (req, res) => {
+    await toggleEventParticipation();
     res.end();
 });
