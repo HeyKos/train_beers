@@ -1,6 +1,7 @@
 import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
 import { initializeNextEvent } from './create_next_event';
+import { toggleEventParticipation } from './toggle_event_participation';
 
 admin.initializeApp();
 
@@ -18,4 +19,13 @@ export const scheduleNextEvent = functions.pubsub.schedule('0 0 18 ? * FRI *')
 */
 export const scheduleNextEventOnDemand = functions.https.onRequest((req, res) => {
     initializeNextEvent();
+    res.end();
+});
+
+/*
+    Toggles a user's participation status for the current train beer event.
+*/
+export const toggleEventParticipationOnDemand = functions.https.onRequest((req, res) => {
+    toggleEventParticipation();
+    res.end();
 });
