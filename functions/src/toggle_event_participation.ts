@@ -1,4 +1,5 @@
 import * as admin from 'firebase-admin';
+import { ParticipationToggleResponse } from './models/participation_toggle_response';
 
 // Type aliases
 type DocData = FirebaseFirestore.DocumentData;
@@ -11,26 +12,31 @@ interface EventParticipant {
     user: DocRef,
 }
 
-export const toggleEventParticipation = async () => {
+export const toggleEventParticipation = async (): Promise<ParticipationToggleResponse> => {
     // In order to test we're going to use hard-coded event and user data.
     // These will eventually be replaced with parameters, or API calls.
     // Get current event
     // TODO: Replace with API call
     const eventId: string = "SeH13v22sQ0CSJywrtm8";
+    const response: ParticipationToggleResponse = {
+        eventId: eventId,
+        userId: "",
+    };
     // TODO: Break this out into a separate function
     const eventRef: DocRef = admin.firestore().collection("events").doc(eventId);
     if (eventRef === null || eventRef === undefined) {
-        return;
+        return response;
     }
     // Get user
     // TODO: Replace this with a parameter
     const userId: string = "CK3P11pxZEPMBq0Z9yD6";
+    response.userId = userId;
     // TODO: Break this out into a separate function
     const userRef: DocRef = admin.firestore()
         .collection("users")
         .doc(userId);
     if (userRef === null || userRef === undefined) {
-        return;
+        return response;
     }
     // Get event participation for user
     // TODO: Break this out into a separate function
@@ -58,7 +64,8 @@ export const toggleEventParticipation = async () => {
                 console.error("An error occurred when creating event.", e);
             });
 
-        return;
+        response.isParticipating = true;
+        return response;
     }
 
     // if record exists, delete it to indicate the user is not particpating in the event
@@ -72,4 +79,6 @@ export const toggleEventParticipation = async () => {
     const deletedOn = deleteParticipantResult.writeTime.toDate().toString();
     const message = `Participant ${ participant.id } deleted at ${ deletedOn }`;
     console.log(message);
+    response.isParticipating = false;
+    return response;
 };
