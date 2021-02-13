@@ -26,7 +26,15 @@ export const scheduleNextEventOnDemand = functions.https.onRequest((req, res) =>
     Toggles a user's participation status for the current train beer event.
 */
 export const toggleEventParticipationOnDemand = functions.https.onRequest(async (req, res) => {
-    const response = await toggleEventParticipation();
+    if (req.body === undefined || req.body === null) {
+        res.status(400).end();
+        return;
+    }
+    if (req.body.userId === null || req.body.userId === undefined) {
+        res.status(400).json({message: "userId property is required."}).end();
+        return;
+    }
+    const response = await toggleEventParticipation(req.body.userId);
     res.json(response);
     res.end();
 });

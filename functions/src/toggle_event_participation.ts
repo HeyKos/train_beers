@@ -12,7 +12,7 @@ interface EventParticipant {
     user: DocRef,
 }
 
-export const toggleEventParticipation = async (): Promise<ParticipationToggleResponse> => {
+export const toggleEventParticipation = async (userId: string): Promise<ParticipationToggleResponse> => {
     // In order to test we're going to use hard-coded event and user data.
     // These will eventually be replaced with parameters, or API calls.
     // Get current event
@@ -20,7 +20,7 @@ export const toggleEventParticipation = async (): Promise<ParticipationToggleRes
     const eventId: string = "SeH13v22sQ0CSJywrtm8";
     const response: ParticipationToggleResponse = {
         eventId: eventId,
-        userId: "",
+        userId: userId,
     };
     // TODO: Break this out into a separate function
     const eventRef: DocRef = admin.firestore().collection("events").doc(eventId);
@@ -28,9 +28,6 @@ export const toggleEventParticipation = async (): Promise<ParticipationToggleRes
         return response;
     }
     // Get user
-    // TODO: Replace this with a parameter
-    const userId: string = "CK3P11pxZEPMBq0Z9yD6";
-    response.userId = userId;
     // TODO: Break this out into a separate function
     const userRef: DocRef = admin.firestore()
         .collection("users")
